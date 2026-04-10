@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+
+# Xcode user data
+xcuserdata/
+**/xcuserdata/
+*.xcuserstate
+
+# Xcode build artifacts
+DerivedData/
+build/
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# Archives and logs
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.log
+
+# Playground
+timeline.xctimeline
+playground.xcworkspace
