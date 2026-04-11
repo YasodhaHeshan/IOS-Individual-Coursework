@@ -126,8 +126,8 @@ struct LoginView: View {
                     HStack(spacing: 12) {
                         BottomInfoCard(
                             icon: "lock.shield",
-                            title: "SECURE CLOUD",
-                            subtitle: "INFRASTRUCTURE"
+                            title: "BEST SERVICE",
+                            subtitle: "GUARANTEED"
                         )
 
                         BottomInfoCard(

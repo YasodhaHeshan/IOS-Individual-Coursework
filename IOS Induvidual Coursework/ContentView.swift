@@ -25,6 +25,9 @@ struct ContentView: View {
                     onLoginTap: flowViewModel.goToLogin
                 )
                 .transition(.opacity)
+            case .onboarding:
+                OnboardingView(onComplete: flowViewModel.goToOnboarding)
+                    .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.35), value: flowViewModel.currentScreen)
