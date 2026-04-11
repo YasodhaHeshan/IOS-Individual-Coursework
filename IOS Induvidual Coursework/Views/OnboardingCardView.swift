@@ -12,10 +12,10 @@ struct OnboardingCardView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                decorativeBackground
-
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {
+                        Spacer()
+
                         iconCircle
 
                         VStack(spacing: 12) {
@@ -30,7 +30,7 @@ struct OnboardingCardView: View {
                                 .lineLimit(nil)
                         }
 
-                        Spacer(minLength: 20)
+                        Spacer()
                     }
                     .padding(.horizontal, 20)
                 }
