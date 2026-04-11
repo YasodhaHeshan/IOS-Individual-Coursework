@@ -5,6 +5,7 @@ enum AppScreen {
     case login
     case signUp
     case onboarding
+    case home
 }
 
 enum OnboardingPage: Int, CaseIterable {

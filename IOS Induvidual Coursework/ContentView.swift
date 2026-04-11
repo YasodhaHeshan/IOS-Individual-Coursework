@@ -17,8 +17,11 @@ struct ContentView: View {
                 SplashView()
                     .transition(.opacity)
             case .login:
-                LoginView(onSignUpTap: flowViewModel.goToSignUp)
-                    .transition(.opacity)
+                LoginView(
+                    onSignUpTap: flowViewModel.goToSignUp,
+                    onLoginSuccess: flowViewModel.goToOnboarding
+                )
+                .transition(.opacity)
             case .signUp:
                 SignUpView(
                     onCancel: flowViewModel.goToLogin,
@@ -26,7 +29,10 @@ struct ContentView: View {
                 )
                 .transition(.opacity)
             case .onboarding:
-                OnboardingView(onComplete: flowViewModel.goToOnboarding)
+                OnboardingView(onComplete: flowViewModel.goToHome)
+                    .transition(.opacity)
+            case .home:
+                Text("Home Screen")
                     .transition(.opacity)
             }
         }
