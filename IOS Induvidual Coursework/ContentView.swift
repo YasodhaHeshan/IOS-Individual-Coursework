@@ -32,7 +32,7 @@ struct ContentView: View {
                 OnboardingView(onComplete: flowViewModel.goToHome)
                     .transition(.opacity)
             case .home:
-                Text("Home Screen")
+                MainTabView()
                     .transition(.opacity)
             }
         }
