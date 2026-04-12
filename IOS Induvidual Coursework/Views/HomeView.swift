@@ -1,9 +1,14 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedIssue: String = ""
+    @State private var selectedTab: SearchTab = .typeIssue
     @State private var issueInput: String = ""
-    @State private var showCategorySelection = false
+    @State private var selectedIssue: String = ""
+    
+    enum SearchTab {
+        case typeIssue
+        case selectIssue
+    }
     
     let recentSearches = [
         ("Brake Pad Replacement", "Honda Civic • 5 days ago"),
@@ -52,48 +57,71 @@ struct HomeView: View {
                         
                         // MARK: - Search Section
                         VStack(spacing: 12) {
-                            HStack(spacing: 12) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Type Issue")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(.gray)
-                                    TextField("", text: $issueInput)
-                                        .font(.system(size: 14, weight: .regular))
+                            // Tab Selection
+                            HStack(spacing: 0) {
+                                Button(action: {
+                                    selectedTab = .typeIssue
+                                    selectedIssue = ""
+                                }) {
+                                    Text("Type issue")
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(selectedTab == .typeIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                    
+                                    if selectedTab == .typeIssue {
+                                        VStack {
+                                            Spacer()
+                                            Rectangle()
+                                                .fill(Color.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
+                                                .frame(height: 2)
+                                        }
+                                    }
                                 }
                                 
-                                Divider()
-                                    .frame(width: 1)
-                                    .frame(height: 40)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Select Issue")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(.gray)
+                                Button(action: {
+                                    selectedTab = .selectIssue
+                                    issueInput = ""
+                                }) {
+                                    Text("Select issue")
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(selectedTab == .selectIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
                                     
-                                    Button(action: { showCategorySelection.toggle() }) {
-                                        HStack {
-                                            Text(selectedIssue.isEmpty ? "Choose" : selectedIssue)
-                                                .font(.system(size: 14, weight: .regular))
-                                                .foregroundColor(selectedIssue.isEmpty ? .gray : .black)
+                                    if selectedTab == .selectIssue {
+                                        VStack {
                                             Spacer()
-                                            Image(systemName: "chevron.down")
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(.gray)
+                                            Rectangle()
+                                                .fill(Color.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
+                                                .frame(height: 2)
                                         }
                                     }
                                 }
                             }
-                            .padding(16)
                             .background(Color(UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)))
                             .cornerRadius(12)
                             
-                            // Category Selection
-                            if showCategorySelection {
+                            // Content based on selected tab
+                            if selectedTab == .typeIssue {
+                                HStack(spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Type Issue")
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .foregroundColor(.gray)
+                                        TextField("Enter issue", text: $issueInput)
+                                            .font(.system(size: 14, weight: .regular))
+                                    }
+                                    Spacer()
+                                }
+                                .padding(16)
+                                .background(Color(UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)))
+                                .cornerRadius(12)
+                            } else {
                                 VStack(spacing: 10) {
                                     ForEach(categories, id: \.self) { category in
                                         Button(action: {
                                             selectedIssue = category
-                                            showCategorySelection = false
                                         }) {
                                             HStack {
                                                 Image(systemName: getCategoryIcon(category))
