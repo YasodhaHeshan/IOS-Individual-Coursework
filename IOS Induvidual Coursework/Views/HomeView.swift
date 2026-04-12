@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedTab: SearchTab = .typeIssue
+    @Binding var selectedTab: String
+    @State private var searchTab: SearchTab = .typeIssue
     @State private var issueInput: String = ""
     @State private var selectedIssue: String = ""
     
@@ -60,16 +61,16 @@ struct HomeView: View {
                             // Tab Selection
                             HStack(spacing: 0) {
                                 Button(action: {
-                                    selectedTab = .typeIssue
+                                    searchTab = .typeIssue
                                     selectedIssue = ""
                                 }) {
                                     Text("Type issue")
                                         .font(.system(size: 15, weight: .semibold))
-                                        .foregroundColor(selectedTab == .typeIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
+                                        .foregroundColor(searchTab == .typeIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
                                     
-                                    if selectedTab == .typeIssue {
+                                    if searchTab == .typeIssue {
                                         VStack {
                                             Spacer()
                                             Rectangle()
@@ -80,16 +81,16 @@ struct HomeView: View {
                                 }
                                 
                                 Button(action: {
-                                    selectedTab = .selectIssue
+                                    searchTab = .selectIssue
                                     issueInput = ""
                                 }) {
                                     Text("Select issue")
                                         .font(.system(size: 15, weight: .semibold))
-                                        .foregroundColor(selectedTab == .selectIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
+                                        .foregroundColor(searchTab == .selectIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
                                     
-                                    if selectedTab == .selectIssue {
+                                    if searchTab == .selectIssue {
                                         VStack {
                                             Spacer()
                                             Rectangle()
@@ -103,7 +104,7 @@ struct HomeView: View {
                             .cornerRadius(12)
                             
                             // Content based on selected tab
-                            if selectedTab == .typeIssue {
+                            if searchTab == .typeIssue {
                                 HStack(spacing: 12) {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Type Issue")
@@ -301,10 +302,18 @@ struct HomeView: View {
                 
                 // MARK: - Bottom Navigation
                 HStack(spacing: 0) {
-                    navBarItem("house.fill", "HOME", isActive: true)
-                    navBarItem("building", "GARAGE", isActive: false)
-                    navBarItem("gearshape", "SPARE PARTS", isActive: false)
-                    navBarItem("person.fill", "PROFILE", isActive: false)
+                    Button(action: { selectedTab = "home" }) {
+                        navBarItem("house.fill", "HOME", isActive: selectedTab == "home")
+                    }
+                    Button(action: {}) {
+                        navBarItem("building", "GARAGE", isActive: false)
+                    }
+                    Button(action: {}) {
+                        navBarItem("gear", "SPARE PARTS", isActive: false)
+                    }
+                    Button(action: { selectedTab = "profile" }) {
+                        navBarItem("person.fill", "PROFILE", isActive: selectedTab == "profile")
+                    }
                 }
                 .frame(height: 60)
                 .background(Color.white)
@@ -344,5 +353,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeView(selectedTab: .constant("home"))
 }
