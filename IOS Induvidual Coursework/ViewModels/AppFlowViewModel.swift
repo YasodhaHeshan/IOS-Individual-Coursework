@@ -19,4 +19,12 @@ final class AppFlowViewModel: ObservableObject {
     func goToLogin() {
         currentScreen = .login
     }
+
+    func goToOnboarding() {
+        currentScreen = .onboarding
+    }
+
+    func goToHome() {
+        currentScreen = .home
+    }
 }

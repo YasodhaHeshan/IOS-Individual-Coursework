@@ -17,14 +17,23 @@ struct ContentView: View {
                 SplashView()
                     .transition(.opacity)
             case .login:
-                LoginView(onSignUpTap: flowViewModel.goToSignUp)
-                    .transition(.opacity)
+                LoginView(
+                    onSignUpTap: flowViewModel.goToSignUp,
+                    onLoginSuccess: flowViewModel.goToOnboarding
+                )
+                .transition(.opacity)
             case .signUp:
                 SignUpView(
                     onCancel: flowViewModel.goToLogin,
                     onLoginTap: flowViewModel.goToLogin
                 )
                 .transition(.opacity)
+            case .onboarding:
+                OnboardingView(onComplete: flowViewModel.goToHome)
+                    .transition(.opacity)
+            case .home:
+                Text("Home Screen")
+                    .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.35), value: flowViewModel.currentScreen)

@@ -3,6 +3,7 @@ import SwiftUI
 struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     let onSignUpTap: () -> Void
+    let onLoginSuccess: () -> Void
 
     var body: some View {
         ZStack {
@@ -83,6 +84,7 @@ struct LoginView: View {
 
                     Button {
                         viewModel.login()
+                        onLoginSuccess()
                     } label: {
                         HStack {
                             Spacer()
@@ -126,8 +128,8 @@ struct LoginView: View {
                     HStack(spacing: 12) {
                         BottomInfoCard(
                             icon: "lock.shield",
-                            title: "SECURE CLOUD",
-                            subtitle: "INFRASTRUCTURE"
+                            title: "BEST SERVICE",
+                            subtitle: "GUARANTEED"
                         )
 
                         BottomInfoCard(
@@ -145,5 +147,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(onSignUpTap: {})
+    LoginView(onSignUpTap: {}, onLoginSuccess: {})
 }
