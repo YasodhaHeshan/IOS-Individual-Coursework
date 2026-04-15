@@ -297,41 +297,8 @@ struct HomeView: View {
                         .padding(.bottom, 20)
                     }
                 }
-                
-                Spacer()
-                
-                // MARK: - Bottom Navigation
-                HStack(spacing: 0) {
-                    Button(action: { selectedTab = "home" }) {
-                        navBarItem("house.fill", "HOME", isActive: selectedTab == "home")
-                    }
-                    Button(action: {}) {
-                        navBarItem("building", "GARAGE", isActive: false)
-                    }
-                    Button(action: {}) {
-                        navBarItem("gear", "SPARE PARTS", isActive: false)
-                    }
-                    Button(action: { selectedTab = "profile" }) {
-                        navBarItem("person.fill", "PROFILE", isActive: selectedTab == "profile")
-                    }
-                }
-                .frame(height: 60)
-                .background(Color.white)
-                .border(Color(UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1)), width: 1)
             }
         }
-    }
-    
-    private func navBarItem(_ icon: String, _ label: String, isActive: Bool) -> some View {
-        VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.system(size: 20, weight: .semibold))
-            
-            Text(label)
-                .font(.system(size: 10, weight: .semibold))
-        }
-        .foregroundColor(isActive ? .orange : .gray)
-        .frame(maxWidth: .infinity)
     }
     
     private func getCategoryIcon(_ category: String) -> String {
