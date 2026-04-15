@@ -20,33 +20,36 @@ struct HomeView: View {
     let categories = ["Engine", "Brakes", "Transmission", "Electrical", "Suspension"]
     
     var body: some View {
-        ZStack {
-            Color(uiColor: .systemGroupedBackground)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // MARK: - Header
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("RepairCost LK")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.gray)
-                    }
-                    Spacer()
-                    Image(systemName: "bell")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.black)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
+        NavigationStack {
+            ZStack {
+                Color(uiColor: .systemGroupedBackground)
+                    .ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // MARK: - Hero Section
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("FIX IT.")
-                                .font(.system(size: 40, weight: .bold))
+                VStack(spacing: 0) {
+                    // MARK: - Header
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("RepairCost LK")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                        NavigationLink(destination: NotificationsView()) {
+                            Image(systemName: "bell")
+                                .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(.black)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            // MARK: - Hero Section
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("FIX IT.")
+                                    .font(.system(size: 40, weight: .bold))
+                                    .foregroundColor(.black)
                             
                             Text("ESTIMATE REPAIR COSTS IN SECONDS.")
                                 .font(.system(size: 13, weight: .regular))
@@ -298,6 +301,7 @@ struct HomeView: View {
                     }
                 }
             }
+        }
         }
     }
     

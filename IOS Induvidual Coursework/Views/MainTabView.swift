@@ -12,7 +12,7 @@ struct MainTabView: View {
                     GaragesView()
                         .transition(.opacity)
                 case "spareParts":
-                    SpareParts()
+                    SparePartsView()
                         .transition(.opacity)
                 case "profile":
                     ProfileView(selectedTab: $selectedTab)
@@ -82,30 +82,6 @@ struct TabBarItem: View {
                     .foregroundColor(isSelected ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-}
-
-// MARK: - Placeholder View for Spare Parts
-struct SpareParts: View {
-    var body: some View {
-        ZStack {
-            Color(uiColor: .systemGroupedBackground)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 20) {
-                Text("Spare Parts")
-                    .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(.black)
-                
-                Image(systemName: "wrench.and.screwdriver.fill")
-                    .font(.system(size: 60))
-                    .foregroundColor(.gray.opacity(0.5))
-                
-                Text("Coming Soon")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.gray)
-            }
         }
     }
 }
