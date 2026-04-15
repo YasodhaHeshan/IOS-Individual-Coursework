@@ -104,9 +104,7 @@ struct GaragesView: View {
                         ScrollView {
                             VStack(spacing: 16) {
                                 ForEach(sampleGarages) { garage in
-                                    NavigationLink(value: garage) {
-                                        GarageListItemView(garage: garage)
-                                    }
+                                    GarageListItemView(garage: garage)
                                 }
                             }
                             .padding(.horizontal, 20)
@@ -115,9 +113,6 @@ struct GaragesView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
                 }
-            }
-            .navigationDestination(for: Garage.self) { garage in
-                GarageDetailView(garage: garage)
             }
         }
         .navigationViewStyle(.stack)
@@ -150,6 +145,7 @@ struct TabButton: View {
 // MARK: - Garage List Item View
 struct GarageListItemView: View {
     let garage: Garage
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(spacing: 12) {
@@ -203,7 +199,7 @@ struct GarageListItemView: View {
                 
                 // Buttons
                 HStack(spacing: 8) {
-                    Button(action: {}) {
+                    NavigationLink(destination: GarageDetailView(garage: garage)) {
                         Text("View Details")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)

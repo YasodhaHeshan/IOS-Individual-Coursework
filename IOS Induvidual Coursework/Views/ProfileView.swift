@@ -37,7 +37,7 @@ struct ProfileView: View {
                     
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.orange)
+                        .foregroundColor(.black)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
