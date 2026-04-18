@@ -22,11 +22,12 @@ struct ProfileView: View {
     ]
     
     var body: some View {
-        ZStack {
-            Color(uiColor: .systemGroupedBackground)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
+        NavigationStack {
+            ZStack {
+                Color(uiColor: .systemGroupedBackground)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
                 // MARK: - Header
                 HStack {
                     Text("Profile")
@@ -35,9 +36,11 @@ struct ProfileView: View {
                     
                     Spacer()
                     
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.black)
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.black)
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
@@ -239,6 +242,7 @@ struct ProfileView: View {
                 }
                 .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
             }
+        }
         }
     }
 }
