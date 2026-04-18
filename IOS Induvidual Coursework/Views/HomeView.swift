@@ -160,7 +160,7 @@ struct HomeView: View {
                         // MARK: - Quick Actions
                         VStack(alignment: .leading, spacing: 12) {
                             // Estimate Cost Button
-                            Button(action: {}) {
+                            NavigationLink(destination: SelectVehicleView()) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "doc.richtext")
                                         .font(.system(size: 18, weight: .semibold))
