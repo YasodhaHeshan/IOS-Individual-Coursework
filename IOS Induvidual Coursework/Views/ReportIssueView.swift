@@ -208,7 +208,7 @@ struct ReportIssueView: View {
                     
                     // Compare Garages Button
                     VStack(spacing: 12) {
-                        Button(action: {}) {
+                        NavigationLink(destination: CompareGaragesView()) {
                             HStack(spacing: 8) {
                                 Text("Compare Garages")
                                 Image(systemName: "arrow.right")
@@ -226,7 +226,9 @@ struct ReportIssueView: View {
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }
-                    .padding(20)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, TabBarLayout.bottomClearance)
                 }
             }
             .navigationBarBackButtonHidden(true)

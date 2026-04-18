@@ -109,6 +109,7 @@ struct GaragesView: View {
                             }
                             .padding(.horizontal, 20)
                         }
+                        .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 8)

@@ -142,6 +142,7 @@ struct NotificationsView: View {
                         .padding(.bottom, 20)
                     }
                 }
+                .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
             }
         }
         .navigationBarBackButtonHidden(true)

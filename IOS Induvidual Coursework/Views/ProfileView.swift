@@ -237,6 +237,7 @@ struct ProfileView: View {
                         .padding(.bottom, 20)
                     }
                 }
+                .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
             }
         }
     }
