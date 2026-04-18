@@ -4,102 +4,66 @@ struct MainTabView: View {
     @State private var selectedTab: String = "home"
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                // Content View
-                switch selectedTab {
-                case "garages":
-                    GaragesView()
-                        .transition(.opacity)
-                case "spareParts":
-                    SparePartsView()
-                        .transition(.opacity)
-                case "profile":
-                    ProfileView(selectedTab: $selectedTab)
-                        .transition(.opacity)
-                default:
-                    HomeView(selectedTab: $selectedTab)
-                        .transition(.opacity)
-                }
-                
-                Spacer()
+        VStack(spacing: 0) {
+            // Content View
+            switch selectedTab {
+            case "garages":
+                GaragesView()
+                    .transition(.opacity)
+            case "spareParts":
+                SparePartsView()
+                    .transition(.opacity)
+            case "profile":
+                ProfileView(selectedTab: $selectedTab)
+                    .transition(.opacity)
+            default:
+                HomeView(selectedTab: $selectedTab)
+                    .transition(.opacity)
             }
-            
-            VStack {
-                Spacer()
-                
-                // Glass Morphism Bottom Navigation Bar
-                VStack(spacing: 0) {
-                    HStack(spacing: 8) {
-                        TabBarItem(
-                            icon: "house.fill",
-                            label: "Home",
-                            isSelected: selectedTab == "home",
-                            action: { selectedTab = "home" }
-                        )
-                        
-                        TabBarItem(
-                            icon: "building.2.fill",
-                            label: "Garages",
-                            isSelected: selectedTab == "garages",
-                            action: { selectedTab = "garages" }
-                        )
-                        
-                        TabBarItem(
-                            icon: "wrench.and.screwdriver.fill",
-                            label: "Spare Parts",
-                            isSelected: selectedTab == "spareParts",
-                            action: { selectedTab = "spareParts" }
-                        )
-                        
-                        TabBarItem(
-                            icon: "person.fill",
-                            label: "Profile",
-                            isSelected: selectedTab == "profile",
-                            action: { selectedTab = "profile" }
-                        )
-                    }
-                    .frame(height: 70)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 12)
-                }
-                .background(
-                    ZStack {
-                        // Glass Effect Background
-                        Color.white.opacity(0.15)
-                        
-                        // Blur Effect
-                        Rectangle()
-                            .fill(Color.white.opacity(0.1))
-                            .backdrop()
-                    }
+        }
+        .safeAreaInset(edge: .bottom) {
+            HStack(spacing: 8) {
+                TabBarItem(
+                    icon: "house.fill",
+                    label: "Home",
+                    isSelected: selectedTab == "home",
+                    action: { selectedTab = "home" }
                 )
-                .cornerRadius(20)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
-                .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: -5)
+                
+                TabBarItem(
+                    icon: "building.2.fill",
+                    label: "Garages",
+                    isSelected: selectedTab == "garages",
+                    action: { selectedTab = "garages" }
+                )
+                
+                TabBarItem(
+                    icon: "wrench.and.screwdriver.fill",
+                    label: "Spare Parts",
+                    isSelected: selectedTab == "spareParts",
+                    action: { selectedTab = "spareParts" }
+                )
+                
+                TabBarItem(
+                    icon: "person.fill",
+                    label: "Profile",
+                    isSelected: selectedTab == "profile",
+                    action: { selectedTab = "profile" }
+                )
             }
+            .frame(height: 70)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(Color.white.opacity(0.35), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.10), radius: 18, x: 0, y: 6)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
         }
         .animation(.easeInOut(duration: 0.3), value: selectedTab)
-    }
-}
-
-// MARK: - Blur Modifier
-struct BlurModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 15.0, *) {
-            content
-                .background(.ultraThinMaterial)
-        } else {
-            content
-                .background(Color.white.opacity(0.1))
-        }
-    }
-}
-
-extension View {
-    func backdrop() -> some View {
-        self.modifier(BlurModifier())
     }
 }
 

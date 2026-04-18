@@ -226,7 +226,9 @@ struct ReportIssueView: View {
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }
-                    .padding(20)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, 96)
                 }
             }
             .navigationBarBackButtonHidden(true)
