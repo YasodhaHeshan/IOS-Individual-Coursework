@@ -299,7 +299,7 @@ struct HomeView: View {
                         .padding(.horizontal, 20)
                         .padding(.bottom, 20)
                     }
-                    .safeAreaPadding(.bottom, 96)
+                    .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
                 }
             }
         }

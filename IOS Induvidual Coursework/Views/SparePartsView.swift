@@ -144,7 +144,7 @@ struct SparePartsView: View {
                         .padding(.bottom, 30)
                     }
                 }
-                .safeAreaPadding(.bottom, 96)
+                .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
             }
         }
     }

@@ -148,7 +148,7 @@ struct DescribeProblemView: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 12)
-                    .padding(.bottom, 96)
+                    .padding(.bottom, TabBarLayout.bottomClearance)
                 }
             }
             .navigationBarBackButtonHidden(true)
