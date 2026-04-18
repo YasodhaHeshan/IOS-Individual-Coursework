@@ -151,19 +151,36 @@ struct GarageDetailView: View {
                                 .cornerRadius(8)
                             }
                             
-                            Button(action: {}) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "phone.fill")
-                                        .font(.system(size: 14, weight: .semibold))
-                                    
-                                    Text("CONTACT GARAGE")
-                                        .font(.system(size: 13, weight: .semibold))
+                            HStack(spacing: 12) {
+                                Button(action: {}) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "phone.fill")
+                                            .font(.system(size: 14, weight: .semibold))
+                                        
+                                        Text("CONTACT")
+                                            .font(.system(size: 13, weight: .semibold))
+                                    }
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(Color.black)
+                                    .cornerRadius(8)
                                 }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(Color.black)
-                                .cornerRadius(8)
+                                
+                                NavigationLink(destination: WriteReviewView(selectedGarage: garage.name)) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "pencil")
+                                            .font(.system(size: 14, weight: .semibold))
+                                        
+                                        Text("REVIEW")
+                                            .font(.system(size: 13, weight: .semibold))
+                                    }
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(Color.orange)
+                                    .cornerRadius(8)
+                                }
                             }
                         }
                         .padding(.horizontal, 20)
