@@ -208,7 +208,7 @@ struct ReportIssueView: View {
                     
                     // Compare Garages Button
                     VStack(spacing: 12) {
-                        Button(action: {}) {
+                        NavigationLink(destination: CompareGaragesView()) {
                             HStack(spacing: 8) {
                                 Text("Compare Garages")
                                 Image(systemName: "arrow.right")
