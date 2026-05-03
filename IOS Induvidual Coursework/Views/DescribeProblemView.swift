@@ -3,10 +3,7 @@ import SwiftUI
 struct DescribeProblemView: View {
     @State private var description: String = ""
     @State private var detailedDescription: String = ""
-    @State private var selectedUrgency: String = "OTHERS"
     @Environment(\.presentationMode) var presentationMode
-    
-    let urgencyOptions = ["URGENT", "OTHERS"]
     
     var isFormValid: Bool {
         !description.trimmingCharacters(in: .whitespaces).isEmpty &&
@@ -91,31 +88,46 @@ struct DescribeProblemView: View {
                             }
                             .padding(.horizontal, 20)
                             
-                            // Urgency Selection
+                            // Visual Evidence
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("TOTAL EXPERIENCE")
+                                Text("VISUAL EVIDENCE")
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundColor(.gray)
-                                
+
                                 HStack(spacing: 12) {
-                                    ForEach(urgencyOptions, id: \.self) { option in
-                                        VStack(spacing: 4) {
-                                            Image(systemName: getUrgencyIcon(for: option))
-                                                .font(.system(size: 24))
-                                                .foregroundColor(selectedUrgency == option ? .white : .gray)
-                                            
-                                            Text(option)
+                                    Button {
+                                        // Upload action placeholder
+                                    } label: {
+                                        VStack(spacing: 8) {
+                                            Image(systemName: "camera")
+                                                .font(.system(size: 22, weight: .semibold))
+                                                .foregroundColor(.gray)
+                                            Text("UPLOAD")
                                                 .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(selectedUrgency == option ? .white : .gray)
+                                                .foregroundColor(.gray)
                                         }
                                         .frame(maxWidth: .infinity)
-                                        .frame(height: 100)
-                                        .background(selectedUrgency == option ? Color.orange : Color.white)
+                                        .frame(height: 90)
+                                        .background(Color.white)
                                         .cornerRadius(12)
-                                        .onTapGesture {
-                                            selectedUrgency = option
-                                        }
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(style: StrokeStyle(lineWidth: 1, dash: [6]))
+                                                .foregroundColor(Color.gray.opacity(0.4))
+                                        )
                                     }
+
+                                    HStack(spacing: 10) {
+                                        Image(systemName: "info.circle.fill")
+                                            .foregroundColor(.orange)
+                                        Text("Clear photos help us provide 95% accurate estimates")
+                                            .font(.system(size: 12, weight: .regular))
+                                            .foregroundColor(.gray)
+                                    }
+                                    .frame(maxWidth: .infinity, minHeight: 90)
+                                    .padding(.horizontal, 12)
+                                    .background(Color.white)
+                                    .cornerRadius(12)
                                 }
                             }
                             .padding(.horizontal, 20)
@@ -155,16 +167,6 @@ struct DescribeProblemView: View {
         }
     }
     
-    private func getUrgencyIcon(for option: String) -> String {
-        switch option {
-        case "URGENT":
-            return "exclamationmark.circle.fill"
-        case "OTHERS":
-            return "checkmark.circle.fill"
-        default:
-            return "circle"
-        }
-    }
 }
 
 #Preview {

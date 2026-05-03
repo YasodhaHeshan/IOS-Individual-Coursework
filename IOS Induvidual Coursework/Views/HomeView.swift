@@ -5,17 +5,33 @@ struct HomeView: View {
     @State private var searchTab: SearchTab = .typeIssue
     @State private var issueInput: String = ""
     @State private var selectedIssue: String = ""
+    @StateObject private var garageService = GarageService.shared
+    @StateObject private var repairRequestService = RepairRequestService.shared
+    @StateObject private var locationService = LocationService.shared
+    @StateObject private var authService = AuthService.shared
     
     enum SearchTab {
         case typeIssue
         case selectIssue
     }
     
-    let recentSearches = [
-        ("Brake Pad Replacement", "Honda Civic • 5 days ago"),
-        ("Engine Oil Leak", "Honda Civic • 5 days ago"),
-        ("Alternator Repair", "BMW 320i • 3 days ago")
-    ]
+    private var recentSearches: [(String, String)] {
+        let mappedRequests = repairRequestService.repairRequests.prefix(3).map { request in
+            let title = request.damageCategory.isEmpty ? request.description : request.damageCategory
+            let details = "\(request.vehicleMake) \(request.vehicleModel) • \(relativeDateString(from: request.createdAt))"
+            return (title, details)
+        }
+        
+        if !mappedRequests.isEmpty {
+            return Array(mappedRequests)
+        }
+        
+        return [
+            ("Brake Pad Replacement", "Honda Civic • 5 days ago"),
+            ("Engine Oil Leak", "Honda Civic • 5 days ago"),
+            ("Alternator Repair", "BMW 320i • 3 days ago")
+        ]
+    }
     
     let categories = ["Engine", "Brakes", "Transmission", "Electrical", "Suspension"]
     
@@ -184,7 +200,9 @@ struct HomeView: View {
                             
                             // Secondary Actions
                             HStack(spacing: 12) {
-                                Button(action: {}) {
+                                Button(action: {
+                                    selectedTab = "garages"
+                                }) {
                                     VStack(spacing: 8) {
                                         Image(systemName: "building.2")
                                             .font(.system(size: 20, weight: .semibold))
@@ -304,6 +322,9 @@ struct HomeView: View {
             }
         }
         }
+        .task {
+            await loadDashboardData()
+        }
     }
     
     private func getCategoryIcon(_ category: String) -> String {
@@ -320,6 +341,22 @@ struct HomeView: View {
             return "shippingbox"
         default:
             return "questionmark.circle"
+        }
+    }
+    
+    private func relativeDateString(from date: Date?) -> String {
+        guard let date else { return "Recently" }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+    
+    private func loadDashboardData() async {
+        locationService.requestLocationPermission()
+        locationService.startUpdatingLocation()
+        await garageService.fetchAllGarages()
+        if authService.isAuthenticated {
+            await repairRequestService.fetchMyRepairRequests()
         }
     }
 }

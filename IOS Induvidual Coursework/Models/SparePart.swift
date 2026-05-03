@@ -1,7 +1,7 @@
 import Foundation
 
-struct SparePart: Identifiable {
-    let id = UUID()
+struct SparePart: Identifiable, Codable {
+    let id: String
     let name: String
     let category: String
     let compatibility: String
@@ -9,7 +9,25 @@ struct SparePart: Identifiable {
     let type: SparePartType
     let icon: String
     
-    enum SparePartType {
+    init(
+        id: String = UUID().uuidString,
+        name: String,
+        category: String,
+        compatibility: String,
+        price: Double,
+        type: SparePartType,
+        icon: String
+    ) {
+        self.id = id
+        self.name = name
+        self.category = category
+        self.compatibility = compatibility
+        self.price = price
+        self.type = type
+        self.icon = icon
+    }
+    
+    enum SparePartType: String, Codable {
         case brakePads
         case engineOil
         case airFilter

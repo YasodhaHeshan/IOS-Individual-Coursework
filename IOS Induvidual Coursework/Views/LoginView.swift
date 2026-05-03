@@ -2,8 +2,14 @@ import SwiftUI
 
 struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
+    @StateObject private var authService = AuthService.shared
+    @StateObject private var biometricService = BiometricAuthService()
+    
     let onSignUpTap: () -> Void
     let onLoginSuccess: () -> Void
+    
+    @State private var showBiometricError = false
+    @State private var biometricError: String = ""
 
     var body: some View {
         ZStack {
@@ -50,7 +56,9 @@ struct LoginView: View {
                                     .foregroundStyle(.secondary)
                                 Spacer()
                                 Button("FORGOT?") {
-                                    viewModel.forgotPassword()
+                                    Task {
+                                        await authService.resetPassword(email: viewModel.email)
+                                    }
                                 }
                                 .font(.caption2.weight(.bold))
                                 .foregroundStyle(Color.orange)
@@ -82,34 +90,62 @@ struct LoginView: View {
                         }
                     }
 
+                    if let errorMessage = authService.errorMessage {
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(Color.red.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                    }
+
                     Button {
-                        viewModel.login()
-                        onLoginSuccess()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Login")
-                                .font(.headline.weight(.semibold))
-                            Image(systemName: "arrow.right")
-                                .font(.subheadline.weight(.semibold))
-                            Spacer()
+                        Task {
+                            await authService.signIn(email: viewModel.email, password: viewModel.password)
+                            if authService.isAuthenticated {
+                                onLoginSuccess()
+                            }
                         }
-                        .foregroundStyle(.white)
+                    } label: {
+                        Group {
+                            if authService.isLoading {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                HStack {
+                                    Spacer()
+                                    Text("Login")
+                                        .font(.headline.weight(.semibold))
+                                    Image(systemName: "arrow.right")
+                                        .font(.subheadline.weight(.semibold))
+                                    Spacer()
+                                }
+                            }
+                        }
+                        .foregroundColor(.white)
                         .padding(.vertical, 14)
                         .background(Color.orange, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
+                    .disabled(authService.isLoading || viewModel.email.isEmpty || viewModel.password.isEmpty)
 
-                    Button {} label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "faceid")
-                            Text("Sign in with Face ID")
-                                .fontWeight(.semibold)
+                    if biometricService.isBiometricAvailable {
+                        Button {
+                            Task {
+                                await signInWithBiometric()
+                            }
+                        } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: biometricService.biometricType == .faceID ? "faceid" : "touchid")
+                                Text("Sign in with \(biometricService.biometricType == .faceID ? "Face ID" : "Touch ID")")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
+                        .buttonStyle(.bordered)
+                        .tint(.primary)
+                        .disabled(authService.isLoading)
                     }
-                    .buttonStyle(.bordered)
-                    .tint(.primary)
 
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
@@ -142,6 +178,47 @@ struct LoginView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 24)
             }
+        }
+        .alert("Biometric Authentication", isPresented: $showBiometricError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(biometricError)
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func signInWithBiometric() async {
+        do {
+            try await biometricService.authenticateWithBiometric()
+            
+            // After successful biometric auth, sign in with saved credentials
+            await authService.signInWithBiometric(email: viewModel.email)
+            
+            if authService.isAuthenticated {
+                onLoginSuccess()
+            }
+        } catch let error as BiometricAuthService.BiometricError {
+            switch error {
+            case .userCancel:
+                biometricError = "Authentication was cancelled"
+            case .userFallback:
+                biometricError = "Please use your password"
+            case .biometryLockout:
+                biometricError = "Too many failed attempts. Please try again later."
+            case .unavailable:
+                biometricError = "Biometric authentication is not available"
+            case .biometryNotAvailable:
+                biometricError = "Biometric authentication is not available on this device"
+            case .notEnrolled:
+                biometricError = "No biometric data enrolled"
+            default:
+                biometricError = error.localizedDescription
+            }
+            showBiometricError = true
+        } catch {
+            biometricError = error.localizedDescription
+            showBiometricError = true
         }
     }
 }

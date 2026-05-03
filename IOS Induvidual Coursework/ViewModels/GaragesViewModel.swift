@@ -41,7 +41,7 @@ class GaragesViewModel: ObservableObject {
                 return numA < numB
             }
         case "topRated":
-            filteredGarages.sort { $0.rating > $1.rating }
+            filteredGarages.sort { ($0.rating ?? 0) > ($1.rating ?? 0) }
         default:
             break
         }
