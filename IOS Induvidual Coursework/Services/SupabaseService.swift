@@ -15,6 +15,7 @@ class SupabaseService {
     private let supabaseKey = "sb_publishable_BCeUrPIBRA7Mpq2rzadiwQ_BaYi6a_7"
     
     private var authToken: String?
+    var hasActiveSession: Bool { authToken != nil }
     
     private init() {}
     
@@ -35,15 +36,17 @@ class SupabaseService {
         request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
         request.httpBody = data
         
-        let (responseData, _) = try await URLSession.shared.data(for: request)
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+
+        try validateHTTPResponse(httpResponse, data: responseData)
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let response = try decoder.decode(AuthResponse.self, from: responseData)
+        let authResponse = try decoder.decode(AuthResponse.self, from: responseData)
         
-        self.authToken = response.session.accessToken
+        self.authToken = authResponse.session?.accessToken
         
-        return response.user
+        return authResponse.user
     }
     
     func signIn(email: String, password: String) async throws -> User {
@@ -61,15 +64,21 @@ class SupabaseService {
         request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
         request.httpBody = data
         
-        let (responseData, _) = try await URLSession.shared.data(for: request)
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+
+        try validateHTTPResponse(httpResponse, data: responseData)
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let response = try decoder.decode(AuthResponse.self, from: responseData)
+        let authResponse = try decoder.decode(AuthResponse.self, from: responseData)
         
-        self.authToken = response.session.accessToken
+        guard let accessToken = authResponse.session?.accessToken else {
+            throw NSError(domain: "SupabaseService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Login succeeded but no session was returned"])
+        }
+
+        self.authToken = accessToken
         
-        return response.user
+        return authResponse.user
     }
     
     func signOut() async throws {
@@ -273,7 +282,7 @@ class SupabaseService {
 
 struct AuthResponse: Codable {
     let user: User
-    let session: Session
+    let session: Session?
 }
 
 struct Session: Codable {
@@ -283,5 +292,32 @@ struct Session: Codable {
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
         case tokenType = "token_type"
+    }
+}
+
+struct SupabaseErrorResponse: Codable {
+    let message: String?
+    let errorDescription: String?
+
+    enum CodingKeys: String, CodingKey {
+        case message
+        case errorDescription = "error_description"
+    }
+}
+
+private extension SupabaseService {
+    func validateHTTPResponse(_ response: URLResponse, data: Data) throws {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NSError(domain: "SupabaseService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid server response"])
+        }
+
+        guard (200...299).contains(httpResponse.statusCode) else {
+            if let decoded = try? JSONDecoder().decode(SupabaseErrorResponse.self, from: data) {
+                let message = decoded.errorDescription ?? decoded.message ?? "Request failed with status \(httpResponse.statusCode)"
+                throw NSError(domain: "SupabaseService", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+            }
+
+            throw NSError(domain: "SupabaseService", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "Request failed with status \(httpResponse.statusCode)"])
+        }
     }
 }

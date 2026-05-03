@@ -3,8 +3,29 @@ import SwiftUI
 struct GaragesView: View {
     @State private var selectedTab: String = "nearby"
     @State private var searchText: String = ""
-    @State private var selectedGarage: Garage?
-    @State private var showDetailView: Bool = false
+    @StateObject private var garageService = GarageService.shared
+    @StateObject private var locationService = LocationService.shared
+    
+    private var displayedGarages: [Garage] {
+        let sourceGarages: [Garage]
+        
+        switch selectedTab {
+        case "nearby":
+            sourceGarages = garageService.nearbyGarages.isEmpty ? garageService.garages : garageService.nearbyGarages
+        case "topRated":
+            sourceGarages = garageService.garages.sorted { ($0.rating ?? 0) > ($1.rating ?? 0) }
+        default:
+            sourceGarages = garageService.garages
+        }
+        
+        guard !searchText.isEmpty else { return sourceGarages }
+        
+        return sourceGarages.filter { garage in
+            garage.name.localizedCaseInsensitiveContains(searchText) ||
+            garage.location.localizedCaseInsensitiveContains(searchText) ||
+            garage.category.localizedCaseInsensitiveContains(searchText)
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -94,7 +115,7 @@ struct GaragesView: View {
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(.gray)
                             
-                            Text("Nearby Experts")
+                            Text(selectedTab == "topRated" ? "Top Rated Experts" : "Nearby Experts")
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(.black)
                             
@@ -103,7 +124,7 @@ struct GaragesView: View {
                         
                         ScrollView {
                             VStack(spacing: 16) {
-                                ForEach(sampleGarages) { garage in
+                                ForEach(displayedGarages) { garage in
                                     GarageListItemView(garage: garage)
                                 }
                             }
@@ -117,6 +138,16 @@ struct GaragesView: View {
             }
         }
         .navigationViewStyle(.stack)
+        .task {
+            await loadGarages()
+        }
+    }
+    
+    private func loadGarages() async {
+        locationService.requestLocationPermission()
+        locationService.startUpdatingLocation()
+        await garageService.fetchAllGarages()
+        await garageService.findNearbyGarages()
     }
 }
 

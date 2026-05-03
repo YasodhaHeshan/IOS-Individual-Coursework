@@ -36,17 +36,26 @@ class AuthService: ObservableObject {
         do {
             let user = try await supabaseService.signUp(email: email, password: password)
             
-            // Save additional profile info
-            try await supabaseService.createUserProfile(
-                userId: user.id,
-                email: email,
-                fullName: fullName
-            )
-            
-            DispatchQueue.main.async {
-                self.currentUser = user
-                self.isAuthenticated = true
-                self.isLoading = false
+            if supabaseService.hasActiveSession {
+                try await supabaseService.createUserProfile(
+                    userId: user.id,
+                    email: email,
+                    fullName: fullName
+                )
+
+                DispatchQueue.main.async {
+                    self.currentUser = user
+                    self.saveSession(user: user)
+                    self.isAuthenticated = true
+                    self.isLoading = false
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.currentUser = nil
+                    self.isAuthenticated = false
+                    self.errorMessage = "Account created. Please verify your email and then log in."
+                    self.isLoading = false
+                }
             }
         } catch {
             DispatchQueue.main.async {
@@ -70,6 +79,7 @@ class AuthService: ObservableObject {
             
             DispatchQueue.main.async {
                 self.currentUser = user
+                self.saveSession(user: user)
                 self.isAuthenticated = true
                 self.isLoading = false
             }
