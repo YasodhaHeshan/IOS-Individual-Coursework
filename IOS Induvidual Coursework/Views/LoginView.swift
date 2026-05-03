@@ -107,20 +107,22 @@ struct LoginView: View {
                             }
                         }
                     } label: {
-                        if authService.isLoading {
-                            ProgressView()
-                                .tint(.white)
-                        } else {
-                            HStack {
-                                Spacer()
-                                Text("Login")
-                                    .font(.headline.weight(.semibold))
-                                Image(systemName: "arrow.right")
-                                    .font(.subheadline.weight(.semibold))
-                                Spacer()
+                        Group {
+                            if authService.isLoading {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                HStack {
+                                    Spacer()
+                                    Text("Login")
+                                        .font(.headline.weight(.semibold))
+                                    Image(systemName: "arrow.right")
+                                        .font(.subheadline.weight(.semibold))
+                                    Spacer()
+                                }
                             }
                         }
-                        .foregroundStyle(.white)
+                        .foregroundColor(.white)
                         .padding(.vertical, 14)
                         .background(Color.orange, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }

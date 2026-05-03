@@ -7,6 +7,8 @@
 
 import Foundation
 import UserNotifications
+import Combine
+import UIKit
 
 class NotificationService: ObservableObject {
     @Published var notifications: [AppNotification] = []
@@ -33,12 +35,12 @@ class NotificationService: ObservableObject {
         title: String,
         body: String,
         delay: TimeInterval = 5,
-        soundName: String = UNNotificationSoundName.default.rawValue
+        soundName: String = ""
     ) {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
-        content.sound = UNNotificationSound(named: UNNotificationSoundName(soundName))
+        content.sound = soundName.isEmpty ? .default : UNNotificationSound(named: UNNotificationSoundName(soundName))
         content.badge = NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1)
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)

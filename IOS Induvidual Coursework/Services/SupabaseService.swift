@@ -11,8 +11,8 @@ class SupabaseService {
     static let shared = SupabaseService()
     
     // TODO: Replace with actual Supabase credentials
-    private let supabaseURL = "YOUR_SUPABASE_URL"
-    private let supabaseKey = "YOUR_SUPABASE_ANON_KEY"
+    private let supabaseURL = URL(string: "https://pcckjmtfpqbcymvrumqg.supabase.co")!
+    private let supabaseKey = "sb_publishable_BCeUrPIBRA7Mpq2rzadiwQ_BaYi6a_7"
     
     private var authToken: String?
     

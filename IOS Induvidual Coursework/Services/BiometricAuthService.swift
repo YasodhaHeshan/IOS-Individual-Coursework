@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import LocalAuthentication
 
 class BiometricAuthService: ObservableObject {

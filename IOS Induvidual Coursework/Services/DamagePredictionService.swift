@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import CoreML
 import UIKit
 
@@ -119,28 +120,31 @@ class DamagePredictionService: ObservableObject {
         case "broken glass":
             parts = [
                 SparePart(
-                    id: "1",
                     name: "Windshield",
                     category: "Glass",
-                    vehicleCompatibility: vehicleModel,
-                    estimatedPrice: 250.0
+                    compatibility: vehicleModel,
+                    price: 250.0,
+                    type: .airFilter,
+                    icon: "square.fill"
                 ),
                 SparePart(
-                    id: "2",
                     name: "Side Window",
                     category: "Glass",
-                    vehicleCompatibility: vehicleModel,
-                    estimatedPrice: 150.0
+                    compatibility: vehicleModel,
+                    price: 150.0,
+                    type: .airFilter,
+                    icon: "square.fill"
                 )
             ]
         case "light":
             parts = [
                 SparePart(
-                    id: "3",
                     name: "Headlight Assembly",
                     category: "Lighting",
-                    vehicleCompatibility: vehicleModel,
-                    estimatedPrice: 200.0
+                    compatibility: vehicleModel,
+                    price: 200.0,
+                    type: .batteryPad,
+                    icon: "bolt.fill"
                 )
             ]
         default:
@@ -189,8 +193,8 @@ extension UIImage {
             return nil
         }
         
-        CVPixelBufferLockBaseAddress(pixelBuffer, .readAndWrite)
-        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readAndWrite) }
+        CVPixelBufferLockBaseAddress(pixelBuffer, [])
+        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, []) }
         
         let cgContext = CGContext(
             data: CVPixelBufferGetBaseAddress(pixelBuffer),

@@ -184,11 +184,11 @@ struct GarageListItemView: View {
                             .font(.system(size: 12))
                             .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                         
-                        Text(String(format: "%.1f", garage.rating))
+                        Text(String(format: "%.1f", garage.rating ?? 0.0))
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.black)
                         
-                        Text("(\(garage.reviewCount))")
+                        Text("(\(garage.reviewCount ?? 0))")
                             .font(.system(size: 11))
                             .foregroundColor(.gray)
                     }

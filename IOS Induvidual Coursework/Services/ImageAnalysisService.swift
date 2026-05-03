@@ -9,6 +9,7 @@ import Foundation
 import Vision
 import UIKit
 import CoreML
+import Combine
 
 class ImageAnalysisService: ObservableObject {
     @Published var analyzedImage: AnalyzedImage?
@@ -26,17 +27,16 @@ class ImageAnalysisService: ObservableObject {
             return .poor(reason: "Invalid image")
         }
         
-        let request = VNDetectFacesRequest()
+        // Try to detect rectangles (damage regions) for quality check
+        let request = VNDetectRectanglesRequest()
         let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         
         do {
             try handler.perform([request])
-            
-            // Check if image is blurry
-            let blurRequest = VNDetectImagePropertiesRequest()
-            try handler.perform([blurRequest])
-            
-            return .good
+            if let observations = request.results as? [VNRectangleObservation], !observations.isEmpty {
+                return .good
+            }
+            return .average
         } catch {
             return .poor(reason: "Invalid image format")
         }
@@ -120,14 +120,14 @@ class ImageAnalysisService: ObservableObject {
         return observations.map { observation in
             DamageRegion(
                 boundingBox: observation.boundingBox,
-                confidence: observation.confidence
+                confidence: CGFloat(observation.confidence)
             )
         }
     }
     
     private func analyzeSeverity(image: CGImage, regions: [DamageRegion]) -> DamageSeverity {
         let regionCount = regions.count
-        let averageConfidence = regions.isEmpty ? 0 : regions.map { $0.confidence }.reduce(0, +) / CGFloat(regions.count)
+        let averageConfidence = regions.isEmpty ? 0 : regions.map { CGFloat($0.confidence) }.reduce(0, +) / CGFloat(regions.count)
         
         if averageConfidence > 0.7 && regionCount > 2 {
             return .high
@@ -141,19 +141,11 @@ class ImageAnalysisService: ObservableObject {
     private func extractImageFeatures(_ cgImage: CGImage) throws -> [String: Any] {
         var features: [String: Any] = [:]
         
-        let request = VNDetectFacesRequest()
-        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-        
-        try handler.perform([request])
-        
-        if let faceObservations = request.results as? [VNFaceObservation] {
-            features["detectedFaces"] = faceObservations.count
-        }
-        
-        // Extract text if present
+        // Extract text using Vision's text recognition
         let textRequest = VNRecognizeTextRequest()
         textRequest.recognitionLevel = .accurate
         
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         try handler.perform([textRequest])
         
         if let textObservations = textRequest.results as? [VNRecognizedTextObservation] {

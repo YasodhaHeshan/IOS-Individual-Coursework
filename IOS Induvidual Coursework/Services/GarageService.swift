@@ -7,6 +7,7 @@
 
 import Foundation
 import MapKit
+import Combine
 
 class GarageService: ObservableObject {
     @Published var garages: [Garage] = []
@@ -79,7 +80,7 @@ class GarageService: ObservableObject {
     func rankGarages(by: RankingCriteria = .distance) {
         switch by {
         case .distance:
-            nearbyGarages.sort { garage1, garage2 in
+            nearbyGarages.sort { (garage1: Garage, garage2: Garage) in
                 guard let loc1 = garage1.garageLocation,
                       let loc2 = garage2.garageLocation,
                       let userLoc = locationService.currentLocation else { return false }
@@ -88,9 +89,13 @@ class GarageService: ObservableObject {
                 return dist1 < dist2
             }
         case .rating:
-            nearbyGarages.sort { ($0.rating ?? 0) > ($1.rating ?? 0) }
+            nearbyGarages.sort { (garage1: Garage, garage2: Garage) in
+                (garage1.rating ?? 0) > (garage2.rating ?? 0)
+            }
         case .price:
-            nearbyGarages.sort { $0.priceLevel < $1.priceLevel }
+            nearbyGarages.sort { (garage1: Garage, garage2: Garage) in
+                garage1.priceRange.count < garage2.priceRange.count
+            }
         }
     }
     

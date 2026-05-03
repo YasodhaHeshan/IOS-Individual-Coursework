@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 class RepairRequestService: ObservableObject {
     @Published var repairRequests: [RepairRequest] = []
