@@ -2,7 +2,28 @@ import SwiftUI
 
 struct NotificationsView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var notifications = sampleNotifications
+    @StateObject private var notificationService = NotificationService.shared
+
+    private var notifications: [Notification] {
+        if notificationService.notifications.isEmpty {
+            return sampleNotifications
+        }
+
+        return notificationService.notifications.map { appNotification in
+            Notification(
+                id: appNotification.id,
+                title: appNotification.title,
+                description: appNotification.body,
+                timestamp: relativeDateString(from: appNotification.createdAt),
+                section: calendar.isDateInToday(appNotification.createdAt) ? .today : .earlier,
+                type: mapNotificationType(appNotification.type),
+                actionButtonTitle: actionTitle(for: appNotification.type),
+                isRead: appNotification.read
+            )
+        }
+    }
+
+    private let calendar = Calendar.current
     
     var todayNotifications: [Notification] {
         notifications.filter { $0.section == .today }
@@ -34,7 +55,9 @@ struct NotificationsView: View {
                     
                     Spacer()
                     
-                    Button(action: {}) {
+                    Button(action: {
+                        notificationService.clearAll()
+                    }) {
                         Image(systemName: "ellipsis")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.black)
@@ -55,7 +78,9 @@ struct NotificationsView: View {
                                 
                                 VStack(spacing: 12) {
                                     ForEach(todayNotifications) { notification in
-                                        NotificationItemView(notification: notification)
+                                        NotificationItemView(notification: notification) {
+                                            notificationService.markAsRead(id: notification.id)
+                                        }
                                     }
                                 }
                                 .padding(.horizontal, 20)
@@ -72,7 +97,9 @@ struct NotificationsView: View {
                                 
                                 VStack(spacing: 12) {
                                     ForEach(earlierNotifications) { notification in
-                                        NotificationItemView(notification: notification)
+                                        NotificationItemView(notification: notification) {
+                                            notificationService.markAsRead(id: notification.id)
+                                        }
                                     }
                                 }
                                 .padding(.horizontal, 20)
@@ -146,12 +173,78 @@ struct NotificationsView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .task {
+            if notificationService.notifications.isEmpty {
+                seedDemoNotificationsIfNeeded()
+            }
+        }
+    }
+
+    private func mapNotificationType(_ type: AppNotification.NotificationType) -> Notification.NotificationType {
+        switch type {
+        case .requestCreated:
+            return .estimateReady
+        case .requestAccepted:
+            return .appointmentReminder
+        case .requestCompleted:
+            return .serviceCompleted
+        case .garageMessage, .generalUpdate:
+            return .offer
+        }
+    }
+
+    private func actionTitle(for type: AppNotification.NotificationType) -> String? {
+        switch type {
+        case .requestCreated:
+            return "View Estimate"
+        case .requestAccepted:
+            return "Track Request"
+        case .requestCompleted:
+            return "View Details"
+        case .garageMessage, .generalUpdate:
+            return nil
+        }
+    }
+
+    private func relativeDateString(from date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .short
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+
+    private func seedDemoNotificationsIfNeeded() {
+        sampleNotifications.forEach { item in
+            let type: AppNotification.NotificationType
+            switch item.type {
+            case .estimateReady:
+                type = .requestCreated
+            case .offer:
+                type = .generalUpdate
+            case .serviceCompleted:
+                type = .requestCompleted
+            case .appointmentReminder:
+                type = .requestAccepted
+            }
+
+            notificationService.addNotification(
+                AppNotification(
+                    id: item.id,
+                    title: item.title,
+                    body: item.description,
+                    type: type,
+                    read: item.isRead,
+                    createdAt: item.section == .today ? Date() : Date().addingTimeInterval(-86_400),
+                    associatedRequestId: nil
+                )
+            )
+        }
     }
 }
 
 // MARK: - Notification Item View
 struct NotificationItemView: View {
     let notification: Notification
+    let onTap: () -> Void
     
     var body: some View {
         HStack(spacing: 12) {
@@ -203,6 +296,9 @@ struct NotificationItemView: View {
         .padding(12)
         .background(notification.isRead ? Color.white.opacity(0.5) : Color.white)
         .cornerRadius(10)
+        .onTapGesture {
+            onTap()
+        }
     }
     
     private func getIconName() -> String {

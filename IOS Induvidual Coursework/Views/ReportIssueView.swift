@@ -2,8 +2,23 @@ import SwiftUI
 
 struct ReportIssueView: View {
     @Environment(\.presentationMode) var presentationMode
-    
-    let estimate = RepairCostEstimate(
+    @StateObject private var repairRequestService = RepairRequestService.shared
+    @StateObject private var notificationService = NotificationService.shared
+
+    let estimate: RepairCostEstimate
+    let vehicleMake: String
+    let vehicleModel: String
+    let vehicleYear: Int
+    let issueDescription: String
+    let damageCategory: String
+    let imageURLs: [String]
+
+    @State private var isSubmittingRequest = false
+    @State private var requestError: String?
+    @State private var navigateToComparison = false
+
+    init(
+        estimate: RepairCostEstimate = RepairCostEstimate(
         totalCost: "42.5K",
         currency: "LKR",
         priceLabel: "Repair • LKR • Tata",
@@ -26,7 +41,22 @@ struct ReportIssueView: View {
             RepairCostEstimate.GarageInfo(name: "Pujith VR's Ideal Parts Outlet", icon: "building.2.fill"),
             RepairCostEstimate.GarageInfo(name: "Specialized Autoworks Colombo", icon: "wrench.and.screwdriver.fill")
         ]
-    )
+        ),
+        vehicleMake: String = "Toyota",
+        vehicleModel: String = "Prius",
+        vehicleYear: Int = 2022,
+        issueDescription: String = "General issue reported",
+        damageCategory: String = "General Damage",
+        imageURLs: [String] = []
+    ) {
+        self.estimate = estimate
+        self.vehicleMake = vehicleMake
+        self.vehicleModel = vehicleModel
+        self.vehicleYear = vehicleYear
+        self.issueDescription = issueDescription
+        self.damageCategory = damageCategory
+        self.imageURLs = imageURLs
+    }
     
     var body: some View {
         NavigationStack {
@@ -208,8 +238,17 @@ struct ReportIssueView: View {
                     
                     // Compare Garages Button
                     VStack(spacing: 12) {
-                        NavigationLink(destination: CompareGaragesView()) {
+                        Button {
+                            Task {
+                                await submitRepairRequestAndContinue()
+                            }
+                        } label: {
                             HStack(spacing: 8) {
+                                if isSubmittingRequest {
+                                    ProgressView()
+                                        .tint(.white)
+                                }
+
                                 Text("Compare Garages")
                                 Image(systemName: "arrow.right")
                             }
@@ -217,8 +256,15 @@ struct ReportIssueView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
-                            .background(Color.orange)
+                            .background(isSubmittingRequest ? Color.gray.opacity(0.5) : Color.orange)
                             .cornerRadius(10)
+                        }
+                        .disabled(isSubmittingRequest)
+
+                        if let requestError {
+                            Text(requestError)
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(.red)
                         }
                         
                         Text("By continuing, you agree to our terms of service")
@@ -232,7 +278,50 @@ struct ReportIssueView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+            .navigationDestination(isPresented: $navigateToComparison) {
+                CompareGaragesView()
+            }
         }
+    }
+
+    private func submitRepairRequestAndContinue() async {
+        isSubmittingRequest = true
+        requestError = nil
+
+        await repairRequestService.createRepairRequest(
+            vehicleMake: vehicleMake,
+            vehicleModel: vehicleModel,
+            vehicleYear: vehicleYear,
+            description: issueDescription,
+            damageCategory: damageCategory,
+            imageURLs: imageURLs
+        )
+
+        if let serviceError = repairRequestService.errorMessage {
+            requestError = serviceError
+            isSubmittingRequest = false
+            return
+        }
+
+        notificationService.addNotification(
+            AppNotification(
+                id: UUID().uuidString,
+                title: "Repair Request Submitted",
+                body: "Your \(vehicleMake) \(vehicleModel) request is now in review.",
+                type: .requestCreated,
+                read: false,
+                createdAt: Date(),
+                associatedRequestId: repairRequestService.currentRequest?.id
+            )
+        )
+        notificationService.sendLocalNotification(
+            title: "Request submitted",
+            body: "We are matching you with nearby garages.",
+            delay: 1
+        )
+
+        isSubmittingRequest = false
+        navigateToComparison = true
     }
 }
 

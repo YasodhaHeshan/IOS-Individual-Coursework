@@ -43,8 +43,8 @@ class SupabaseService {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let authResponse = try decoder.decode(AuthResponse.self, from: responseData)
-        
-        self.authToken = authResponse.session?.accessToken
+
+        self.authToken = authResponse.resolvedAccessToken
         
         return authResponse.user
     }
@@ -71,8 +71,8 @@ class SupabaseService {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let authResponse = try decoder.decode(AuthResponse.self, from: responseData)
-        
-        guard let accessToken = authResponse.session?.accessToken else {
+
+        guard let accessToken = authResponse.resolvedAccessToken else {
             throw NSError(domain: "SupabaseService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Login succeeded but no session was returned"])
         }
 
@@ -283,6 +283,19 @@ class SupabaseService {
 struct AuthResponse: Codable {
     let user: User
     let session: Session?
+    let accessToken: String?
+    let tokenType: String?
+
+    enum CodingKeys: String, CodingKey {
+        case user
+        case session
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+    }
+
+    var resolvedAccessToken: String? {
+        session?.accessToken ?? accessToken
+    }
 }
 
 struct Session: Codable {

@@ -9,6 +9,7 @@ struct HomeView: View {
     @StateObject private var repairRequestService = RepairRequestService.shared
     @StateObject private var locationService = LocationService.shared
     @StateObject private var authService = AuthService.shared
+    @StateObject private var notificationService = NotificationService.shared
     
     enum SearchTab {
         case typeIssue
@@ -51,9 +52,21 @@ struct HomeView: View {
                         }
                         Spacer()
                         NavigationLink(destination: NotificationsView()) {
-                            Image(systemName: "bell")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.black)
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: "bell")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.black)
+
+                                if notificationService.unreadCount > 0 {
+                                    Text("\(min(notificationService.unreadCount, 9))")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(4)
+                                        .background(Color.orange)
+                                        .clipShape(Circle())
+                                        .offset(x: 8, y: -8)
+                                }
+                            }
                         }
                     }
                     .padding(.horizontal, 20)

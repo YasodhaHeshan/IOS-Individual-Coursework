@@ -1,7 +1,7 @@
 import Foundation
 
 struct Notification: Identifiable {
-    let id = UUID()
+    let id: String
     let title: String
     let description: String
     let timestamp: String
@@ -25,6 +25,7 @@ struct Notification: Identifiable {
 
 let sampleNotifications: [Notification] = [
     Notification(
+        id: UUID().uuidString,
         title: "Estimate Ready",
         description: "Your repair estimate for Porsche 911 Engine Service is complete and ready for review.",
         timestamp: "2h ago",
@@ -34,6 +35,7 @@ let sampleNotifications: [Notification] = [
         isRead: false
     ),
     Notification(
+        id: UUID().uuidString,
         title: "Precision Member Offer",
         description: "Enjoy 15% off performance brake pads with code TURBO15 at checkout.",
         timestamp: "1h ago",
@@ -43,6 +45,7 @@ let sampleNotifications: [Notification] = [
         isRead: false
     ),
     Notification(
+        id: UUID().uuidString,
         title: "Service Completed",
         description: "Routine oil change and multi-point inspection for BMW M4 has been finalized. Vehicle is ready for pickup.",
         timestamp: "Yesterday",
@@ -52,6 +55,7 @@ let sampleNotifications: [Notification] = [
         isRead: true
     ),
     Notification(
+        id: UUID().uuidString,
         title: "Appointment Reminder",
         description: "Don't forget your scheduled wheel alignment tomorrow at 10:00 AM.",
         timestamp: "2d ago",

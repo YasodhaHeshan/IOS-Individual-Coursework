@@ -1,9 +1,14 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var notificationsEnabled: Bool = true
+    @StateObject private var notificationService = NotificationService.shared
+    @StateObject private var authService = AuthService.shared
+    @StateObject private var syncService = SyncService.shared
+
+    @State private var notificationsEnabled: Bool = false
     @State private var selectedLanguage: String = "English"
     @State private var selectedUnit: String = "Metric"
+    @State private var isLoggingOut = false
     
     var body: some View {
         NavigationStack {
@@ -350,13 +355,18 @@ struct SettingsView: View {
                             }
                             
                             // MARK: - Log Out Button
-                            Button(action: {}) {
-                                Text("Log Out")
+                            Button(action: {
+                                Task {
+                                    await handleLogout()
+                                }
+                            }) {
+                                Text(isLoggingOut ? "Logging Out..." : "Log Out")
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.red)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                             }
+                            .disabled(isLoggingOut)
                             .padding(.horizontal, 20)
                             
                             // MARK: - Version Info
@@ -364,6 +374,22 @@ struct SettingsView: View {
                                 Text("Version 2.4.12 (Build 2024.102)")
                                     .font(.system(size: 12, weight: .regular))
                                     .foregroundColor(.gray)
+
+                                Button(action: {
+                                    Task {
+                                        await syncService.syncAllData()
+                                    }
+                                }) {
+                                    Text(syncService.isSyncing ? "Syncing data..." : "Sync data now")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(.orange)
+                                }
+
+                                if let lastSyncDate = syncService.lastSyncDate {
+                                    Text("Last sync: \(lastSyncDate.formatted(date: .abbreviated, time: .shortened))")
+                                        .font(.system(size: 11, weight: .regular))
+                                        .foregroundColor(.gray)
+                                }
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
@@ -376,6 +402,21 @@ struct SettingsView: View {
                 }
             }
         }
+        .onChange(of: notificationsEnabled) { enabled in
+            guard enabled else { return }
+            Task {
+                let granted = await notificationService.requestNotificationPermission()
+                if !granted {
+                    notificationsEnabled = false
+                }
+            }
+        }
+    }
+
+    private func handleLogout() async {
+        isLoggingOut = true
+        await authService.signOut()
+        isLoggingOut = false
     }
 }
 
