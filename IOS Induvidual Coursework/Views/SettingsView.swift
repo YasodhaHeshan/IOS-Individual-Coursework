@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var selectedLanguage: String = "English"
     @State private var selectedUnit: String = "Metric"
     @State private var isLoggingOut = false
+    @State private var showLogoutConfirmation = false
     
     var body: some View {
         NavigationStack {
@@ -356,9 +357,7 @@ struct SettingsView: View {
                             
                             // MARK: - Log Out Button
                             Button(action: {
-                                Task {
-                                    await handleLogout()
-                                }
+                                showLogoutConfirmation = true
                             }) {
                                 Text(isLoggingOut ? "Logging Out..." : "Log Out")
                                     .font(.system(size: 16, weight: .semibold))
@@ -410,6 +409,16 @@ struct SettingsView: View {
                     notificationsEnabled = false
                 }
             }
+        }
+        .alert("Log Out", isPresented: $showLogoutConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Log Out", role: .destructive) {
+                Task {
+                    await handleLogout()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to log out?")
         }
     }
 
