@@ -137,7 +137,9 @@ struct NotificationsView: View {
                                     .foregroundColor(.white.opacity(0.3))
                             }
                             
-                            Button(action: {}) {
+                            Button(action: {
+                                notificationService.clearAll()
+                            }) {
                                 HStack(spacing: 4) {
                                     Text("Explore Partners")
                                         .font(.system(size: 13, weight: .semibold))
@@ -280,7 +282,9 @@ struct NotificationItemView: View {
                 
                 // Action Button
                 if let actionButtonTitle = notification.actionButtonTitle {
-                    Button(action: {}) {
+                    Button(action: {
+                        onTap()
+                    }) {
                         Text(actionButtonTitle)
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.white)

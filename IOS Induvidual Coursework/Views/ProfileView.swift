@@ -126,7 +126,7 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
-                                Button(action: {}) {
+                                NavigationLink(destination: SelectVehicleView()) {
                                     Text("VIEW ALL")
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundColor(.orange)
@@ -162,7 +162,7 @@ struct ProfileView: View {
                                 }
                                 
                                 // Add Vehicle Button
-                                Button(action: {}) {
+                                NavigationLink(destination: SelectVehicleView()) {
                                     HStack {
                                         Spacer()
                                         
@@ -189,13 +189,8 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
-                                Button(action: {
-                                    Task {
-                                        await syncService.syncAllData()
-                                        await repairRequestService.fetchMyRepairRequests()
-                                    }
-                                }) {
-                                    Text(syncService.isSyncing ? "SYNCING..." : "SYNC NOW")
+                                NavigationLink(destination: NotificationsView()) {
+                                    Text(syncService.isSyncing ? "SYNCING..." : "VIEW ALERTS")
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundColor(.orange)
                                 }
@@ -244,7 +239,7 @@ struct ProfileView: View {
                             }
                             
                             // View Full History Button
-                            Button(action: {}) {
+                            NavigationLink(destination: NotificationsView()) {
                                 HStack {
                                     Image(systemName: "calendar")
                                         .font(.system(size: 14, weight: .semibold))

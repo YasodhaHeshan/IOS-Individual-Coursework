@@ -2,35 +2,56 @@ import SwiftUI
 
 struct CompareGaragesView: View {
     @Environment(\.presentationMode) var presentationMode
+    @StateObject private var garageService = GarageService.shared
+    @StateObject private var locationService = LocationService.shared
     @State private var searchText: String = ""
     @State private var showMapView: Bool = false
-    
-    let garages = [
-        GarageResult(
-            name: "Colombo Auto Works",
-            rating: 4.6,
-            distance: "0.5 km away (Wellawatta)",
-            price: "LKR 41,800",
-            availability: "AVAILABLE • TOMORROW",
-            warranty: "NO WARRANTY"
-        ),
-        GarageResult(
-            name: "Express Car Care",
-            rating: 4.3,
-            distance: "1.3 km away (Bambalapitiya)",
-            price: "LKR 38,500",
-            availability: "AVAILABLE • 2 DAYS",
-            warranty: "2 MO WARRANTY"
-        ),
-        GarageResult(
-            name: "Apex Premium Service",
-            rating: 4.9,
-            distance: "0.8 km away (Close By)",
-            price: "LKR 46,000",
-            availability: "AVAILABLE • SAME DAY",
-            warranty: "6 MO WARRANTY"
-        )
-    ]
+
+    private var garages: [GarageResult] {
+        let source = garageService.nearbyGarages.isEmpty ? garageService.garages : garageService.nearbyGarages
+
+        let mapped = source.prefix(3).map { garage in
+            GarageResult(
+                name: garage.name,
+                rating: garage.rating ?? 0,
+                distance: garage.distance ?? garageService.getDistance(to: garage).flatMap { String(format: "%.1f km away", $0 / 1000) } ?? "Distance unavailable",
+                price: garage.priceRange,
+                availability: garage.isVerified ? "AVAILABLE • VERIFIED" : "AVAILABLE • TODAY",
+                warranty: garage.isVerified ? "6 MO WARRANTY" : "2 MO WARRANTY"
+            )
+        }
+
+        if !mapped.isEmpty {
+            return Array(mapped)
+        }
+
+        return [
+            GarageResult(
+                name: "Colombo Auto Works",
+                rating: 4.6,
+                distance: "0.5 km away (Wellawatta)",
+                price: "LKR 41,800",
+                availability: "AVAILABLE • TOMORROW",
+                warranty: "NO WARRANTY"
+            ),
+            GarageResult(
+                name: "Express Car Care",
+                rating: 4.3,
+                distance: "1.3 km away (Bambalapitiya)",
+                price: "LKR 38,500",
+                availability: "AVAILABLE • 2 DAYS",
+                warranty: "2 MO WARRANTY"
+            ),
+            GarageResult(
+                name: "Apex Premium Service",
+                rating: 4.9,
+                distance: "0.8 km away (Close By)",
+                price: "LKR 46,000",
+                availability: "AVAILABLE • SAME DAY",
+                warranty: "6 MO WARRANTY"
+            )
+        ]
+    }
     
     var body: some View {
         NavigationStack {
@@ -53,7 +74,11 @@ struct CompareGaragesView: View {
                         
                         Spacer()
                         
-                        Button(action: {}) {
+                        Button(action: {
+                            Task {
+                                await loadGaragesIfNeeded()
+                            }
+                        }) {
                             Image(systemName: "magnifyingglass")
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(.black)
@@ -198,6 +223,21 @@ struct CompareGaragesView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+            .task {
+                await loadGaragesIfNeeded()
+            }
+        }
+    }
+
+    private func loadGaragesIfNeeded() async {
+        locationService.requestLocationPermission()
+        locationService.startUpdatingLocation()
+
+        if garageService.garages.isEmpty {
+            await garageService.fetchAllGarages()
+        }
+        if garageService.nearbyGarages.isEmpty {
+            await garageService.findNearbyGarages()
         }
     }
 }

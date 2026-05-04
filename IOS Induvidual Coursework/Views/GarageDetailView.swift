@@ -1,8 +1,14 @@
 import SwiftUI
+import MapKit
 
 struct GarageDetailView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.openURL) private var openURL
+    @StateObject private var garageService = GarageService.shared
     let garage: Garage
+    @State private var isLoadingDirections = false
+    @State private var routeInfo: String?
+    @State private var routeError: String?
     
     var body: some View {
         ZStack {
@@ -136,11 +142,20 @@ struct GarageDetailView: View {
                         
                         // MARK: - Action Buttons
                         VStack(spacing: 12) {
-                            Button(action: {}) {
+                            Button(action: {
+                                Task {
+                                    await showDirections()
+                                }
+                            }) {
                                 HStack(spacing: 8) {
                                     Image(systemName: "location.fill")
                                         .font(.system(size: 14, weight: .semibold))
                                     
+                                    if isLoadingDirections {
+                                        ProgressView()
+                                            .tint(.white)
+                                    }
+
                                     Text("GET DIRECTIONS")
                                         .font(.system(size: 13, weight: .semibold))
                                 }
@@ -152,7 +167,11 @@ struct GarageDetailView: View {
                             }
                             
                             HStack(spacing: 12) {
-                                Button(action: {}) {
+                                Button(action: {
+                                    if let phone = garage.phone, let url = URL(string: "tel://\(phone.filter { $0.isNumber })") {
+                                        openURL(url)
+                                    }
+                                }) {
                                     HStack(spacing: 8) {
                                         Image(systemName: "phone.fill")
                                             .font(.system(size: 14, weight: .semibold))
@@ -185,6 +204,20 @@ struct GarageDetailView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
+
+                        if let routeInfo {
+                            Text(routeInfo)
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(.gray)
+                                .padding(.horizontal, 20)
+                        }
+
+                        if let routeError {
+                            Text(routeError)
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 20)
+                        }
                         
                         Divider()
                             .padding(.vertical, 8)
@@ -240,6 +273,26 @@ struct GarageDetailView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+    }
+
+    private func showDirections() async {
+        isLoadingDirections = true
+        routeError = nil
+
+        let directions = await garageService.getDirections(to: garage)
+
+        await MainActor.run {
+            isLoadingDirections = false
+
+            guard let route = directions?.routes.first else {
+                routeError = "Directions are unavailable right now."
+                return
+            }
+
+            let distanceKm = route.distance / 1000
+            let minutes = Int(route.expectedTravelTime / 60)
+            routeInfo = String(format: "Approx. %.1f km away, about %d min by car.", distanceKm, minutes)
+        }
     }
 }
 

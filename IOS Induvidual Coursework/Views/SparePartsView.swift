@@ -1,14 +1,15 @@
 import SwiftUI
 
 struct SparePartsView: View {
+    @State private var sparePartsData: [SparePart] = spareParts
+    @State private var isLoading = false
+    @State private var errorMessage: String?
     @State private var searchText: String = ""
     @State private var selectedCategory: String = "ALL PARTS"
     
     var filteredParts: [String: [SparePart]] {
-        let filtered = spareParts.filter { part in
-            searchText.isEmpty || 
-            part.name.localizedCaseInsensitiveContains(searchText) ||
-            part.compatibility.localizedCaseInsensitiveContains(searchText)
+        let filtered = sparePartsData.filter { part in
+            matchesSelectedCategory(part) && matchesSearchText(part)
         }
         
         var grouped: [String: [SparePart]] = [:]
@@ -16,6 +17,33 @@ struct SparePartsView: View {
             grouped[part.category, default: []].append(part)
         }
         return grouped
+    }
+
+    private func matchesSelectedCategory(_ part: SparePart) -> Bool {
+        guard selectedCategory != "ALL PARTS" else { return true }
+
+        let category = selectedCategory.replacingOccurrences(of: " ", with: "")
+        let normalizedPartCategory = part.category.replacingOccurrences(of: " ", with: "")
+
+        switch category {
+        case "ENGINE":
+            return normalizedPartCategory.localizedCaseInsensitiveContains("engine")
+        case "BRAKES":
+            return normalizedPartCategory.localizedCaseInsensitiveContains("brake")
+        case "FILTERS":
+            return normalizedPartCategory.localizedCaseInsensitiveContains("filter")
+        case "ELECTRICAL":
+            return normalizedPartCategory.localizedCaseInsensitiveContains("electrical") || normalizedPartCategory.localizedCaseInsensitiveContains("battery")
+        default:
+            return true
+        }
+    }
+
+    private func matchesSearchText(_ part: SparePart) -> Bool {
+        guard !searchText.isEmpty else { return true }
+
+        return part.name.localizedCaseInsensitiveContains(searchText) ||
+        part.compatibility.localizedCaseInsensitiveContains(searchText)
     }
     
     var body: some View {
@@ -41,6 +69,18 @@ struct SparePartsView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
+                        if isLoading {
+                            ProgressView("Loading spare parts...")
+                                .padding(.horizontal, 20)
+                        }
+
+                        if let errorMessage {
+                            Text(errorMessage)
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 20)
+                        }
+
                         // MARK: - Title Section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("INVENTORY")
@@ -145,6 +185,28 @@ struct SparePartsView: View {
                     }
                 }
                 .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
+            }
+            .task {
+                await loadSpareParts()
+            }
+        }
+    }
+
+    private func loadSpareParts() async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let parts = try await SupabaseService.shared.fetchSpareParts()
+            await MainActor.run {
+                sparePartsData = parts.isEmpty ? spareParts : parts
+                isLoading = false
+            }
+        } catch {
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+                sparePartsData = spareParts
+                isLoading = false
             }
         }
     }

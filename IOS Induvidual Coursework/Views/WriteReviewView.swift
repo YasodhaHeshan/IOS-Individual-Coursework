@@ -5,6 +5,7 @@ struct WriteReviewView: View {
     @State private var reviewTitle: String = ""
     @State private var reviewDescription: String = ""
     @State private var selectedGarage: String = "Select Garage"
+    @State private var showSubmitSuccess = false
     @Environment(\.presentationMode) var presentationMode
     
     init(selectedGarage: String = "Select Garage") {
@@ -183,7 +184,9 @@ struct WriteReviewView: View {
                     
                     // Submit Button
                     VStack(spacing: 12) {
-                        Button(action: {}) {
+                        Button(action: {
+                            showSubmitSuccess = true
+                        }) {
                             HStack(spacing: 8) {
                                 Text("Submit Review")
                                 Image(systemName: "arrow.right")
@@ -208,6 +211,13 @@ struct WriteReviewView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+            .alert("Review Submitted", isPresented: $showSubmitSuccess) {
+                Button("OK", role: .cancel) {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            } message: {
+                Text("Thanks for sharing your experience.")
+            }
         }
     }
 }
