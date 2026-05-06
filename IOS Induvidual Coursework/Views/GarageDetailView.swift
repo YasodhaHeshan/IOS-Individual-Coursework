@@ -19,14 +19,43 @@ struct GarageDetailView: View {
                 VStack(spacing: 0) {
                     // MARK: - Header Image
                     ZStack(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: 0)
-                            .fill(Color.gray.opacity(0.2))
+                        if let imageURLString = garage.imageURL,
+                           let imageURL = URL(string: imageURLString) {
+                            AsyncImage(url: imageURL) { phase in
+                                switch phase {
+                                case .empty:
+                                    ZStack {
+                                        Color.gray.opacity(0.2)
+                                        ProgressView()
+                                            .tint(.orange)
+                                    }
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                case .failure:
+                                    ZStack {
+                                        Color.gray.opacity(0.2)
+                                        Image(systemName: "photo.fill")
+                                            .font(.system(size: 80))
+                                            .foregroundColor(.gray.opacity(0.5))
+                                    }
+                                @unknown default:
+                                    ZStack {
+                                        Color.gray.opacity(0.2)
+                                    }
+                                }
+                            }
                             .frame(height: 240)
-                            .overlay(
+                        } else {
+                            ZStack {
+                                Color.gray.opacity(0.2)
                                 Image(systemName: "building.2.fill")
                                     .font(.system(size: 80))
                                     .foregroundColor(.gray.opacity(0.5))
-                            )
+                            }
+                            .frame(height: 240)
+                        }
                         
                         Button(action: { dismiss() }) {
                             Image(systemName: "chevron.left")

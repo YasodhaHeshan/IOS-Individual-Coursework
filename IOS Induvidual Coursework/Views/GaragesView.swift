@@ -121,16 +121,39 @@ struct GaragesView: View {
                             
                             Spacer()
                         }
-                        
-                        ScrollView {
-                            VStack(spacing: 16) {
-                                ForEach(displayedGarages) { garage in
-                                    GarageListItemView(garage: garage)
-                                }
+
+                        if garageService.isLoading {
+                            ProgressView("Loading garages...")
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.top, 24)
+                        } else if let errorMessage = garageService.errorMessage {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Failed to load garages")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.red)
+                                Text(errorMessage)
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundColor(.gray)
                             }
-                            .padding(.horizontal, 20)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, 8)
+                        } else if displayedGarages.isEmpty {
+                            Text("No garages found")
+                                .font(.system(size: 13, weight: .regular))
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 8)
+                        } else {
+                            ScrollView {
+                                VStack(spacing: 16) {
+                                    ForEach(displayedGarages) { garage in
+                                        GarageListItemView(garage: garage)
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                            }
+                            .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
                         }
-                        .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
@@ -182,14 +205,46 @@ struct GarageListItemView: View {
     var body: some View {
         VStack(spacing: 12) {
             // Image
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.2))
+            if let imageURLString = garage.imageURL,
+               let imageURL = URL(string: imageURLString) {
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                            ProgressView()
+                                .tint(.orange)
+                        }
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                            Image(systemName: "photo.fill")
+                                .font(.system(size: 40))
+                                .foregroundColor(.gray.opacity(0.5))
+                        }
+                    @unknown default:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                        }
+                    }
+                }
                 .frame(height: 180)
-                .overlay(
+                .clipped()
+                .cornerRadius(12)
+            } else {
+                ZStack {
+                    Color.gray.opacity(0.2)
                     Image(systemName: "building.2.fill")
                         .font(.system(size: 40))
                         .foregroundColor(.gray.opacity(0.5))
-                )
+                }
+                .frame(height: 180)
+                .cornerRadius(12)
+            }
             
             VStack(alignment: .leading, spacing: 8) {
                 // Name

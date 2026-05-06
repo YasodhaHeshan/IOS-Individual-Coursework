@@ -18,6 +18,61 @@ class SupabaseService {
     var hasActiveSession: Bool { authToken != nil }
     
     private init() {}
+
+    private static let iso8601WithFractionalSeconds: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let iso8601WithoutFractionalSeconds: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+
+    private static let noTimezoneFractionalDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        return formatter
+    }()
+
+    private static let noTimezoneSecondsDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter
+    }()
+
+    private func makeJSONDecoder() -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateString = try container.decode(String.self)
+
+            if let date = Self.iso8601WithFractionalSeconds.date(from: dateString) {
+                return date
+            }
+
+            if let date = Self.iso8601WithoutFractionalSeconds.date(from: dateString) {
+                return date
+            }
+
+            if let date = Self.noTimezoneFractionalDateFormatter.date(from: dateString) {
+                return date
+            }
+
+            if let date = Self.noTimezoneSecondsDateFormatter.date(from: dateString) {
+                return date
+            }
+
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unsupported date format: \(dateString)")
+        }
+        return decoder
+    }
     
     // MARK: - Authentication
     
@@ -168,8 +223,7 @@ class SupabaseService {
         
         let (responseData, _) = try await URLSession.shared.data(for: request)
         
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        let decoder = makeJSONDecoder()
         let garages = try decoder.decode([Garage].self, from: responseData)
         
         return garages
@@ -183,8 +237,7 @@ class SupabaseService {
         
         let (responseData, _) = try await URLSession.shared.data(for: request)
         
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        let decoder = makeJSONDecoder()
         let garages = try decoder.decode([Garage].self, from: responseData)
         
         guard let garage = garages.first else {
