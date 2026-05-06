@@ -123,17 +123,13 @@ class DamagePredictionService: ObservableObject {
                     name: "Windshield",
                     category: "Glass",
                     compatibility: vehicleModel,
-                    price: 250.0,
-                    type: .airFilter,
-                    icon: "square.fill"
+                    price: 250.0
                 ),
                 SparePart(
                     name: "Side Window",
                     category: "Glass",
                     compatibility: vehicleModel,
-                    price: 150.0,
-                    type: .airFilter,
-                    icon: "square.fill"
+                    price: 150.0
                 )
             ]
         case "light":
@@ -142,9 +138,7 @@ class DamagePredictionService: ObservableObject {
                     name: "Headlight Assembly",
                     category: "Lighting",
                     compatibility: vehicleModel,
-                    price: 200.0,
-                    type: .batteryPad,
-                    icon: "bolt.fill"
+                    price: 200.0
                 )
             ]
         default:

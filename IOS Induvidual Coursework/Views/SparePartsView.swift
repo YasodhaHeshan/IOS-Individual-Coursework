@@ -218,15 +218,53 @@ struct SparePartItemView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Icon
-            ZStack {
-                Circle()
-                    .fill(Color.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)).opacity(0.2))
-                    .frame(width: 48, height: 48)
-                
-                Image(systemName: part.icon)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
+            // Image
+            if let imageURLString = part.imageURL,
+               !imageURLString.isEmpty,
+               let imageURL = URL(string: imageURLString) {
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                            ProgressView()
+                                .tint(.orange)
+                        }
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(8)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 60, height: 60)
+                            .clipped()
+                            .cornerRadius(8)
+                    case .failure:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                            Image(systemName: "photo")
+                                .font(.system(size: 16))
+                                .foregroundColor(.gray.opacity(0.5))
+                        }
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(8)
+                    @unknown default:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                        }
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(8)
+                    }
+                }
+            } else {
+                ZStack {
+                    Color.gray.opacity(0.2)
+                    Image(systemName: "wrench.and.screwdriver")
+                        .font(.system(size: 16))
+                        .foregroundColor(.gray.opacity(0.5))
+                }
+                .frame(width: 60, height: 60)
+                .cornerRadius(8)
             }
             
             // Content
@@ -234,10 +272,19 @@ struct SparePartItemView: View {
                 Text(part.name)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.black)
+                    .lineLimit(2)
                 
                 Text(part.compatibility)
                     .font(.system(size: 10, weight: .regular))
                     .foregroundColor(.gray)
+                    .lineLimit(1)
+                
+                if let supplier = part.supplier {
+                    Text(supplier)
+                        .font(.system(size: 9, weight: .regular))
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+                }
             }
             
             Spacer()
