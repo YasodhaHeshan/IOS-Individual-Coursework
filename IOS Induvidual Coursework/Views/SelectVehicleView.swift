@@ -292,7 +292,14 @@ struct SelectVehicleView: View {
                     
                     // Continue Button
                     VStack(spacing: 12) {
-                        NavigationLink(destination: DescribeProblemView()) {
+                        NavigationLink(
+                            destination: DescribeProblemView(
+                                vehicleType: selectedVehicleType,
+                                vehicleMake: selectedBrand,
+                                vehicleModel: selectedModel,
+                                vehicleYear: Int(selectedYear) ?? Calendar.current.component(.year, from: Date())
+                            )
+                        ) {
                             HStack(spacing: 8) {
                                 Text("Continue")
                                 Image(systemName: "arrow.right")

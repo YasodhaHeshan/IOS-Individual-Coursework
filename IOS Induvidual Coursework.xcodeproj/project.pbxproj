@@ -256,11 +256,10 @@
 				DEVELOPMENT_TEAM = Y93G5C3WP9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to capture images of vehicle damage for repair diagnosis and cost estimation.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "We need access to Face ID to securely authenticate your identity for your garage account.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to find nearby garages and calculate distances to service centers.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to capture images of vehicle damage for repair diagnosis and cost estimation.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select images of vehicle damage for repair requests.";
-
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -293,11 +292,10 @@
 				DEVELOPMENT_TEAM = Y93G5C3WP9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to capture images of vehicle damage for repair diagnosis and cost estimation.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "We need access to Face ID to securely authenticate your identity for your garage account.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to find nearby garages and calculate distances to service centers.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to capture images of vehicle damage for repair diagnosis and cost estimation.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select images of vehicle damage for repair requests.";
-
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

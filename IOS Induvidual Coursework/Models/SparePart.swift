@@ -6,8 +6,18 @@ struct SparePart: Identifiable, Codable {
     let category: String
     let compatibility: String
     let price: Double
-    let type: SparePartType
-    let icon: String
+    let supplier: String?
+    let imageURL: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case category
+        case compatibility = "vehicle_compatibility"
+        case price = "estimated_price"
+        case supplier
+        case imageURL = "image_url"
+    }
     
     init(
         id: String = UUID().uuidString,
@@ -15,24 +25,16 @@ struct SparePart: Identifiable, Codable {
         category: String,
         compatibility: String,
         price: Double,
-        type: SparePartType,
-        icon: String
+        supplier: String? = nil,
+        imageURL: String? = nil
     ) {
         self.id = id
         self.name = name
         self.category = category
         self.compatibility = compatibility
         self.price = price
-        self.type = type
-        self.icon = icon
-    }
-    
-    enum SparePartType: String, Codable {
-        case brakePads
-        case engineOil
-        case airFilter
-        case batteryPad
-        case sparkPlug
+        self.supplier = supplier
+        self.imageURL = imageURL
     }
 }
 
@@ -48,28 +50,28 @@ struct PartComparison: Identifiable {
 
 let spareParts: [SparePart] = [
     SparePart(
-        name: "Front Set - Toyota Prius",
-        category: "Brake Pads",
-        compatibility: "OEM ORIGINAL",
-        price: 18500,
-        type: .brakePads,
-        icon: "square.fill"
+        name: "Oil Filter - Toyota Corolla",
+        category: "Filters",
+        compatibility: "Toyota Corolla 2015-2022",
+        price: 850,
+        supplier: "Toyota Lanka Parts Co.",
+        imageURL: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Oil_filter_2.jpg/320px-Oil_filter_2.jpg"
     ),
     SparePart(
-        name: "Premium Aftermarket",
-        category: "Brake Pads",
-        compatibility: "PREMIUM AFTERMARKET",
-        price: 12200,
-        type: .brakePads,
-        icon: "square.fill"
+        name: "Air Filter - Honda Civic",
+        category: "Filters",
+        compatibility: "Honda Civic 2016-2021",
+        price: 1200,
+        supplier: "Honda Parts Lanka",
+        imageURL: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Luftfilter.jpg/320px-Luftfilter.jpg"
     ),
     SparePart(
-        name: "Economy Choice",
-        category: "Brake Pads",
-        compatibility: "ECONOMY CHOICE",
-        price: 7800,
-        type: .brakePads,
-        icon: "bag.fill"
+        name: "Brake Pads - Front Set",
+        category: "Brakes",
+        compatibility: "Universal Fit",
+        price: 3500,
+        supplier: "AutoParts Lanka",
+        imageURL: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Brake_pads.jpg/320px-Brake_pads.jpg"
     )
 ]
 

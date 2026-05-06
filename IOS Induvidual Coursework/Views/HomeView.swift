@@ -5,10 +5,12 @@ struct HomeView: View {
     @State private var searchTab: SearchTab = .typeIssue
     @State private var issueInput: String = ""
     @State private var selectedIssue: String = ""
+    @State private var showRecentSearches = true
     @StateObject private var garageService = GarageService.shared
     @StateObject private var repairRequestService = RepairRequestService.shared
     @StateObject private var locationService = LocationService.shared
     @StateObject private var authService = AuthService.shared
+    @StateObject private var notificationService = NotificationService.shared
     
     enum SearchTab {
         case typeIssue
@@ -51,9 +53,21 @@ struct HomeView: View {
                         }
                         Spacer()
                         NavigationLink(destination: NotificationsView()) {
-                            Image(systemName: "bell")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.black)
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: "bell")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.black)
+
+                                if notificationService.unreadCount > 0 {
+                                    Text("\(min(notificationService.unreadCount, 9))")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(4)
+                                        .background(Color.orange)
+                                        .clipShape(Circle())
+                                        .offset(x: 8, y: -8)
+                                }
+                            }
                         }
                     }
                     .padding(.horizontal, 20)
@@ -217,7 +231,9 @@ struct HomeView: View {
                                     .cornerRadius(12)
                                 }
                                 
-                                Button(action: {}) {
+                                Button(action: {
+                                    selectedTab = "spareParts"
+                                }) {
                                     VStack(spacing: 8) {
                                         Image(systemName: "gearshape")
                                             .font(.system(size: 20, weight: .semibold))
@@ -244,38 +260,54 @@ struct HomeView: View {
                                 
                                 Spacer()
                                 
-                                Button(action: {}) {
+                                Button(action: {
+                                    showRecentSearches = false
+                                }) {
                                     Text("CLEAR ALL")
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundColor(.orange)
                                 }
                             }
                             
-                            VStack(spacing: 10) {
-                                ForEach(recentSearches, id: \.0) { search, details in
-                                    HStack(spacing: 12) {
-                                        Image(systemName: "clock")
-                                            .font(.system(size: 14, weight: .semibold))
-                                            .foregroundColor(.gray)
-                                        
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(search)
+                            if showRecentSearches {
+                                VStack(spacing: 10) {
+                                    ForEach(recentSearches, id: \.0) { search, details in
+                                        HStack(spacing: 12) {
+                                            Image(systemName: "clock")
                                                 .font(.system(size: 14, weight: .semibold))
-                                                .foregroundColor(.black)
-                                            Text(details)
-                                                .font(.system(size: 11, weight: .regular))
+                                                .foregroundColor(.gray)
+                                            
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(search)
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundColor(.black)
+                                                Text(details)
+                                                    .font(.system(size: 11, weight: .regular))
+                                                    .foregroundColor(.gray)
+                                            }
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "chevron.right")
+                                                .font(.system(size: 12, weight: .semibold))
                                                 .foregroundColor(.gray)
                                         }
-                                        
-                                        Spacer()
-                                        
-                                        Image(systemName: "chevron.right")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.gray)
+                                        .padding(12)
+                                        .background(Color.white)
+                                        .cornerRadius(10)
                                     }
+                                }
+                            } else {
+                                Text("Recent searches cleared")
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundColor(.gray)
                                     .padding(12)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .background(Color.white)
                                     .cornerRadius(10)
+                                    .onTapGesture {
+                                        showRecentSearches = true
+                                    }
                                 }
                             }
                         }
@@ -298,7 +330,9 @@ struct HomeView: View {
                                 Spacer()
                             }
                             
-                            Button(action: {}) {
+                            Button(action: {
+                                selectedTab = "garages"
+                            }) {
                                 HStack(spacing: 4) {
                                     Text("LEARN MORE")
                                         .font(.system(size: 12, weight: .semibold))
@@ -320,7 +354,6 @@ struct HomeView: View {
                     .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
                 }
             }
-        }
         }
         .task {
             await loadDashboardData()

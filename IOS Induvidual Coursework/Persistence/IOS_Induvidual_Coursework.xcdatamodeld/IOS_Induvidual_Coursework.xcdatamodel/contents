@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="26037" systemVersion="26D61" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="NO">
+    <entity name="Garage">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="category" optional="NO" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="descriptionText" optional="YES" attributeType="String"/>
+        <attribute name="distance" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="NO" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imageName" optional="NO" attributeType="String"/>
+        <attribute name="imageURL" optional="YES" attributeType="String"/>
+        <attribute name="isVerified" optional="NO" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="location" optional="NO" attributeType="String"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="name" optional="NO" attributeType="String"/>
+        <attribute name="openHours" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="priceRange" optional="NO" attributeType="String"/>
+        <attribute name="rating" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="reviewCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="specializations" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformerName"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="RepairRequest">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="damageCategory" optional="NO" attributeType="String"/>
+        <attribute name="descriptionText" optional="NO" attributeType="String"/>
+        <attribute name="id" optional="NO" attributeType="String"/>
+        <attribute name="imageURLs" optional="NO" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformerName"/>
+        <attribute name="predictedConfidence" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="predictedCost" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="selectedGarageId" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="NO" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userId" optional="NO" attributeType="String"/>
+        <attribute name="vehicleMake" optional="NO" attributeType="String"/>
+        <attribute name="vehicleModel" optional="NO" attributeType="String"/>
+        <attribute name="vehicleYear" optional="NO" attributeType="Integer 16" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="Garage" positionX="50" positionY="16" width="128" height="388"/>
+        <element name="RepairRequest" positionX="50" positionY="424" width="128" height="330"/>
+    </elements>
+</model>

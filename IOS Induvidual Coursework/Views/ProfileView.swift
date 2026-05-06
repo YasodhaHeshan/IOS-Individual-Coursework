@@ -2,23 +2,43 @@ import SwiftUI
 
 struct ProfileView: View {
     @Binding var selectedTab: String
+    @StateObject private var authService = AuthService.shared
+    @StateObject private var repairRequestService = RepairRequestService.shared
+    @StateObject private var syncService = SyncService.shared
     
-    let userData = (
-        name: "Kasun Perera",
-        subtitle: "service centers since 2021",
-        garages: "6",
-        ratings: "5"
-    )
+    private var userName: String {
+        authService.currentUser?.email.components(separatedBy: "@").first?.capitalized ?? "Guest User"
+    }
+
+    private var userSubtitle: String {
+        authService.currentUser?.email ?? "Sign in to sync your history"
+    }
+
+    private var estimateHistory: [(number: String, name: String, price: String, status: String)] {
+        let mapped = repairRequestService.repairRequests.prefix(3).enumerated().map { index, request in
+            let estimated = Int(request.predictedCost ?? 0)
+            return (
+                number: String(format: "%02d", index + 1),
+                name: request.damageCategory.isEmpty ? request.description : request.damageCategory,
+                price: estimated > 0 ? "LKR \(estimated)" : "Pending",
+                status: request.status.capitalized
+            )
+        }
+
+        if !mapped.isEmpty {
+            return mapped
+        }
+
+        return [
+            (number: "01", name: "Bumper Repair", price: "LKR 45,000", status: "Urgent Fix"),
+            (number: "05", name: "Engine Tune-up", price: "LKR 12,000", status: "Urgent"),
+            (number: "28", name: "Brake Pad Change", price: "LKR 8,500", status: "Completed")
+        ]
+    }
     
     let savedVehicles = [
         (name: "Toyota Prius", services: "3 car services"),
         (name: "Honda Hornet", services: "2 car services")
-    ]
-    
-    let estimateHistory = [
-        (number: "01", name: "Bumper Repair", price: "LKR 45,000", status: "Urgent Fix"),
-        (number: "05", name: "Engine Tune-up", price: "LKR 12,000", status: "Urgent"),
-        (number: "28", name: "Brake Pad Change", price: "LKR 8,500", status: "Completed")
     ]
     
     var body: some View {
@@ -60,22 +80,22 @@ struct ProfileView: View {
                                     .foregroundColor(.orange)
                             }
                             
-                            Text(userData.name)
+                            Text(userName)
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.black)
                             
-                            Text(userData.subtitle)
+                            Text(userSubtitle)
                                 .font(.system(size: 12, weight: .regular))
                                 .foregroundColor(.gray)
                             
                             // Stats
                             HStack(spacing: 24) {
                                 VStack(spacing: 4) {
-                                    Text(userData.garages)
+                                    Text("\(max(0, repairRequestService.repairRequests.count))")
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(.black)
                                     
-                                    Text("GARAGES")
+                                    Text("REQUESTS")
                                         .font(.system(size: 10, weight: .semibold))
                                         .foregroundColor(.gray)
                                 }
@@ -84,11 +104,11 @@ struct ProfileView: View {
                                     .frame(height: 30)
                                 
                                 VStack(spacing: 4) {
-                                    Text(userData.ratings)
+                                    Text(syncService.lastSyncDate == nil ? "-" : "OK")
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(.orange)
                                     
-                                    Text("RATINGS")
+                                    Text("SYNC")
                                         .font(.system(size: 10, weight: .semibold))
                                         .foregroundColor(.gray)
                                 }
@@ -106,7 +126,7 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
-                                Button(action: {}) {
+                                NavigationLink(destination: SelectVehicleView()) {
                                     Text("VIEW ALL")
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundColor(.orange)
@@ -142,7 +162,7 @@ struct ProfileView: View {
                                 }
                                 
                                 // Add Vehicle Button
-                                Button(action: {}) {
+                                NavigationLink(destination: SelectVehicleView()) {
                                     HStack {
                                         Spacer()
                                         
@@ -169,8 +189,8 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
-                                Button(action: {}) {
-                                    Text("LAST HISTORY")
+                                NavigationLink(destination: NotificationsView()) {
+                                    Text(syncService.isSyncing ? "SYNCING..." : "VIEW ALERTS")
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundColor(.orange)
                                 }
@@ -219,7 +239,7 @@ struct ProfileView: View {
                             }
                             
                             // View Full History Button
-                            Button(action: {}) {
+                            NavigationLink(destination: NotificationsView()) {
                                 HStack {
                                     Image(systemName: "calendar")
                                         .font(.system(size: 14, weight: .semibold))
@@ -241,6 +261,11 @@ struct ProfileView: View {
                     }
                 }
                 .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
+            }
+        }
+        .task {
+            if authService.isAuthenticated {
+                await repairRequestService.fetchMyRepairRequests()
             }
         }
         }

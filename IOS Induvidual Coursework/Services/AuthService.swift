@@ -125,6 +125,7 @@ class AuthService: ObservableObject {
     func signOut() async {
         DispatchQueue.main.async {
             self.isLoading = true
+            self.errorMessage = nil
         }
         
         do {
@@ -135,8 +136,7 @@ class AuthService: ObservableObject {
             }
             
             DispatchQueue.main.async {
-                self.currentUser = nil
-                self.isAuthenticated = false
+                self.clearSession()
                 self.isLoading = false
             }
         } catch {
