@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import CoreML
+import Vision
 import UIKit
 
 class DamagePredictionService: ObservableObject {
@@ -16,6 +17,25 @@ class DamagePredictionService: ObservableObject {
     @Published var errorMessage: String?
     
     static let shared = DamagePredictionService()
+
+    private lazy var visionModel: VNCoreMLModel? = {
+        do {
+            if let compiledURL = Bundle.main.url(forResource: "car-damage", withExtension: "mlmodelc") {
+                let model = try MLModel(contentsOf: compiledURL)
+                return try VNCoreMLModel(for: model)
+            }
+
+            if let packageURL = Bundle.main.url(forResource: "car-damage", withExtension: "mlpackage") {
+                let compiledURL = try MLModel.compileModel(at: packageURL)
+                let model = try MLModel(contentsOf: compiledURL)
+                return try VNCoreMLModel(for: model)
+            }
+        } catch {
+            self.errorMessage = "Failed to load damage model: \(error.localizedDescription)"
+        }
+
+        return nil
+    }()
     
     private init() {}
     
@@ -26,35 +46,138 @@ class DamagePredictionService: ObservableObject {
             self.isLoading = true
             self.errorMessage = nil
         }
-        
-        guard let buffer = image.pixelBuffer(width: 224, height: 224) else {
+
+        guard let cgImage = image.cgImage else {
             DispatchQueue.main.async {
                 self.errorMessage = "Failed to process image"
                 self.isLoading = false
             }
             return nil
         }
-        
-        // TODO: Load and use actual CoreML model
-        // For now, we'll use a placeholder prediction
+
+        guard let visionModel else {
+            DispatchQueue.main.async {
+                self.errorMessage = "Damage model is not available in app bundle"
+                self.isLoading = false
+            }
+            return nil
+        }
+
+        let classification: VNClassificationObservation? = await withCheckedContinuation { continuation in
+            let request = VNCoreMLRequest(model: visionModel) { request, _ in
+                let result = (request.results as? [VNClassificationObservation])?.first
+                continuation.resume(returning: result)
+            }
+
+            request.imageCropAndScaleOption = .centerCrop
+
+            DispatchQueue.global(qos: .userInitiated).async {
+                let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+                do {
+                    try handler.perform([request])
+                } catch {
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
+
+        guard let classification else {
+            DispatchQueue.main.async {
+                self.errorMessage = "Unable to predict damage severity"
+                self.isLoading = false
+            }
+            return nil
+        }
+
+        let severity = mapSeverity(from: classification.identifier)
         let prediction = DamagePrediction(
-            category: "General Damage",
-            severity: .medium,
-            confidence: 0.85,
-            estimatedCostRange: (150.0, 500.0),
-            recommendations: [
-                "Professional inspection recommended",
-                "Document with photos",
-                "Get multiple quotes"
-            ]
+            category: prettyCategoryName(from: classification.identifier),
+            severity: severity,
+            confidence: Double(classification.confidence),
+            estimatedCostRange: estimatedRange(for: severity),
+            recommendations: recommendations(for: severity)
         )
-        
+
         DispatchQueue.main.async {
             self.prediction = prediction
             self.isLoading = false
         }
-        
+
         return prediction
+    }
+
+    private func mapSeverity(from identifier: String) -> DamageSeverity {
+        let normalized = identifier.lowercased()
+
+        if normalized.contains("severe") {
+            return .high
+        }
+
+        if normalized.contains("moderate") {
+            return .medium
+        }
+
+        if normalized.contains("minor") || normalized.contains("light") {
+            return .low
+        }
+
+        return .medium
+    }
+
+    private func prettyCategoryName(from identifier: String) -> String {
+        let cleaned = identifier
+            .replacingOccurrences(of: "01-", with: "")
+            .replacingOccurrences(of: "02-", with: "")
+            .replacingOccurrences(of: "03-", with: "")
+            .capitalized
+
+        if cleaned == "Minor" {
+            return "Light Damage"
+        }
+
+        if cleaned == "Moderate" {
+            return "Moderate Damage"
+        }
+
+        if cleaned == "Severe" {
+            return "Severe Damage"
+        }
+
+        return cleaned
+    }
+
+    private func estimatedRange(for severity: DamageSeverity) -> (min: Double, max: Double) {
+        switch severity {
+        case .low:
+            return (120.0, 350.0)
+        case .medium:
+            return (300.0, 900.0)
+        case .high:
+            return (850.0, 3000.0)
+        }
+    }
+
+    private func recommendations(for severity: DamageSeverity) -> [String] {
+        switch severity {
+        case .low:
+            return [
+                "Minor damage detected; schedule a routine garage check",
+                "Keep photos for insurance records",
+                "Compare at least two quotes"
+            ]
+        case .medium:
+            return [
+                "Moderate damage detected; inspect within 24-48 hours",
+                "Avoid long trips until inspected",
+                "Request itemized parts and labor estimate"
+            ]
+        case .high:
+            return [
+                "Severe damage detected; arrange urgent professional inspection",
+                "Avoid driving if safety systems may be affected",
+                "Contact insurance support immediately"
+            ]
+        }
     }
     
     // MARK: - Cost Estimation
