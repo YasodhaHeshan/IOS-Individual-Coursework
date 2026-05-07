@@ -18,10 +18,12 @@ struct DescribeProblemView: View {
     @State private var isSubmitting = false
     @State private var formError: String?
     @State private var shouldNavigateToReport = false
+    @State private var extractedText: String = ""
 
     @StateObject private var imageAnalysisService = ImageAnalysisService.shared
     @StateObject private var damagePredictionService = DamagePredictionService.shared
     @StateObject private var imageUploadService = ImageUploadService.shared
+    @StateObject private var textRecognitionService = TextRecognitionService.shared
 
     @Environment(\.presentationMode) var presentationMode
     
@@ -154,13 +156,35 @@ struct DescribeProblemView: View {
                                         }
 
                                         if let selectedImage {
-                                            Image(uiImage: selectedImage)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(height: 52)
-                                                .frame(maxWidth: .infinity)
-                                                .clipped()
-                                                .cornerRadius(8)
+                                            VStack(alignment: .leading, spacing: 8) {
+                                                Image(uiImage: selectedImage)
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(height: 52)
+                                                    .frame(maxWidth: .infinity)
+                                                    .clipped()
+                                                    .cornerRadius(8)
+
+                                                if !extractedText.isEmpty {
+                                                    VStack(alignment: .leading, spacing: 4) {
+                                                        HStack(spacing: 4) {
+                                                            Image(systemName: "doc.text.fill")
+                                                                .font(.system(size: 10))
+                                                            Text("Text Detected")
+                                                                .font(.system(size: 10, weight: .semibold))
+                                                        }
+                                                        .foregroundColor(.orange)
+
+                                                        Text(extractedText)
+                                                            .font(.system(size: 10, weight: .regular))
+                                                            .foregroundColor(.gray)
+                                                            .lineLimit(2)
+                                                    }
+                                                    .padding(8)
+                                                    .background(Color.orange.opacity(0.1))
+                                                    .cornerRadius(6)
+                                                }
+                                            }
                                         }
                                     }
                                     .frame(maxWidth: .infinity, minHeight: 90)
@@ -173,6 +197,15 @@ struct DescribeProblemView: View {
                                     Text(formError)
                                         .font(.system(size: 12, weight: .regular))
                                         .foregroundColor(.red)
+                                }
+
+                                if textRecognitionService.isRecognizing {
+                                    HStack(spacing: 8) {
+                                        ProgressView()
+                                        Text("Extracting text from image...")
+                                            .font(.system(size: 12, weight: .regular))
+                                            .foregroundColor(.gray)
+                                    }
                                 }
 
                                 if isSubmitting || imageAnalysisService.isAnalyzing || damagePredictionService.isLoading || imageUploadService.isUploading {
@@ -254,6 +287,12 @@ struct DescribeProblemView: View {
 
             selectedImage = image
             formError = nil
+            extractedText = ""
+
+            let recognizedText = await textRecognitionService.recognizeText(from: image)
+            await MainActor.run {
+                extractedText = recognizedText
+            }
         } catch {
             formError = error.localizedDescription
         }
