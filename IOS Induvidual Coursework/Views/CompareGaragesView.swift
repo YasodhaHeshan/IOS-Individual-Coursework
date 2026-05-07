@@ -6,51 +6,14 @@ struct CompareGaragesView: View {
     @StateObject private var locationService = LocationService.shared
     @State private var searchText: String = ""
     @State private var showMapView: Bool = false
+    @State private var selectedGarageForMap: Garage?
 
-    private var garages: [GarageResult] {
+    private var topGarages: [Garage] {
         let source = garageService.nearbyGarages.isEmpty ? garageService.garages : garageService.nearbyGarages
+        let list = Array(source.prefix(3))
+        if !list.isEmpty { return list }
 
-        let mapped = source.prefix(3).map { garage in
-            GarageResult(
-                name: garage.name,
-                rating: garage.rating ?? 0,
-                distance: garage.distance ?? garageService.getDistance(to: garage).flatMap { String(format: "%.1f km away", $0 / 1000) } ?? "Distance unavailable",
-                price: garage.priceRange,
-                availability: garage.isVerified ? "AVAILABLE • VERIFIED" : "AVAILABLE • TODAY",
-                warranty: garage.isVerified ? "6 MO WARRANTY" : "2 MO WARRANTY"
-            )
-        }
-
-        if !mapped.isEmpty {
-            return Array(mapped)
-        }
-
-        return [
-            GarageResult(
-                name: "Colombo Auto Works",
-                rating: 4.6,
-                distance: "0.5 km away (Wellawatta)",
-                price: "LKR 41,800",
-                availability: "AVAILABLE • TOMORROW",
-                warranty: "NO WARRANTY"
-            ),
-            GarageResult(
-                name: "Express Car Care",
-                rating: 4.3,
-                distance: "1.3 km away (Bambalapitiya)",
-                price: "LKR 38,500",
-                availability: "AVAILABLE • 2 DAYS",
-                warranty: "2 MO WARRANTY"
-            ),
-            GarageResult(
-                name: "Apex Premium Service",
-                rating: 4.9,
-                distance: "0.8 km away (Close By)",
-                price: "LKR 46,000",
-                availability: "AVAILABLE • SAME DAY",
-                warranty: "6 MO WARRANTY"
-            )
-        ]
+        return Array(sampleGarages.prefix(3))
     }
     
     var body: some View {
@@ -95,7 +58,7 @@ struct CompareGaragesView: View {
                     
                     ScrollView {
                         VStack(spacing: 16) {
-                            ForEach(garages, id: \.name) { garage in
+                            ForEach(topGarages) { garage in
                                 VStack(alignment: .leading, spacing: 12) {
                                     // Top Row: Name and Rating
                                     HStack(alignment: .top, spacing: 12) {
@@ -112,10 +75,16 @@ struct CompareGaragesView: View {
                                                 Image(systemName: "star.fill")
                                                     .font(.system(size: 12))
                                                     .foregroundColor(.orange)
-                                                
-                                                Text("\(String(format: "%.1f", garage.rating))")
-                                                    .font(.system(size: 12, weight: .semibold))
-                                                    .foregroundColor(.black)
+
+                                                if let rating = garage.rating {
+                                                    Text(String(format: "%.1f", rating))
+                                                        .font(.system(size: 12, weight: .semibold))
+                                                        .foregroundColor(.black)
+                                                } else {
+                                                    Text("–")
+                                                        .font(.system(size: 12, weight: .semibold))
+                                                        .foregroundColor(.black)
+                                                }
                                             }
                                         }
                                     }
@@ -126,44 +95,46 @@ struct CompareGaragesView: View {
                                             .font(.system(size: 11))
                                             .foregroundColor(.gray)
                                         
-                                        Text(garage.distance)
+                                        Text(distanceText(for: garage))
                                             .font(.system(size: 11, weight: .regular))
                                             .foregroundColor(.gray)
                                     }
                                     
                                     // Price
-                                    Text(garage.price)
+                                    Text(garage.priceRange)
                                         .font(.system(size: 24, weight: .bold))
                                         .foregroundColor(.black)
                                     
-                                    // Availability and Warranty
+                                    // Hours and Category
                                     HStack(spacing: 12) {
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .font(.system(size: 10))
-                                                .foregroundColor(.orange)
-                                            
-                                            Text(garage.availability)
-                                                .font(.system(size: 11, weight: .regular))
-                                                .foregroundColor(.gray)
-                                        }
-                                        
                                         HStack(spacing: 4) {
                                             Image(systemName: "clock")
                                                 .font(.system(size: 10))
-                                                .foregroundColor(.gray)
-                                            
-                                            Text(garage.warranty)
+                                                .foregroundColor(.orange)
+
+                                            Text(garage.openHours ?? "Hours unavailable")
                                                 .font(.system(size: 11, weight: .regular))
                                                 .foregroundColor(.gray)
                                         }
-                                        
+
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "wrench.and.screwdriver")
+                                                .font(.system(size: 10))
+                                                .foregroundColor(.gray)
+
+                                            Text(garage.category)
+                                                .font(.system(size: 11, weight: .regular))
+                                                .foregroundColor(.gray)
+                                        }
+
                                         Spacer()
                                     }
                                     
                                     // Action Buttons
                                     HStack(spacing: 12) {
-                                        Button(action: {}) {
+                                        Button(action: {
+                                            selectedGarageForMap = garage
+                                        }) {
                                             Text("VIEW MAP")
                                                 .font(.system(size: 12, weight: .semibold))
                                                 .foregroundColor(.orange)
@@ -177,7 +148,11 @@ struct CompareGaragesView: View {
                                                 )
                                         }
                                         
-                                        Button(action: {}) {
+                                        Button(action: {
+                                            if let phone = garage.phone, let url = URL(string: "tel://\(phone.filter { $0.isNumber })") {
+                                                UIApplication.shared.open(url)
+                                            }
+                                        }) {
                                             Text("CONTACT")
                                                 .font(.system(size: 12, weight: .semibold))
                                                 .foregroundColor(.white)
@@ -226,6 +201,12 @@ struct CompareGaragesView: View {
             .task {
                 await loadGaragesIfNeeded()
             }
+                    .sheet(item: $selectedGarageForMap) { garage in
+                        GarageMapView(garage: garage)
+                    }
+                    .sheet(isPresented: $showMapView) {
+                        CompareMapView(garages: topGarages)
+                    }
         }
     }
 
@@ -239,6 +220,16 @@ struct CompareGaragesView: View {
         if garageService.nearbyGarages.isEmpty {
             await garageService.findNearbyGarages()
         }
+    }
+
+    private func distanceText(for garage: Garage) -> String {
+        if let d = garage.distance {
+            return d
+        }
+        if let meters = garageService.getDistance(to: garage) {
+            return String(format: "%.1f km away", meters / 1000)
+        }
+        return "Distance unavailable"
     }
 }
 

@@ -218,4 +218,11 @@ struct User: Codable, Identifiable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
+    
+    mutating func updateProfile(fullName: String, phone: String, location: String) {
+        self.fullName = fullName
+        self.phone = phone
+        self.preferredLocation = location
+        self.updatedAt = Date()
+    }
 }

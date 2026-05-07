@@ -1,11 +1,14 @@
 import SwiftUI
 
 struct WriteReviewView: View {
+    @State private var isSubmitting = false
     @State private var selectedRating: Int = 0
     @State private var reviewTitle: String = ""
     @State private var reviewDescription: String = ""
     @State private var selectedGarage: String = "Select Garage"
-    @State private var showSubmitSuccess = false
+    @State private var alertTitle: String = ""
+    @State private var alertMessage: String = ""
+    @State private var showAlert = false
     @Environment(\.presentationMode) var presentationMode
     
     init(selectedGarage: String = "Select Garage") {
@@ -15,6 +18,7 @@ struct WriteReviewView: View {
     let garages = ["Colombo Auto Works", "Express Car Care", "Apex Premium Service"]
     
     var isFormValid: Bool {
+        selectedGarage != "Select Garage" &&
         selectedRating > 0 && !reviewTitle.trimmingCharacters(in: .whitespaces).isEmpty &&
         !reviewDescription.trimmingCharacters(in: .whitespaces).isEmpty
     }
@@ -185,20 +189,29 @@ struct WriteReviewView: View {
                     // Submit Button
                     VStack(spacing: 12) {
                         Button(action: {
-                            showSubmitSuccess = true
-                        }) {
-                            HStack(spacing: 8) {
-                                Text("Submit Review")
-                                Image(systemName: "arrow.right")
+                            Task {
+                                await submitReview()
                             }
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
+                        }) {
+                            ZStack {
+                                HStack(spacing: 8) {
+                                    Text("Submit Review")
+                                    Image(systemName: "arrow.right")
+                                }
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+
+                                if isSubmitting {
+                                    ProgressView()
+                                        .tint(.white)
+                                }
+                            }
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
-                            .background(isFormValid ? Color.orange : Color.gray.opacity(0.5))
+                            .background(isFormValid && !isSubmitting ? Color.orange : Color.gray.opacity(0.5))
                             .cornerRadius(10)
                         }
-                        .disabled(!isFormValid)
+                        .disabled(!isFormValid || isSubmitting)
                         
                         Text("Your review will be moderated before appearing")
                             .font(.system(size: 11, weight: .regular))
@@ -211,12 +224,58 @@ struct WriteReviewView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
-            .alert("Review Submitted", isPresented: $showSubmitSuccess) {
+            .alert(alertTitle, isPresented: $showAlert) {
                 Button("OK", role: .cancel) {
-                    presentationMode.wrappedValue.dismiss()
+                    if alertTitle == "Review Submitted" {
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 }
             } message: {
-                Text("Thanks for sharing your experience.")
+                Text(alertMessage)
+            }
+        }
+    }
+
+    private func submitReview() async {
+        let trimmedTitle = reviewTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedDescription = reviewDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard isFormValid else { return }
+        guard let userId = AuthService.shared.currentUser?.id else {
+            await MainActor.run {
+                alertTitle = "Sign In Required"
+                alertMessage = "Please sign in before submitting a review."
+                showAlert = true
+            }
+            return
+        }
+
+        await MainActor.run {
+            isSubmitting = true
+            showAlert = false
+        }
+
+        do {
+            try await SupabaseService.shared.createGarageReview(
+                userId: userId,
+                garageName: selectedGarage,
+                rating: selectedRating,
+                reviewTitle: trimmedTitle,
+                reviewDescription: trimmedDescription
+            )
+
+            await MainActor.run {
+                isSubmitting = false
+                alertTitle = "Review Submitted"
+                alertMessage = "Thanks for sharing your experience."
+                showAlert = true
+            }
+        } catch {
+            await MainActor.run {
+                isSubmitting = false
+                alertTitle = "Couldn’t Save Review"
+                alertMessage = error.localizedDescription
+                showAlert = true
             }
         }
     }
