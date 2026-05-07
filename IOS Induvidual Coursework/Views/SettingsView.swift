@@ -1,15 +1,17 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @StateObject private var notificationService = NotificationService.shared
+    @StateObject private var viewModel = SettingsViewModel()
     @StateObject private var authService = AuthService.shared
     @StateObject private var syncService = SyncService.shared
 
-    @State private var notificationsEnabled: Bool = false
-    @State private var selectedLanguage: String = "English"
-    @State private var selectedUnit: String = "Metric"
     @State private var isLoggingOut = false
     @State private var showLogoutConfirmation = false
+    @State private var showLanguagePicker = false
+    @State private var showUnitPicker = false
+    
+    let languages = ["English", "Sinhala", "Tamil"]
+    let units = ["Metric", "Imperial"]
     
     var body: some View {
         NavigationStack {
@@ -45,24 +47,24 @@ struct SettingsView: View {
                                             .fill(Color(red: 0.2, green: 0.2, blue: 0.3))
                                             .frame(width: 56, height: 56)
                                         
-                                        Text("MT")
+                                        Text(getInitials(viewModel.fullName))
                                             .font(.system(size: 16, weight: .bold))
                                             .foregroundColor(.white)
                                     }
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("Marcus Thorne")
+                                        Text(viewModel.fullName.isEmpty ? "User" : viewModel.fullName)
                                             .font(.system(size: 16, weight: .bold))
                                             .foregroundColor(.black)
                                         
-                                        Text("marcus.t@engine-precision.com")
+                                        Text(viewModel.email)
                                             .font(.system(size: 12, weight: .regular))
                                             .foregroundColor(.gray)
                                     }
                                     
                                     Spacer()
                                     
-                                    NavigationLink(destination: ProfileView(selectedTab: .constant("profile"))) {
+                                    NavigationLink(destination: EditProfileView()) {
                                         Text("Edit\nProfile")
                                             .font(.system(size: 12, weight: .semibold))
                                             .foregroundColor(.orange)
@@ -102,8 +104,11 @@ struct SettingsView: View {
                                         
                                         Spacer()
                                         
-                                        Toggle("", isOn: $notificationsEnabled)
+                                        Toggle("", isOn: $viewModel.notificationsEnabled)
                                             .tint(.orange)
+                                            .onChange(of: viewModel.notificationsEnabled) { _, newValue in
+                                                viewModel.saveNotificationPreference(newValue)
+                                            }
                                     }
                                     .padding(12)
                                     .background(Color.white)
@@ -142,69 +147,73 @@ struct SettingsView: View {
                                         .padding(.horizontal, 56)
                                     
                                     // Language
-                                    HStack(spacing: 12) {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color.orange.opacity(0.2))
-                                                .frame(width: 44, height: 44)
+                                    Button(action: { showLanguagePicker = true }) {
+                                        HStack(spacing: 12) {
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color.orange.opacity(0.2))
+                                                    .frame(width: 44, height: 44)
+                                                
+                                                Image(systemName: "globe")
+                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .foregroundColor(.orange)
+                                            }
                                             
-                                            Image(systemName: "globe")
-                                                .font(.system(size: 18, weight: .semibold))
-                                                .foregroundColor(.orange)
-                                        }
-                                        
-                                        Text("Language")
-                                            .font(.system(size: 16, weight: .regular))
-                                            .foregroundColor(.black)
-                                        
-                                        Spacer()
-                                        
-                                        HStack(spacing: 8) {
-                                            Text(selectedLanguage)
-                                                .font(.system(size: 14, weight: .regular))
-                                                .foregroundColor(.gray)
+                                            Text("Language")
+                                                .font(.system(size: 16, weight: .regular))
+                                                .foregroundColor(.black)
                                             
-                                            Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
-                                                .foregroundColor(.gray)
+                                            Spacer()
+                                            
+                                            HStack(spacing: 8) {
+                                                Text(viewModel.language)
+                                                    .font(.system(size: 14, weight: .regular))
+                                                    .foregroundColor(.gray)
+                                                
+                                                Image(systemName: "chevron.right")
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundColor(.gray)
+                                            }
                                         }
+                                        .padding(12)
+                                        .background(Color.white)
                                     }
-                                    .padding(12)
-                                    .background(Color.white)
                                     
                                     Divider()
                                         .padding(.horizontal, 56)
                                     
                                     // Measurement Units
-                                    HStack(spacing: 12) {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color.orange.opacity(0.2))
-                                                .frame(width: 44, height: 44)
+                                    Button(action: { showUnitPicker = true }) {
+                                        HStack(spacing: 12) {
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color.orange.opacity(0.2))
+                                                    .frame(width: 44, height: 44)
+                                                
+                                                Image(systemName: "ruler.fill")
+                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .foregroundColor(.orange)
+                                            }
                                             
-                                            Image(systemName: "ruler.fill")
-                                                .font(.system(size: 18, weight: .semibold))
-                                                .foregroundColor(.orange)
-                                        }
-                                        
-                                        Text("Measurement Units")
-                                            .font(.system(size: 16, weight: .regular))
-                                            .foregroundColor(.black)
-                                        
-                                        Spacer()
-                                        
-                                        HStack(spacing: 8) {
-                                            Text(selectedUnit)
-                                                .font(.system(size: 14, weight: .regular))
-                                                .foregroundColor(.gray)
+                                            Text("Measurement Units")
+                                                .font(.system(size: 16, weight: .regular))
+                                                .foregroundColor(.black)
                                             
-                                            Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
-                                                .foregroundColor(.gray)
+                                            Spacer()
+                                            
+                                            HStack(spacing: 8) {
+                                                Text(viewModel.measurementUnit)
+                                                    .font(.system(size: 14, weight: .regular))
+                                                    .foregroundColor(.gray)
+                                                
+                                                Image(systemName: "chevron.right")
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundColor(.gray)
+                                            }
                                         }
+                                        .padding(12)
+                                        .background(Color.white)
                                     }
-                                    .padding(12)
-                                    .background(Color.white)
                                 }
                                 .cornerRadius(12)
                                 .padding(.horizontal, 20)
@@ -401,14 +410,8 @@ struct SettingsView: View {
                 }
             }
         }
-        .onChange(of: notificationsEnabled) { enabled in
-            guard enabled else { return }
-            Task {
-                let granted = await notificationService.requestNotificationPermission()
-                if !granted {
-                    notificationsEnabled = false
-                }
-            }
+        .onChange(of: viewModel.notificationsEnabled) { oldValue, newValue in
+            // Notification preference already saved in viewModel
         }
         .alert("Log Out", isPresented: $showLogoutConfirmation) {
             Button("Cancel", role: .cancel) {}
@@ -420,12 +423,86 @@ struct SettingsView: View {
         } message: {
             Text("Are you sure you want to log out?")
         }
+        .sheet(isPresented: $showLanguagePicker) {
+            languagePicker
+        }
+        .sheet(isPresented: $showUnitPicker) {
+            unitPicker
+        }
+    }
+    
+    private var languagePicker: some View {
+        NavigationStack {
+            List(languages, id: \.self) { language in
+                HStack {
+                    Text(language)
+                    Spacer()
+                    if viewModel.language == language {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.orange)
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.saveLanguagePreference(language)
+                    showLanguagePicker = false
+                }
+            }
+            .navigationTitle("Select Language")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Done") {
+                        showLanguagePicker = false
+                    }
+                }
+            }
+        }
+    }
+    
+    private var unitPicker: some View {
+        NavigationStack {
+            List(units, id: \.self) { unit in
+                HStack {
+                    Text(unit)
+                    Spacer()
+                    if viewModel.measurementUnit == unit {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.orange)
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.saveMeasurementUnitPreference(unit)
+                    showUnitPicker = false
+                }
+            }
+            .navigationTitle("Select Unit")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Done") {
+                        showUnitPicker = false
+                    }
+                }
+            }
+        }
     }
 
     private func handleLogout() async {
         isLoggingOut = true
         await authService.signOut()
         isLoggingOut = false
+    }
+    
+    private func getInitials(_ name: String) -> String {
+        let components = name.split(separator: " ")
+        if components.count >= 2 {
+            return String(components[0].prefix(1)) + String(components[1].prefix(1))
+        } else if let first = components.first {
+            return String(first.prefix(2))
+        }
+        return "U"
     }
 }
 

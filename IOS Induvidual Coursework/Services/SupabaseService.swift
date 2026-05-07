@@ -188,7 +188,20 @@ class SupabaseService {
         }
         request.httpBody = data
         
-        _ = try await URLSession.shared.data(for: request)
+        print("🌐 [POST] Creating profile for user: \(userId)")
+        print("📦 Auth Token: \(authToken != nil ? "✓ Present" : "✗ Missing")")
+        
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        
+        if let httpResp = httpResponse as? HTTPURLResponse {
+            print("📊 Response Status: \(httpResp.statusCode)")
+            if let responseString = String(data: responseData, encoding: .utf8) {
+                print("📄 Response: \(responseString)")
+            }
+        }
+        
+        try validateHTTPResponse(httpResponse, data: responseData)
+        print("✅ Profile created successfully")
     }
     
     func getUserProfile(userId: String) async throws -> User {
@@ -211,6 +224,66 @@ class SupabaseService {
         }
         
         return user
+    }
+    
+    func updateUserProfile(userId: String, fullName: String, phone: String, preferredLocation: String) async throws {
+        let endpoint = "\(supabaseURL)/rest/v1/profiles?id=eq.\(userId)"
+        
+        let body: [String: Any] = [
+            "full_name": fullName,
+            "phone": phone,
+            "preferred_location": preferredLocation,
+            "updated_at": ISO8601DateFormatter().string(from: Date())
+        ]
+        
+        let data = try JSONSerialization.data(withJSONObject: body)
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.httpBody = data
+        
+        print("🌐 [PATCH] \(endpoint)")
+        print("📦 Auth Token: \(authToken != nil ? "✓ Present" : "✗ Missing")")
+        
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        
+        if let httpResp = httpResponse as? HTTPURLResponse {
+            print("📊 Response Status: \(httpResp.statusCode)")
+            if let responseString = String(data: responseData, encoding: .utf8) {
+                print("📄 Response Body: \(responseString)")
+            }
+        }
+        
+        try validateHTTPResponse(httpResponse, data: responseData)
+        print("✅ Profile updated successfully")
+    }
+    
+    func updateUserPreferences(userId: String, notificationsEnabled: Bool, language: String, measurementUnit: String) async throws {
+        let endpoint = "\(supabaseURL)/rest/v1/user_preferences?user_id=eq.\(userId)"
+        
+        let body: [String: Any] = [
+            "notifications_enabled": notificationsEnabled,
+            "language": language,
+            "measurement_unit": measurementUnit,
+            "updated_at": ISO8601DateFormatter().string(from: Date())
+        ]
+        
+        let data = try JSONSerialization.data(withJSONObject: body)
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.httpBody = data
+        
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
     }
     
     // MARK: - Garages
@@ -272,6 +345,41 @@ class SupabaseService {
         let createdRequest = try decoder.decode(RepairRequest.self, from: responseData)
         
         return createdRequest
+    }
+
+    func createGarageReview(
+        userId: String,
+        garageName: String,
+        rating: Int,
+        reviewTitle: String,
+        reviewDescription: String
+    ) async throws {
+        let endpoint = "\(supabaseURL)/rest/v1/garage_reviews"
+
+        let body: [String: Any] = [
+            "user_id": userId,
+            "garage_name": garageName,
+            "rating": rating,
+            "review_title": reviewTitle,
+            "review_description": reviewDescription,
+            "is_moderated": false,
+            "created_at": ISO8601DateFormatter().string(from: Date()),
+            "updated_at": ISO8601DateFormatter().string(from: Date())
+        ]
+
+        let data = try JSONSerialization.data(withJSONObject: body)
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        request.setValue("return=representation", forHTTPHeaderField: "Prefer")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.httpBody = data
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
     }
     
     func fetchRepairRequests(userId: String) async throws -> [RepairRequest] {
@@ -374,16 +482,21 @@ struct SupabaseErrorResponse: Codable {
 private extension SupabaseService {
     func validateHTTPResponse(_ response: URLResponse, data: Data) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
+            print("❌ Invalid response type")
             throw NSError(domain: "SupabaseService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid server response"])
         }
 
         guard (200...299).contains(httpResponse.statusCode) else {
+            var errorMessage = "HTTP \(httpResponse.statusCode)"
+            
             if let decoded = try? JSONDecoder().decode(SupabaseErrorResponse.self, from: data) {
-                let message = decoded.errorDescription ?? decoded.message ?? "Request failed with status \(httpResponse.statusCode)"
-                throw NSError(domain: "SupabaseService", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+                errorMessage = decoded.errorDescription ?? decoded.message ?? errorMessage
+            } else if let responseString = String(data: data, encoding: .utf8) {
+                errorMessage = "HTTP \(httpResponse.statusCode): \(responseString)"
             }
-
-            throw NSError(domain: "SupabaseService", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "Request failed with status \(httpResponse.statusCode)"])
+            
+            print("❌ API Error: \(errorMessage)")
+            throw NSError(domain: "SupabaseService", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
         }
     }
 }
