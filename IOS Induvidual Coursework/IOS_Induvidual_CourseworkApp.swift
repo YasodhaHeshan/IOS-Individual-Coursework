@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct IOS_Induvidual_CourseworkApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var notificationService = NotificationService.shared
     @StateObject private var syncService = SyncService.shared
 
