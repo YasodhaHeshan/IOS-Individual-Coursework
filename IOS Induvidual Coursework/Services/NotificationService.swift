@@ -10,31 +10,51 @@ import UserNotifications
 import Combine
 import UIKit
 
-class NotificationService: ObservableObject {
+class NotificationService: NSObject, ObservableObject {
     @Published var notifications: [AppNotification] = []
     @Published var unreadCount = 0
-    
+    @Published var deviceToken: String?
+
     static let shared = NotificationService()
-    
-    private init() {}
-    
+
+    private override init() {
+        super.init()
+    }
+
     // MARK: - Request Permission
-    
+
     func requestNotificationPermission() async -> Bool {
         do {
-            return try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+            let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+            if granted {
+                await MainActor.run {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+            return granted
         } catch {
             print("Notification permission error: \(error.localizedDescription)")
             return false
         }
     }
-    
+
+    // MARK: - Device Token
+
+    func storeDeviceToken(_ tokenData: Data) {
+        let token = tokenData.map { String(format: "%02.2hhx", $0) }.joined()
+        DispatchQueue.main.async {
+            self.deviceToken = token
+        }
+        print("APNs device token: \(token)")
+    }
+
     // MARK: - Local Notifications
-    
+
     func sendLocalNotification(
         title: String,
         body: String,
         delay: TimeInterval = 5,
+        userInfo: [AnyHashable: Any] = [:],
         soundName: String = ""
     ) {
         let content = UNMutableNotificationContent()
@@ -42,40 +62,67 @@ class NotificationService: ObservableObject {
         content.body = body
         content.sound = soundName.isEmpty ? .default : UNNotificationSound(named: UNNotificationSoundName(soundName))
         content.badge = NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1)
-        
+        content.userInfo = userInfo
+
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
+
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("Notification error: \(error.localizedDescription)")
             }
         }
     }
-    
-    // MARK: - Notification Handling
-    
-    func handleNotificationResponse(_ response: UNNotificationResponse) {
-        let userInfo = response.notification.request.content.userInfo
-        
-        if let type = userInfo["type"] as? String,
-           let requestId = userInfo["requestId"] as? String {
-            print("Notification handled: \(type) for request \(requestId)")
+
+    // MARK: - Remote Notification Handling
+
+    func handleRemoteNotification(_ userInfo: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        guard let aps = userInfo["aps"] as? [String: Any] else {
+            completionHandler(.noData)
+            return
         }
+
+        let title: String
+        let body: String
+
+        if let alert = aps["alert"] as? [String: Any] {
+            title = alert["title"] as? String ?? "Notification"
+            body = alert["body"] as? String ?? ""
+        } else if let alertString = aps["alert"] as? String {
+            title = "Notification"
+            body = alertString
+        } else {
+            completionHandler(.noData)
+            return
+        }
+
+        let typeString = userInfo["type"] as? String ?? AppNotification.NotificationType.generalUpdate.rawValue
+        let notificationType = AppNotification.NotificationType(rawValue: typeString) ?? .generalUpdate
+        let requestId = userInfo["requestId"] as? String
+
+        let notification = AppNotification(
+            id: UUID().uuidString,
+            title: title,
+            body: body,
+            type: notificationType,
+            createdAt: Date(),
+            associatedRequestId: requestId
+        )
+        addNotification(notification)
+        completionHandler(.newData)
     }
-    
-    // MARK: - Add Local Notification
-    
+
+    // MARK: - In-App Notification Store
+
     func addNotification(_ notification: AppNotification) {
         DispatchQueue.main.async {
             self.notifications.insert(notification, at: 0)
-            
             if !notification.read {
                 self.unreadCount += 1
             }
         }
     }
-    
+
     func markAsRead(id: String) {
         DispatchQueue.main.async {
             if let index = self.notifications.firstIndex(where: { $0.id == id }) {
@@ -86,12 +133,42 @@ class NotificationService: ObservableObject {
             }
         }
     }
-    
+
     func clearAll() {
         DispatchQueue.main.async {
             self.notifications.removeAll()
             self.unreadCount = 0
         }
+    }
+}
+
+// MARK: - UNUserNotificationCenterDelegate
+
+extension NotificationService: UNUserNotificationCenterDelegate {
+
+    // Show notifications as banners even when the app is in the foreground
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound, .badge])
+    }
+
+    // Handle taps on notifications
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let userInfo = response.notification.request.content.userInfo
+
+        if let type = userInfo["type"] as? String,
+           let requestId = userInfo["requestId"] as? String {
+            print("Notification tapped: \(type) for request \(requestId)")
+        }
+
+        completionHandler()
     }
 }
 
