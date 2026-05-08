@@ -14,6 +14,7 @@ A SwiftUI iOS app prototype for **RepairCost LK**, focused on a clean automotive
 
 - `IOS Induvidual Coursework/` — SwiftUI source files and assets
 - `IOS Induvidual Coursework.xcodeproj/` — Xcode project
+- `IOS Induvidual CourseworkTests/` — Unit Tests
 
 ## Requirements
 
@@ -26,11 +27,6 @@ A SwiftUI iOS app prototype for **RepairCost LK**, focused on a clean automotive
 1. Open `IOS Induvidual Coursework.xcodeproj` in Xcode.
 2. Select an iPhone simulator (for example, iPhone 15 Pro).
 3. Press **Run** (`⌘R`).
-
-## Notes
-
-- Current authentication actions are UI-only placeholders.
-- You can connect login, forgot-password, and sign-up actions to your backend/services next.
 
 ## Author
 
