@@ -354,9 +354,9 @@ struct HomeView: View {
     private func getCategoryIcon(_ category: String) -> String {
         switch category {
         case "Engine":
-            return "engine"
+            return "car.fill"
         case "Brakes":
-            return "brake.radiator.fill"
+            return "stop.circle.fill"
         case "Transmission":
             return "gearshape"
         case "Electrical":

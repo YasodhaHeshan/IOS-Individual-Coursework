@@ -162,7 +162,7 @@ struct ProfileView: View {
                                 }
                                 
                                 // Add Vehicle Button
-                                NavigationLink(destination: SelectVehicleView()) {
+                                NavigationLink(destination: SettingsView()) {
                                     HStack {
                                         Spacer()
                                         

@@ -439,7 +439,7 @@ struct SettingsView: View {
                             
                             // MARK: - Version Info
                             VStack(spacing: 4) {
-                                Text("Version 2.4.12 (Build 2024.102)")
+                                Text("Version 1.0.1")
                                     .appFont(size: 12, weight: .regular)
                                     .foregroundColor(.gray)
 
