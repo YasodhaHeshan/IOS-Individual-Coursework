@@ -70,13 +70,15 @@ class AuthService: ObservableObject {
             self.isLoading = true
             self.errorMessage = nil
         }
-        
+
         do {
-            let user = try await supabaseService.signIn(email: email, password: password)
-            
-            // Save credentials securely for biometric login
+            let authUser = try await supabaseService.signIn(email: email, password: password)
+
+            // Merge in profile data (full_name, phone, etc.) from the profiles table
+            let user = (try? await supabaseService.getUserProfile(userId: authUser.id)) ?? authUser
+
             biometricService.saveCredentials(email: email, password: password)
-            
+
             DispatchQueue.main.async {
                 self.currentUser = user
                 self.saveSession(user: user)
@@ -111,6 +113,7 @@ class AuthService: ObservableObject {
             
             DispatchQueue.main.async {
                 self.currentUser = user
+                self.saveSession(user: user)
                 self.isAuthenticated = true
                 self.isLoading = false
             }
@@ -121,7 +124,7 @@ class AuthService: ObservableObject {
             }
         }
     }
-    
+
     func signOut() async {
         DispatchQueue.main.async {
             self.isLoading = true
@@ -172,25 +175,33 @@ class AuthService: ObservableObject {
     
     private func restoreSession() {
         DispatchQueue.main.async {
-            // Restore from secure storage or UserDefaults
             if let userJson = UserDefaults.standard.string(forKey: "currentUser"),
                let data = userJson.data(using: .utf8),
                let user = try? JSONDecoder().decode(User.self, from: data) {
                 self.currentUser = user
                 self.isAuthenticated = true
             }
+            // Restore auth token so API calls (storage uploads, PATCH) work after app restart
+            if let savedToken = UserDefaults.standard.string(forKey: "authToken") {
+                self.supabaseService.setAuthToken(savedToken)
+            }
         }
     }
-    
+
     func saveSession(user: User) {
         if let encoded = try? JSONEncoder().encode(user) {
             let json = String(data: encoded, encoding: .utf8)
             UserDefaults.standard.set(json, forKey: "currentUser")
         }
+        if let token = supabaseService.currentAuthToken {
+            UserDefaults.standard.set(token, forKey: "authToken")
+        }
     }
-    
+
     func clearSession() {
         UserDefaults.standard.removeObject(forKey: "currentUser")
+        UserDefaults.standard.removeObject(forKey: "authToken")
+        supabaseService.setAuthToken(nil)
         currentUser = nil
         isAuthenticated = false
     }

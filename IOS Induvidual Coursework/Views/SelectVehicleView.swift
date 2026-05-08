@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SelectVehicleView: View {
+    let initialIssue: String
+
     @State private var selectedVehicleType: String = ""
     @State private var selectedBrand: String = ""
     @State private var selectedModel: String = ""
@@ -9,11 +11,29 @@ struct SelectVehicleView: View {
     @State private var showModelPicker = false
     @State private var showYearPicker = false
     @Environment(\.presentationMode) var presentationMode
-    
+
+    init(initialIssue: String = "") {
+        self.initialIssue = initialIssue
+    }
+
     let vehicleTypes = ["Car", "Motorcycle", "Truck", "Van"]
     let brands = ["Honda", "Toyota", "BMW", "Mercedes", "Ford", "Hyundai", "Nissan", "Suzuki"]
-    let models = ["Civic", "Accord", "CR-V", "Pilot", "City", "Odyssey"]
     let years = Array(2000...2026).map { String($0) }.reversed()
+
+    private let brandModels: [String: [String]] = [
+        "Honda":    ["Civic", "Accord", "CR-V", "Pilot", "City", "HR-V", "Jazz", "Odyssey"],
+        "Toyota":   ["Corolla", "Camry", "Prius", "Hilux", "Land Cruiser", "RAV4", "Yaris", "Fortuner"],
+        "BMW":      ["3 Series", "5 Series", "X3", "X5", "7 Series", "1 Series", "X1", "M3"],
+        "Mercedes": ["C-Class", "E-Class", "GLE", "S-Class", "A-Class", "GLC", "CLA", "GLA"],
+        "Ford":     ["Ranger", "EcoSport", "Everest", "Fiesta", "Focus", "Explorer", "Mustang", "F-150"],
+        "Hyundai":  ["i10", "i20", "Tucson", "Santa Fe", "Elantra", "Creta", "Ioniq", "Kona"],
+        "Nissan":   ["Sunny", "X-Trail", "Navara", "Leaf", "Qashqai", "Note", "Pathfinder", "Micra"],
+        "Suzuki":   ["Alto", "Swift", "Vitara", "Jimny", "Baleno", "Celerio", "Dzire", "S-Cross"]
+    ]
+
+    private var models: [String] {
+        brandModels[selectedBrand] ?? []
+    }
     
     var isFormValid: Bool {
         !selectedVehicleType.isEmpty && !selectedBrand.isEmpty && 
@@ -32,11 +52,11 @@ struct SelectVehicleView: View {
                         Button(action: { presentationMode.wrappedValue.dismiss() }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                 Text("RepairCost LK")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         Spacer()
                     }
@@ -48,14 +68,14 @@ struct SelectVehicleView: View {
                             // Title
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("CONFIGURATION")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 Text("Select Vehicle")
-                                    .font(.system(size: 28, weight: .bold))
+                                    .appFont(size: 28, weight: .bold)
                                 
                                 Text("Select your vehicle type and provide details for a more accurate diagnostic and service quote.")
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .foregroundColor(.gray)
                             }
                             .padding(.horizontal, 20)
@@ -63,23 +83,23 @@ struct SelectVehicleView: View {
                             // Vehicle Type Selection
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("VEHICLE TYPE")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack(spacing: 12) {
                                     ForEach(vehicleTypes, id: \.self) { type in
                                         VStack(spacing: 8) {
                                             Image(systemName: getVehicleIcon(for: type))
-                                                .font(.system(size: 28))
+                                                .appFont(size: 28)
                                                 .foregroundColor(selectedVehicleType == type ? .white : .gray)
                                             
                                             Text(type)
-                                                .font(.system(size: 10, weight: .semibold))
+                                                .appFont(size: 10, weight: .semibold)
                                                 .foregroundColor(selectedVehicleType == type ? .white : .gray)
                                         }
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 80)
-                                        .background(selectedVehicleType == type ? Color.orange : Color.white)
+                                        .background(selectedVehicleType == type ? Color.orange : Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(12)
                                         .onTapGesture {
                                             selectedVehicleType = type
@@ -92,23 +112,23 @@ struct SelectVehicleView: View {
                             // Vehicle Brand
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("VEHICLE BRAND")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack {
                                     Text(selectedBrand.isEmpty ? "Select Brand" : selectedBrand)
-                                        .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(selectedBrand.isEmpty ? .gray : .black)
+                                        .appFont(size: 16, weight: .regular)
+                                        .foregroundColor(selectedBrand.isEmpty ? .gray : .primary)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 .onTapGesture {
                                     showBrandPicker.toggle()
@@ -119,19 +139,20 @@ struct SelectVehicleView: View {
                                         ForEach(brands, id: \.self) { brand in
                                             HStack {
                                                 Text(brand)
-                                                    .font(.system(size: 16, weight: .regular))
+                                                    .appFont(size: 16, weight: .regular)
                                                 Spacer()
                                                 if selectedBrand == brand {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .onTapGesture {
                                                 selectedBrand = brand
+                                                selectedModel = ""
                                                 showBrandPicker = false
                                             }
                                             
@@ -141,7 +162,7 @@ struct SelectVehicleView: View {
                                             }
                                         }
                                     }
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                             }
@@ -150,23 +171,23 @@ struct SelectVehicleView: View {
                             // Vehicle Model
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("VEHICLE MODEL")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack {
                                     Text(selectedModel.isEmpty ? "Select Model" : selectedModel)
-                                        .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(selectedModel.isEmpty ? .gray : .black)
+                                        .appFont(size: 16, weight: .regular)
+                                        .foregroundColor(selectedModel.isEmpty ? .gray : .primary)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 .onTapGesture {
                                     showModelPicker.toggle()
@@ -177,17 +198,17 @@ struct SelectVehicleView: View {
                                         ForEach(models, id: \.self) { model in
                                             HStack {
                                                 Text(model)
-                                                    .font(.system(size: 16, weight: .regular))
+                                                    .appFont(size: 16, weight: .regular)
                                                 Spacer()
                                                 if selectedModel == model {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .onTapGesture {
                                                 selectedModel = model
                                                 showModelPicker = false
@@ -199,7 +220,7 @@ struct SelectVehicleView: View {
                                             }
                                         }
                                     }
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                             }
@@ -208,23 +229,23 @@ struct SelectVehicleView: View {
                             // Manufacturing Year
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("MANUFACTURING YEAR")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack {
                                     Text(selectedYear.isEmpty ? "E.g. 2022" : selectedYear)
-                                        .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(selectedYear.isEmpty ? .gray : .black)
+                                        .appFont(size: 16, weight: .regular)
+                                        .foregroundColor(selectedYear.isEmpty ? .gray : .primary)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 .onTapGesture {
                                     showYearPicker.toggle()
@@ -235,17 +256,17 @@ struct SelectVehicleView: View {
                                         ForEach(years, id: \.self) { year in
                                             HStack {
                                                 Text(year)
-                                                    .font(.system(size: 16, weight: .regular))
+                                                    .appFont(size: 16, weight: .regular)
                                                 Spacer()
                                                 if selectedYear == year {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .onTapGesture {
                                                 selectedYear = year
                                                 showYearPicker = false
@@ -257,7 +278,7 @@ struct SelectVehicleView: View {
                                             }
                                         }
                                     }
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                             }
@@ -266,15 +287,15 @@ struct SelectVehicleView: View {
                             // Info Card
                             HStack(spacing: 12) {
                                 Image(systemName: "info.circle.fill")
-                                    .font(.system(size: 20))
+                                    .appFont(size: 20)
                                     .foregroundColor(.orange)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("By selecting your vehicle")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                     
                                     Text("You have a more compatible parts and specialist connected to any garage.")
-                                        .font(.system(size: 12, weight: .regular))
+                                        .appFont(size: 12, weight: .regular)
                                         .foregroundColor(.gray)
                                 }
                                 
@@ -297,14 +318,15 @@ struct SelectVehicleView: View {
                                 vehicleType: selectedVehicleType,
                                 vehicleMake: selectedBrand,
                                 vehicleModel: selectedModel,
-                                vehicleYear: Int(selectedYear) ?? Calendar.current.component(.year, from: Date())
+                                vehicleYear: Int(selectedYear) ?? Calendar.current.component(.year, from: Date()),
+                                initialIssue: initialIssue
                             )
                         ) {
                             HStack(spacing: 8) {
                                 Text("Continue")
                                 Image(systemName: "arrow.right")
                             }
-                            .font(.system(size: 16, weight: .semibold))
+                            .appFont(size: 16, weight: .semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
@@ -314,7 +336,7 @@ struct SelectVehicleView: View {
                         .disabled(!isFormValid)
                         
                         Text("By continuing, you agree to our terms of service")
-                            .font(.system(size: 11, weight: .regular))
+                            .appFont(size: 11, weight: .regular)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }

@@ -16,7 +16,7 @@ struct AppLogo: View {
             .frame(width: size, height: size)
             .overlay {
                 Image(systemName: "wrench.and.screwdriver.fill")
-                    .font(.system(size: iconSize, weight: .semibold))
+                    .appFont(size: iconSize, weight: .semibold)
                     .foregroundStyle(.white)
             }
             .shadow(color: .black.opacity(0.08), radius: 10, y: 5)

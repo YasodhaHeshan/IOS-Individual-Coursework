@@ -78,11 +78,11 @@ struct TabBarItem: View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 20, weight: .semibold))
+                    .appFont(size: 20, weight: .semibold)
                     .foregroundColor(isSelected ? .white : .gray)
                 
                 Text(label)
-                    .font(.system(size: 10, weight: .semibold))
+                    .appFont(size: 10, weight: .semibold)
                     .foregroundColor(isSelected ? .white : .gray)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

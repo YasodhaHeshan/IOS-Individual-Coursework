@@ -35,11 +35,11 @@ struct WriteReviewView: View {
                         Button(action: { presentationMode.wrappedValue.dismiss() }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                 Text("Write Review")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         Spacer()
                     }
@@ -51,14 +51,14 @@ struct WriteReviewView: View {
                             // Title
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("SHARE YOUR EXPERIENCE")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 Text("Write Review")
-                                    .font(.system(size: 28, weight: .bold))
+                                    .appFont(size: 28, weight: .bold)
                                 
                                 Text("Tell other users about your experience with this garage.")
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .foregroundColor(.gray)
                             }
                             .padding(.horizontal, 20)
@@ -66,23 +66,23 @@ struct WriteReviewView: View {
                             // Select Garage
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("SELECT GARAGE")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack {
                                     Text(selectedGarage)
-                                        .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(.black)
+                                        .appFont(size: 16, weight: .regular)
+                                        .foregroundColor(.primary)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                             }
                             .padding(.horizontal, 20)
@@ -90,14 +90,14 @@ struct WriteReviewView: View {
                             // Rating
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("RATE YOUR EXPERIENCE")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack(spacing: 8) {
                                     ForEach(1...5, id: \.self) { star in
                                         Button(action: { selectedRating = star }) {
                                             Image(systemName: star <= selectedRating ? "star.fill" : "star")
-                                                .font(.system(size: 28))
+                                                .appFont(size: 28)
                                                 .foregroundColor(star <= selectedRating ? .orange : .gray.opacity(0.3))
                                         }
                                         Spacer()
@@ -105,16 +105,16 @@ struct WriteReviewView: View {
                                 }
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 16)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 
                                 HStack(spacing: 8) {
                                     Text("You rated:")
-                                        .font(.system(size: 12, weight: .regular))
+                                        .appFont(size: 12, weight: .regular)
                                         .foregroundColor(.gray)
                                     
                                     Text("\(selectedRating) stars")
-                                        .font(.system(size: 13, weight: .semibold))
+                                        .appFont(size: 13, weight: .semibold)
                                         .foregroundColor(.orange)
                                     
                                     Spacer()
@@ -125,13 +125,13 @@ struct WriteReviewView: View {
                             // Review Title
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("REVIEW TITLE")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 TextField("E.g. Great service and fair pricing", text: $reviewTitle)
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
@@ -143,14 +143,14 @@ struct WriteReviewView: View {
                             // Review Description
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("DETAILED REVIEW")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 TextField("Share your detailed experience...", text: $reviewDescription, axis: .vertical)
                                     .lineLimit(4...6)
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
@@ -162,15 +162,15 @@ struct WriteReviewView: View {
                             // Info Card
                             HStack(spacing: 12) {
                                 Image(systemName: "info.circle.fill")
-                                    .font(.system(size: 16))
+                                    .appFont(size: 16)
                                     .foregroundColor(.orange)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Help others decide")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                     
                                     Text("Your honest review helps other vehicle owners find the best service centers.")
-                                        .font(.system(size: 11, weight: .regular))
+                                        .appFont(size: 11, weight: .regular)
                                         .foregroundColor(.gray)
                                 }
                                 
@@ -198,7 +198,7 @@ struct WriteReviewView: View {
                                     Text("Submit Review")
                                     Image(systemName: "arrow.right")
                                 }
-                                .font(.system(size: 16, weight: .semibold))
+                                .appFont(size: 16, weight: .semibold)
                                 .foregroundColor(.white)
 
                                 if isSubmitting {
@@ -214,7 +214,7 @@ struct WriteReviewView: View {
                         .disabled(!isFormValid || isSubmitting)
                         
                         Text("Your review will be moderated before appearing")
-                            .font(.system(size: 11, weight: .regular))
+                            .appFont(size: 11, weight: .regular)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }
@@ -256,8 +256,10 @@ struct WriteReviewView: View {
         }
 
         do {
+            let reviewerName = AuthService.shared.currentUser?.fullName ?? "Anonymous"
             try await SupabaseService.shared.createGarageReview(
                 userId: userId,
+                reviewerName: reviewerName,
                 garageName: selectedGarage,
                 rating: selectedRating,
                 reviewTitle: trimmedTitle,

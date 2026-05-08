@@ -76,37 +76,43 @@ class SyncService: ObservableObject {
     }
     
     private func syncRepairRequests() async throws {
-        // Fetch from Supabase and update local cache
         let authService = AuthService.shared
         guard let userId = authService.currentUser?.id else { return }
-        
+
         let requests = try await supabaseService.fetchRepairRequests(userId: userId)
-        
-        // Update CoreData
-        let context = coreDataStack.viewContext
-        
         for request in requests {
-            // Check if exists and update or create new
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "RepairRequest")
-            fetchRequest.predicate = NSPredicate(format: "id == %@", request.id)
-            
-            // Delete existing and create new (simplified)
-            try context.execute(NSBatchDeleteRequest(fetchRequest: fetchRequest))
+            coreDataStack.saveRepairRequest(request)
         }
-        
-        coreDataStack.saveContext(context)
     }
-    
+
     private func syncGarages() async throws {
         let garages = try await supabaseService.fetchGarages()
-        
-        // Update CoreData cache
         let context = coreDataStack.viewContext
-        
-        // Simplified: delete old and insert new
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Garage")
-        try context.execute(NSBatchDeleteRequest(fetchRequest: fetchRequest))
-        
+
+        for garage in garages {
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Garage")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", garage.id as CVarArg)
+
+            let existing = (try? context.fetch(fetchRequest))?.first
+            let obj = existing ?? NSEntityDescription.insertNewObject(forEntityName: "Garage", into: context)
+
+            obj.setValue(garage.id, forKey: "id")
+            obj.setValue(garage.name, forKey: "name")
+            obj.setValue(garage.location, forKey: "location")
+            obj.setValue(garage.address ?? "", forKey: "address")
+            obj.setValue(garage.phone ?? "", forKey: "phone")
+            obj.setValue(garage.rating ?? 0, forKey: "rating")
+            obj.setValue(garage.isVerified, forKey: "isVerified")
+            obj.setValue(garage.category, forKey: "category")
+            obj.setValue(garage.priceRange, forKey: "priceRange")
+            obj.setValue(garage.imageName, forKey: "imageName")
+            obj.setValue(garage.imageURL, forKey: "imageURL")
+            obj.setValue(garage.openHours, forKey: "openHours")
+            obj.setValue(garage.latitude ?? 0, forKey: "latitude")
+            obj.setValue(garage.longitude ?? 0, forKey: "longitude")
+            obj.setValue(garage.specializations as? NSArray, forKey: "specializations")
+        }
+
         coreDataStack.saveContext(context)
     }
     

@@ -20,7 +20,7 @@ struct GarageMapView: View {
                                 .frame(width: 50, height: 50)
                             
                             Image(systemName: "mappin.circle.fill")
-                                .font(.system(size: 24))
+                                .appFont(size: 24)
                                 .foregroundColor(.white)
                         }
                     }
@@ -36,11 +36,11 @@ struct GarageMapView: View {
                     Color.gray.opacity(0.2)
                     VStack(spacing: 12) {
                         Image(systemName: "location.slash")
-                            .font(.system(size: 40))
+                            .appFont(size: 40)
                             .foregroundColor(.gray)
                         
                         Text("Location Not Available")
-                            .font(.system(size: 14, weight: .semibold))
+                            .appFont(size: 14, weight: .semibold)
                             .foregroundColor(.gray)
                     }
                 }
@@ -51,21 +51,21 @@ struct GarageMapView: View {
                 HStack {
                     Button(action: { dismiss() }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.black)
+                            .appFont(size: 16, weight: .semibold)
+                            .foregroundColor(.primary)
                             .padding(10)
-                            .background(Color.white)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                             .clipShape(Circle())
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(garage.name)
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.black)
+                            .appFont(size: 14, weight: .semibold)
+                            .foregroundColor(.primary)
                         
                         if let address = garage.address {
                             Text(address)
-                                .font(.system(size: 11))
+                                .appFont(size: 11)
                                 .foregroundColor(.gray)
                                 .lineLimit(1)
                         }
@@ -74,7 +74,7 @@ struct GarageMapView: View {
                     Spacer()
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(Color(uiColor: .secondarySystemGroupedBackground))
                 .cornerRadius(12)
                 .shadow(radius: 4)
                 .padding(16)
@@ -90,10 +90,10 @@ struct GarageMapView: View {
                     Button(action: { openAppleMaps() }) {
                         HStack(spacing: 12) {
                             Image(systemName: "arrow.triangle.turn.up.right")
-                                .font(.system(size: 14, weight: .semibold))
+                                .appFont(size: 14, weight: .semibold)
                             
                             Text("SHOW DIRECTIONS")
-                                .font(.system(size: 13, weight: .semibold))
+                                .appFont(size: 13, weight: .semibold)
                             
                             Spacer()
                         }
@@ -109,10 +109,10 @@ struct GarageMapView: View {
                         Button(action: { openGoogleMaps() }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "globe")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                 
                                 Text("Google Maps")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -124,10 +124,10 @@ struct GarageMapView: View {
                         Button(action: { copyLocation() }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "doc.on.doc")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                 
                                 Text("Copy Location")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -138,7 +138,7 @@ struct GarageMapView: View {
                     }
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(Color(uiColor: .secondarySystemGroupedBackground))
                 .cornerRadius(12)
                 .shadow(radius: 4)
                 .padding(16)

@@ -20,7 +20,7 @@ struct OnboardingCardView: View {
 
                         VStack(spacing: 12) {
                             Text(page.title)
-                                .font(.system(size: 36, weight: .heavy, design: .rounded))
+                                .appFont(size: 36, weight: .heavy, design: .rounded)
                                 .multilineTextAlignment(.center)
 
                             Text(page.description)
@@ -97,7 +97,7 @@ struct OnboardingCardView: View {
             VStack {
                 HStack {
                     Image(systemName: "gearshape.fill")
-                        .font(.system(size: 24))
+                        .appFont(size: 24)
                         .foregroundStyle(.gray.opacity(0.2))
                     Spacer()
                 }
@@ -108,7 +108,7 @@ struct OnboardingCardView: View {
                 HStack {
                     Spacer()
                     Image(systemName: "wrench.fill")
-                        .font(.system(size: 18))
+                        .appFont(size: 18)
                         .foregroundStyle(.orange.opacity(0.15))
                 }
                 .padding(20)
@@ -136,7 +136,7 @@ struct OnboardingCardView: View {
                 )
                 .overlay(
                     Image(systemName: page.icon)
-                        .font(.system(size: 44, weight: .semibold))
+                        .appFont(size: 44, weight: .semibold)
                         .foregroundStyle(Color.orange)
                 )
         }

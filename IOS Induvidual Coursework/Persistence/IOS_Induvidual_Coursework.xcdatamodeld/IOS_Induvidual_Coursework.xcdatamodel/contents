@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="26037" systemVersion="26D61" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="NO">
+    <entity name="AppNotification">
+        <attribute name="associatedRequestId" optional="YES" attributeType="String"/>
+        <attribute name="body" optional="NO" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="NO" attributeType="String"/>
+        <attribute name="read" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="title" optional="NO" attributeType="String"/>
+        <attribute name="type" optional="NO" attributeType="String"/>
+        <attribute name="userId" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="Garage">
         <attribute name="address" optional="YES" attributeType="String"/>
         <attribute name="category" optional="NO" attributeType="String"/>
@@ -39,6 +49,7 @@
         <attribute name="vehicleYear" optional="NO" attributeType="Integer 16" usesScalarValueType="YES"/>
     </entity>
     <elements>
+        <element name="AppNotification" positionX="250" positionY="16" width="128" height="195"/>
         <element name="Garage" positionX="50" positionY="16" width="128" height="388"/>
         <element name="RepairRequest" positionX="50" positionY="424" width="128" height="330"/>
     </elements>

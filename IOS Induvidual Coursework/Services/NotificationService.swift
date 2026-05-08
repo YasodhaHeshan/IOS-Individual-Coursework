@@ -15,10 +15,35 @@ class NotificationService: NSObject, ObservableObject {
     @Published var unreadCount = 0
     @Published var deviceToken: String?
 
+    private let supabaseService = SupabaseService.shared
+    private let coreDataStack = CoreDataStack.shared
+    private let authService = AuthService.shared
+
     static let shared = NotificationService()
 
     private override init() {
         super.init()
+    }
+
+    func loadCachedNotifications() {
+        guard let userId = authService.currentUser?.id else { return }
+        let cached = coreDataStack.fetchNotifications(userId: userId)
+        DispatchQueue.main.async {
+            self.notifications = cached
+            self.unreadCount = cached.filter { !$0.read }.count
+        }
+    }
+
+    func syncNotificationsFromServer() async {
+        guard let userId = authService.currentUser?.id else { return }
+        if let remote = try? await supabaseService.fetchNotifications(userId: userId) {
+            for n in remote { coreDataStack.saveNotification(n, userId: userId) }
+            let sorted = remote.sorted { $0.createdAt > $1.createdAt }
+            DispatchQueue.main.async {
+                self.notifications = sorted
+                self.unreadCount = sorted.filter { !$0.read }.count
+            }
+        }
     }
 
     // MARK: - Request Permission
@@ -115,23 +140,43 @@ class NotificationService: NSObject, ObservableObject {
     // MARK: - In-App Notification Store
 
     func addNotification(_ notification: AppNotification) {
+        let userId = authService.currentUser?.id
+
+        // 1. Save to CoreData immediately
+        coreDataStack.saveNotification(notification, userId: userId)
+
+        // 2. Update in-memory list
         DispatchQueue.main.async {
             self.notifications.insert(notification, at: 0)
             if !notification.read {
                 self.unreadCount += 1
             }
         }
+
+        // 3. Persist to Supabase in background (best-effort)
+        if let userId {
+            Task {
+                try? await supabaseService.createNotification(notification, userId: userId)
+            }
+        }
     }
 
     func markAsRead(id: String) {
+        // Update CoreData
+        coreDataStack.markNotificationRead(id: id)
+
+        // Update in-memory list
         DispatchQueue.main.async {
             if let index = self.notifications.firstIndex(where: { $0.id == id }) {
                 if !self.notifications[index].read {
                     self.notifications[index].read = true
-                    self.unreadCount -= 1
+                    self.unreadCount = max(0, self.unreadCount - 1)
                 }
             }
         }
+
+        // Sync to Supabase in background
+        Task { try? await self.supabaseService.markNotificationRead(id: id) }
     }
 
     func clearAll() {

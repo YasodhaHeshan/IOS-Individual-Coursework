@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class SupabaseService {
     static let shared = SupabaseService()
@@ -16,6 +17,11 @@ class SupabaseService {
     
     private var authToken: String?
     var hasActiveSession: Bool { authToken != nil }
+    var currentAuthToken: String? { authToken }
+
+    func setAuthToken(_ token: String?) {
+        self.authToken = token
+    }
     
     private init() {}
 
@@ -206,36 +212,38 @@ class SupabaseService {
     
     func getUserProfile(userId: String) async throws -> User {
         let endpoint = "\(supabaseURL)/rest/v1/profiles?id=eq.\(userId)"
-        
+
         var request = URLRequest(url: URL(string: endpoint)!)
         request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
         if let token = authToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        
-        let (responseData, _) = try await URLSession.shared.data(for: request)
-        
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let users = try decoder.decode([User].self, from: responseData)
-        
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
+
+        let users = try makeJSONDecoder().decode([User].self, from: responseData)
+
         guard let user = users.first else {
             throw NSError(domain: "SupabaseService", code: 1, userInfo: [NSLocalizedDescriptionKey: "User not found"])
         }
-        
+
         return user
     }
     
-    func updateUserProfile(userId: String, fullName: String, phone: String, preferredLocation: String) async throws {
+    func updateUserProfile(userId: String, fullName: String, phone: String, preferredLocation: String, profileImageURL: String? = nil) async throws {
         let endpoint = "\(supabaseURL)/rest/v1/profiles?id=eq.\(userId)"
-        
-        let body: [String: Any] = [
+
+        var body: [String: Any] = [
             "full_name": fullName,
             "phone": phone,
             "preferred_location": preferredLocation,
             "updated_at": ISO8601DateFormatter().string(from: Date())
         ]
-        
+        if let imageURL = profileImageURL {
+            body["profile_image_url"] = imageURL
+        }
+
         let data = try JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: URL(string: endpoint)!)
         request.httpMethod = "PATCH"
@@ -245,21 +253,34 @@ class SupabaseService {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         request.httpBody = data
-        
-        print("🌐 [PATCH] \(endpoint)")
-        print("📦 Auth Token: \(authToken != nil ? "✓ Present" : "✗ Missing")")
-        
+
         let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
-        
-        if let httpResp = httpResponse as? HTTPURLResponse {
-            print("📊 Response Status: \(httpResp.statusCode)")
-            if let responseString = String(data: responseData, encoding: .utf8) {
-                print("📄 Response Body: \(responseString)")
-            }
-        }
-        
         try validateHTTPResponse(httpResponse, data: responseData)
         print("✅ Profile updated successfully")
+    }
+
+    func uploadProfileImage(_ image: UIImage, userId: String) async throws -> String {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            throw NSError(domain: "SupabaseService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to compress image"])
+        }
+
+        let filename = "avatar_\(userId).jpg"
+        let endpoint = "\(supabaseURL)/storage/v1/object/profile-images/\(filename)"
+
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        request.setValue("true", forHTTPHeaderField: "x-upsert")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.httpBody = imageData
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
+
+        return "\(supabaseURL)/storage/v1/object/public/profile-images/\(filename)"
     }
     
     func updateUserPreferences(userId: String, notificationsEnabled: Bool, language: String, measurementUnit: String) async throws {
@@ -324,31 +345,34 @@ class SupabaseService {
     
     func createRepairRequest(_ request: RepairRequest) async throws -> RepairRequest {
         let endpoint = "\(supabaseURL)/rest/v1/repair_requests"
-        
+
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         let data = try encoder.encode(request)
-        
+
         var urlRequest = URLRequest(url: URL(string: endpoint)!)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        urlRequest.setValue("return=representation", forHTTPHeaderField: "Prefer")
         if let token = authToken {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         urlRequest.httpBody = data
-        
-        let (responseData, _) = try await URLSession.shared.data(for: urlRequest)
-        
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let createdRequest = try decoder.decode(RepairRequest.self, from: responseData)
-        
-        return createdRequest
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: urlRequest)
+        try validateHTTPResponse(httpResponse, data: responseData)
+
+        let decoder = makeJSONDecoder()
+        if let created = (try? decoder.decode([RepairRequest].self, from: responseData))?.first {
+            return created
+        }
+        return request
     }
 
     func createGarageReview(
         userId: String,
+        reviewerName: String,
         garageName: String,
         rating: Int,
         reviewTitle: String,
@@ -358,6 +382,7 @@ class SupabaseService {
 
         let body: [String: Any] = [
             "user_id": userId,
+            "reviewer_name": reviewerName,
             "garage_name": garageName,
             "rating": rating,
             "review_title": reviewTitle,
@@ -381,23 +406,70 @@ class SupabaseService {
         let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
         try validateHTTPResponse(httpResponse, data: responseData)
     }
-    
-    func fetchRepairRequests(userId: String) async throws -> [RepairRequest] {
-        let endpoint = "\(supabaseURL)/rest/v1/repair_requests?user_id=eq.\(userId)"
-        
+
+    func fetchGarageReviews(garageName: String) async throws -> [GarageReview] {
+        let encodedName = garageName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? garageName
+        let endpoint = "\(supabaseURL)/rest/v1/garage_reviews?garage_name=eq.\(encodedName)&order=created_at.desc"
+
         var request = URLRequest(url: URL(string: endpoint)!)
         request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
         if let token = authToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        
-        let (responseData, _) = try await URLSession.shared.data(for: request)
-        
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let requests = try decoder.decode([RepairRequest].self, from: responseData)
-        
-        return requests
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
+
+        struct RemoteReview: Codable {
+            let reviewerName: String?
+            let rating: Int
+            let reviewTitle: String
+            let reviewDescription: String
+            let createdAt: Date?
+
+            enum CodingKeys: String, CodingKey {
+                case reviewerName = "reviewer_name"
+                case rating
+                case reviewTitle = "review_title"
+                case reviewDescription = "review_description"
+                case createdAt = "created_at"
+            }
+        }
+
+        let remote = (try? makeJSONDecoder().decode([RemoteReview].self, from: responseData)) ?? []
+        let relativeFormatter = RelativeDateTimeFormatter()
+
+        return remote.map { r in
+            let name = r.reviewerName ?? "Community Member"
+            let initials = name.split(separator: " ")
+                .compactMap { $0.first }
+                .prefix(2)
+                .map { String($0).uppercased() }
+                .joined()
+            let dateStr = r.createdAt.map { relativeFormatter.localizedString(for: $0, relativeTo: Date()) } ?? "Recently"
+            return GarageReview(
+                authorName: name,
+                rating: Double(r.rating),
+                date: dateStr,
+                reviewText: r.reviewDescription,
+                avatarInitials: initials.isEmpty ? "CM" : initials
+            )
+        }
+    }
+    
+    func fetchRepairRequests(userId: String) async throws -> [RepairRequest] {
+        let endpoint = "\(supabaseURL)/rest/v1/repair_requests?user_id=eq.\(userId)&order=created_at.desc"
+
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
+
+        return (try? makeJSONDecoder().decode([RepairRequest].self, from: responseData)) ?? []
     }
     
     func updateRepairRequestStatus(id: String, status: String) async throws {
@@ -421,6 +493,99 @@ class SupabaseService {
         _ = try await URLSession.shared.data(for: request)
     }
     
+    // MARK: - Notifications
+
+    func createNotification(_ notification: AppNotification, userId: String) async throws {
+        let endpoint = "\(supabaseURL)/rest/v1/notifications"
+
+        let body: [String: Any?] = [
+            "id": notification.id,
+            "user_id": userId,
+            "title": notification.title,
+            "body": notification.body,
+            "type": notification.type.rawValue,
+            "read": notification.read,
+            "associated_request_id": notification.associatedRequestId,
+            "created_at": ISO8601DateFormatter().string(from: notification.createdAt)
+        ]
+
+        let cleanBody = body.compactMapValues { $0 }
+        let data = try JSONSerialization.data(withJSONObject: cleanBody)
+
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        request.setValue("return=minimal", forHTTPHeaderField: "Prefer")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.httpBody = data
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
+    }
+
+    func fetchNotifications(userId: String) async throws -> [AppNotification] {
+        let endpoint = "\(supabaseURL)/rest/v1/notifications?user_id=eq.\(userId)&order=created_at.desc"
+
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        let (responseData, httpResponse) = try await URLSession.shared.data(for: request)
+        try validateHTTPResponse(httpResponse, data: responseData)
+
+        struct RemoteNotification: Codable {
+            let id: String
+            let title: String
+            let body: String
+            let type: String
+            let read: Bool
+            let createdAt: Date?
+            let associatedRequestId: String?
+
+            enum CodingKeys: String, CodingKey {
+                case id, title, body, type, read
+                case createdAt = "created_at"
+                case associatedRequestId = "associated_request_id"
+            }
+        }
+
+        let remote = (try? makeJSONDecoder().decode([RemoteNotification].self, from: responseData)) ?? []
+        return remote.map {
+            AppNotification(
+                id: $0.id,
+                title: $0.title,
+                body: $0.body,
+                type: AppNotification.NotificationType(rawValue: $0.type) ?? .generalUpdate,
+                read: $0.read,
+                createdAt: $0.createdAt ?? Date(),
+                associatedRequestId: $0.associatedRequestId
+            )
+        }
+    }
+
+    func markNotificationRead(id: String) async throws {
+        let endpoint = "\(supabaseURL)/rest/v1/notifications?id=eq.\(id)"
+
+        let body: [String: Any] = ["read": true]
+        let data = try JSONSerialization.data(withJSONObject: body)
+
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(supabaseKey, forHTTPHeaderField: "apikey")
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.httpBody = data
+
+        _ = try? await URLSession.shared.data(for: request)
+    }
+
     // MARK: - Spare Parts
     
     func fetchSpareParts() async throws -> [SparePart] {

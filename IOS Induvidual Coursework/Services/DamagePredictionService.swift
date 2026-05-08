@@ -149,11 +149,11 @@ class DamagePredictionService: ObservableObject {
     private func estimatedRange(for severity: DamageSeverity) -> (min: Double, max: Double) {
         switch severity {
         case .low:
-            return (120.0, 350.0)
+            return (8_000.0, 25_000.0)
         case .medium:
-            return (300.0, 900.0)
+            return (25_000.0, 60_000.0)
         case .high:
-            return (850.0, 3000.0)
+            return (60_000.0, 150_000.0)
         }
     }
 
@@ -188,21 +188,27 @@ class DamagePredictionService: ObservableObject {
         vehicleMake: String,
         vehicleModel: String
     ) -> CostEstimate {
-        // Base cost by category
+        // Base cost in LKR by category
         let baseCost: Double
         switch damageCategory.lowercased() {
         case "scratch":
-            baseCost = 100.0
+            baseCost = 8_000.0
         case "dent":
-            baseCost = 200.0
+            baseCost = 18_000.0
         case "broken glass":
-            baseCost = 300.0
+            baseCost = 28_000.0
         case "mechanical":
-            baseCost = 500.0
+            baseCost = 45_000.0
         case "engine":
-            baseCost = 800.0
+            baseCost = 80_000.0
+        case "light damage":
+            baseCost = 10_000.0
+        case "moderate damage":
+            baseCost = 35_000.0
+        case "severe damage":
+            baseCost = 90_000.0
         default:
-            baseCost = 250.0
+            baseCost = 22_000.0
         }
         
         // Multiply by severity

@@ -23,7 +23,7 @@ struct LoginView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("RepairCost LK")
-                            .font(.system(size: 36, weight: .heavy, design: .rounded))
+                            .appFont(size: 36, weight: .heavy, design: .rounded)
 
                         Text("Precision estimates for Sri Lankan motorists.")
                             .font(.subheadline)
@@ -128,14 +128,13 @@ struct LoginView: View {
                     }
                     .disabled(authService.isLoading || viewModel.email.isEmpty || viewModel.password.isEmpty)
 
-                    if biometricService.isBiometricAvailable {
+                    if biometricService.isBiometricAvailable && hasStoredSession {
                         Button {
-                            Task {
-                                await signInWithBiometric()
-                            }
+                            Task { await signInWithBiometric() }
                         } label: {
                             HStack(spacing: 10) {
                                 Image(systemName: biometricService.biometricType == .faceID ? "faceid" : "touchid")
+                                    .font(.title3)
                                 Text("Sign in with \(biometricService.biometricType == .faceID ? "Face ID" : "Touch ID")")
                                     .fontWeight(.semibold)
                             }
@@ -143,7 +142,7 @@ struct LoginView: View {
                             .padding(.vertical, 12)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.primary)
+                        .tint(.orange)
                         .disabled(authService.isLoading)
                     }
 
@@ -179,6 +178,12 @@ struct LoginView: View {
                 .padding(.vertical, 24)
             }
         }
+        .onAppear {
+            // Pre-fill email from stored session so Face ID button is visible
+            if viewModel.email.isEmpty, let storedEmail = authService.currentUser?.email {
+                viewModel.email = storedEmail
+            }
+        }
         .alert("Biometric Authentication", isPresented: $showBiometricError) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -187,41 +192,33 @@ struct LoginView: View {
     }
     
     // MARK: - Helper Methods
-    
+
+    private var hasStoredSession: Bool {
+        authService.currentUser?.email != nil || !viewModel.email.isEmpty
+    }
+
     private func signInWithBiometric() async {
-        do {
-            try await biometricService.authenticateWithBiometric()
-            
-            // After successful biometric auth, sign in with saved credentials
-            await authService.signInWithBiometric(email: viewModel.email)
-            
-            if authService.isAuthenticated {
-                onLoginSuccess()
-            }
-        } catch let error as BiometricAuthService.BiometricError {
-            switch error {
-            case .userCancel:
-                biometricError = "Authentication was cancelled"
-            case .userFallback:
-                biometricError = "Please use your password"
-            case .biometryLockout:
-                biometricError = "Too many failed attempts. Please try again later."
-            case .unavailable:
-                biometricError = "Biometric authentication is not available"
-            case .biometryNotAvailable:
-                biometricError = "Biometric authentication is not available on this device"
-            case .notEnrolled:
-                biometricError = "No biometric data enrolled"
-            default:
-                biometricError = error.localizedDescription
-            }
+        // Prefer the stored session email so the user doesn't need to type it
+        let email = viewModel.email.isEmpty
+            ? (authService.currentUser?.email ?? "")
+            : viewModel.email
+
+        guard !email.isEmpty else {
+            biometricError = "Sign in with your password once first to enable Face ID."
             showBiometricError = true
-        } catch {
-            biometricError = error.localizedDescription
-            showBiometricError = true
+            return
+        }
+
+        // AuthService handles the biometric prompt internally — do NOT call
+        // biometricService.authenticateWithBiometric() here or Face ID fires twice.
+        await authService.signInWithBiometric(email: email)
+
+        if authService.isAuthenticated {
+            onLoginSuccess()
         }
     }
 }
+
 
 #Preview {
     LoginView(onSignUpTap: {}, onLoginSuccess: {})

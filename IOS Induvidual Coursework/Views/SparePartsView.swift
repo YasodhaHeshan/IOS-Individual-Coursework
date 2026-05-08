@@ -56,13 +56,13 @@ struct SparePartsView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("RepairCost LK")
-                            .font(.system(size: 14, weight: .semibold))
+                            .appFont(size: 14, weight: .semibold)
                             .foregroundColor(.gray)
                     }
                     Spacer()
                     Image(systemName: "line.3.horizontal.decrease.circle")
-                        .font(.system(size: 20))
-                        .foregroundColor(.black)
+                        .appFont(size: 20)
+                        .foregroundColor(.primary)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
@@ -76,7 +76,7 @@ struct SparePartsView: View {
 
                         if let errorMessage {
                             Text(errorMessage)
-                                .font(.system(size: 12, weight: .regular))
+                                .appFont(size: 12, weight: .regular)
                                 .foregroundColor(.red)
                                 .padding(.horizontal, 20)
                         }
@@ -84,12 +84,12 @@ struct SparePartsView: View {
                         // MARK: - Title Section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("INVENTORY")
-                                .font(.system(size: 11, weight: .semibold))
+                                .appFont(size: 11, weight: .semibold)
                                 .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                             
                             Text("Spare Parts")
-                                .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(.black)
+                                .appFont(size: 28, weight: .bold)
+                                .foregroundColor(.primary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 20)
@@ -97,11 +97,11 @@ struct SparePartsView: View {
                         // MARK: - Search Bar
                         HStack(spacing: 8) {
                             Image(systemName: "magnifyingglass")
-                                .font(.system(size: 14, weight: .semibold))
+                                .appFont(size: 14, weight: .semibold)
                                 .foregroundColor(.gray)
                             
                             TextField("Search brake pads, filters...", text: $searchText)
-                                .font(.system(size: 14))
+                                .appFont(size: 14)
                                 .tint(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                         }
                         .padding(.horizontal, 12)
@@ -116,11 +116,11 @@ struct SparePartsView: View {
                                 ForEach(partCategories, id: \.self) { category in
                                     Button(action: { selectedCategory = category }) {
                                         Text(category)
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(selectedCategory == category ? .white : .black)
+                                            .appFont(size: 12, weight: .semibold)
+                                            .foregroundColor(selectedCategory == category ? .white : .primary)
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 8)
-                                            .background(selectedCategory == category ? Color.black : Color(UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)))
+                                            .background(selectedCategory == category ? Color.orange : Color(uiColor: .secondarySystemGroupedBackground))
                                             .cornerRadius(6)
                                     }
                                 }
@@ -134,14 +134,14 @@ struct SparePartsView: View {
                                 VStack(alignment: .leading, spacing: 12) {
                                     HStack {
                                         Text(category)
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.black)
+                                            .appFont(size: 16, weight: .semibold)
+                                            .foregroundColor(.primary)
                                         
                                         Spacer()
                                         
                                         Button(action: {}) {
                                             Image(systemName: "info.circle")
-                                                .font(.system(size: 16, weight: .semibold))
+                                                .appFont(size: 16, weight: .semibold)
                                                 .foregroundColor(.gray)
                                         }
                                     }
@@ -159,11 +159,11 @@ struct SparePartsView: View {
                         // MARK: - Disclaimer
                         VStack(alignment: .leading, spacing: 6) {
                             Text("* Prices are estimated based on latest market average.")
-                                .font(.system(size: 10, weight: .regular))
+                                .appFont(size: 10, weight: .regular)
                                 .foregroundColor(.gray)
                             
                             Text("Market volatility may apply")
-                                .font(.system(size: 10, weight: .regular))
+                                .appFont(size: 10, weight: .regular)
                                 .foregroundColor(.gray)
                         }
                         .padding(.horizontal, 20)
@@ -171,7 +171,7 @@ struct SparePartsView: View {
                         // MARK: - Trending Comparisons
                         VStack(alignment: .leading, spacing: 12) {
                             Text("TRENDING COMPARISONS")
-                                .font(.system(size: 11, weight: .semibold))
+                                .appFont(size: 11, weight: .semibold)
                                 .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                             
                             VStack(spacing: 12) {
@@ -243,7 +243,7 @@ struct SparePartItemView: View {
                         ZStack {
                             Color.gray.opacity(0.2)
                             Image(systemName: "photo")
-                                .font(.system(size: 16))
+                                .appFont(size: 16)
                                 .foregroundColor(.gray.opacity(0.5))
                         }
                         .frame(width: 60, height: 60)
@@ -260,7 +260,7 @@ struct SparePartItemView: View {
                 ZStack {
                     Color.gray.opacity(0.2)
                     Image(systemName: "wrench.and.screwdriver")
-                        .font(.system(size: 16))
+                        .appFont(size: 16)
                         .foregroundColor(.gray.opacity(0.5))
                 }
                 .frame(width: 60, height: 60)
@@ -270,18 +270,18 @@ struct SparePartItemView: View {
             // Content
             VStack(alignment: .leading, spacing: 4) {
                 Text(part.name)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.black)
+                    .appFont(size: 14, weight: .semibold)
+                    .foregroundColor(.primary)
                     .lineLimit(2)
                 
                 Text(part.compatibility)
-                    .font(.system(size: 10, weight: .regular))
+                    .appFont(size: 10, weight: .regular)
                     .foregroundColor(.gray)
                     .lineLimit(1)
                 
                 if let supplier = part.supplier {
                     Text(supplier)
-                        .font(.system(size: 9, weight: .regular))
+                        .appFont(size: 9, weight: .regular)
                         .foregroundColor(.gray)
                         .lineLimit(1)
                 }
@@ -290,17 +290,17 @@ struct SparePartItemView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text("Rs. \(Int(part.price)):00")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.black)
+                Text("Rs. \(Int(part.price)).00")
+                    .appFont(size: 14, weight: .bold)
+                    .foregroundColor(.primary)
             }
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
+                .appFont(size: 14, weight: .semibold)
                 .foregroundColor(.gray)
         }
         .padding(12)
-        .background(Color.white)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(10)
     }
 }
@@ -318,18 +318,18 @@ struct TrendingComparisonItemView: View {
                     .frame(width: 44, height: 44)
                 
                 Image(systemName: comparison.icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .appFont(size: 18, weight: .semibold)
                     .foregroundColor(.gray)
             }
             
             // Content
             VStack(alignment: .leading, spacing: 4) {
                 Text(comparison.name)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.black)
+                    .appFont(size: 14, weight: .semibold)
+                    .foregroundColor(.primary)
                 
                 Text(comparison.category)
-                    .font(.system(size: 11, weight: .regular))
+                    .appFont(size: 11, weight: .regular)
                     .foregroundColor(.gray)
             }
             
@@ -337,18 +337,18 @@ struct TrendingComparisonItemView: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 Text(comparison.range)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.black)
+                    .appFont(size: 12, weight: .semibold)
+                    .foregroundColor(.primary)
                 
                 Button(action: {}) {
                     Text("VIEW")
-                        .font(.system(size: 10, weight: .semibold))
+                        .appFont(size: 10, weight: .semibold)
                         .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                 }
             }
         }
         .padding(12)
-        .background(Color.white)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(10)
     }
 }

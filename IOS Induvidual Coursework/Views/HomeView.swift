@@ -17,23 +17,15 @@ struct HomeView: View {
         case selectIssue
     }
     
-    private var recentSearches: [(String, String)] {
-        let mappedRequests = repairRequestService.repairRequests.prefix(3).map { request in
-            let title = request.damageCategory.isEmpty ? request.description : request.damageCategory
-            let details = "\(request.vehicleMake) \(request.vehicleModel) • \(relativeDateString(from: request.createdAt))"
-            return (title, details)
-        }
-        
-        if !mappedRequests.isEmpty {
-            return Array(mappedRequests)
-        }
-        
-        return [
-            ("Brake Pad Replacement", "Honda Civic • 5 days ago"),
-            ("Engine Oil Leak", "Honda Civic • 5 days ago"),
-            ("Alternator Repair", "BMW 320i • 3 days ago")
-        ]
+    private var recentRequests: [RepairRequest] {
+        Array(repairRequestService.repairRequests.prefix(3))
     }
+
+    private let placeholderSearches: [(String, String)] = [
+        ("Brake Pad Replacement", "Honda Civic • 5 days ago"),
+        ("Engine Oil Leak", "Honda Civic • 5 days ago"),
+        ("Alternator Repair", "BMW 320i • 3 days ago")
+    ]
     
     let categories = ["Engine", "Brakes", "Transmission", "Electrical", "Suspension"]
     
@@ -48,19 +40,19 @@ struct HomeView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("RepairCost LK")
-                                .font(.system(size: 14, weight: .semibold))
+                                .appFont(size: 14, weight: .semibold)
                                 .foregroundColor(.gray)
                         }
                         Spacer()
                         NavigationLink(destination: NotificationsView()) {
                             ZStack(alignment: .topTrailing) {
                                 Image(systemName: "bell")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.black)
+                                    .appFont(size: 16, weight: .semibold)
+                                    .foregroundColor(.primary)
 
                                 if notificationService.unreadCount > 0 {
                                     Text("\(min(notificationService.unreadCount, 9))")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .appFont(size: 10, weight: .bold)
                                         .foregroundColor(.white)
                                         .padding(4)
                                         .background(Color.orange)
@@ -78,11 +70,11 @@ struct HomeView: View {
                             // MARK: - Hero Section
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("FIX IT.")
-                                    .font(.system(size: 40, weight: .bold))
-                                    .foregroundColor(.black)
+                                    .appFont(size: 40, weight: .bold)
+                                    .foregroundColor(.primary)
                             
                             Text("ESTIMATE REPAIR COSTS IN SECONDS.")
-                                .font(.system(size: 13, weight: .regular))
+                                .appFont(size: 13, weight: .regular)
                                 .foregroundColor(.gray)
                                 .lineLimit(3)
                         }
@@ -98,7 +90,7 @@ struct HomeView: View {
                                     selectedIssue = ""
                                 }) {
                                     Text("Type issue")
-                                        .font(.system(size: 15, weight: .semibold))
+                                        .appFont(size: 15, weight: .semibold)
                                         .foregroundColor(searchTab == .typeIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
@@ -118,7 +110,7 @@ struct HomeView: View {
                                     issueInput = ""
                                 }) {
                                     Text("Select issue")
-                                        .font(.system(size: 15, weight: .semibold))
+                                        .appFont(size: 15, weight: .semibold)
                                         .foregroundColor(searchTab == .selectIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
@@ -141,10 +133,10 @@ struct HomeView: View {
                                 HStack(spacing: 12) {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Type Issue")
-                                            .font(.system(size: 11, weight: .semibold))
+                                            .appFont(size: 11, weight: .semibold)
                                             .foregroundColor(.gray)
                                         TextField("Enter issue", text: $issueInput)
-                                            .font(.system(size: 14, weight: .regular))
+                                            .appFont(size: 14, weight: .regular)
                                     }
                                     Spacer()
                                 }
@@ -159,23 +151,23 @@ struct HomeView: View {
                                         }) {
                                             HStack {
                                                 Image(systemName: getCategoryIcon(category))
-                                                    .font(.system(size: 16, weight: .semibold))
+                                                    .appFont(size: 16, weight: .semibold)
                                                     .foregroundColor(.orange)
                                                 
                                                 Text(category)
-                                                    .font(.system(size: 14, weight: .semibold))
-                                                    .foregroundColor(.black)
+                                                    .appFont(size: 14, weight: .semibold)
+                                                    .foregroundColor(.primary)
                                                 
                                                 Spacer()
                                                 
                                                 if selectedIssue == category {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
                                             .padding(12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .cornerRadius(10)
                                         }
                                     }
@@ -190,20 +182,20 @@ struct HomeView: View {
                         // MARK: - Quick Actions
                         VStack(alignment: .leading, spacing: 12) {
                             // Estimate Cost Button
-                            NavigationLink(destination: SelectVehicleView()) {
+                            NavigationLink(destination: SelectVehicleView(initialIssue: searchTab == .typeIssue ? issueInput : selectedIssue)) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "doc.richtext")
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .appFont(size: 18, weight: .semibold)
                                         .foregroundColor(.white)
                                     
                                     Text("Estimate Cost")
-                                        .font(.system(size: 16, weight: .semibold))
+                                        .appFont(size: 16, weight: .semibold)
                                         .foregroundColor(.white)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.right")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.white)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -219,11 +211,11 @@ struct HomeView: View {
                                 }) {
                                     VStack(spacing: 8) {
                                         Image(systemName: "building.2")
-                                            .font(.system(size: 20, weight: .semibold))
+                                            .appFont(size: 20, weight: .semibold)
                                             .foregroundColor(.orange)
                                         Text("Find Garage")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.black)
+                                            .appFont(size: 12, weight: .semibold)
+                                            .foregroundColor(.primary)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(16)
@@ -236,11 +228,11 @@ struct HomeView: View {
                                 }) {
                                     VStack(spacing: 8) {
                                         Image(systemName: "gearshape")
-                                            .font(.system(size: 20, weight: .semibold))
+                                            .appFont(size: 20, weight: .semibold)
                                             .foregroundColor(.orange)
                                         Text("Spare Parts")
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(.black)
+                                            .appFont(size: 12, weight: .semibold)
+                                            .foregroundColor(.primary)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(16)
@@ -255,7 +247,7 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 Text("RECENT SEARCHES")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                 
                                 Spacer()
@@ -264,46 +256,45 @@ struct HomeView: View {
                                     showRecentSearches = false
                                 }) {
                                     Text("CLEAR ALL")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.orange)
                                 }
                             }
                             
                             if showRecentSearches {
                                 VStack(spacing: 10) {
-                                    ForEach(recentSearches, id: \.0) { search, details in
-                                        HStack(spacing: 12) {
-                                            Image(systemName: "clock")
-                                                .font(.system(size: 14, weight: .semibold))
-                                                .foregroundColor(.gray)
-                                            
-                                            VStack(alignment: .leading, spacing: 2) {
-                                                Text(search)
-                                                    .font(.system(size: 14, weight: .semibold))
-                                                    .foregroundColor(.black)
-                                                Text(details)
-                                                    .font(.system(size: 11, weight: .regular))
-                                                    .foregroundColor(.gray)
+                                    if !recentRequests.isEmpty {
+                                        ForEach(recentRequests) { request in
+                                            NavigationLink(destination: ReportIssueView(
+                                                estimate: RepairCostEstimate(from: request),
+                                                vehicleMake: request.vehicleMake,
+                                                vehicleModel: request.vehicleModel,
+                                                vehicleYear: request.vehicleYear,
+                                                issueDescription: request.description,
+                                                damageCategory: request.damageCategory,
+                                                imageURLs: request.imageURLs,
+                                                existingRequest: request
+                                            )) {
+                                                recentSearchRow(
+                                                    title: request.damageCategory.isEmpty ? request.description : request.damageCategory,
+                                                    details: "\(request.vehicleMake) \(request.vehicleModel) • \(relativeDateString(from: request.createdAt))"
+                                                )
                                             }
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "chevron.right")
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(.gray)
+                                            .buttonStyle(.plain)
                                         }
-                                        .padding(12)
-                                        .background(Color.white)
-                                        .cornerRadius(10)
+                                    } else {
+                                        ForEach(placeholderSearches, id: \.0) { search, details in
+                                            recentSearchRow(title: search, details: details)
+                                        }
                                     }
                                 }
                             } else {
                                 Text("Recent searches cleared")
-                                    .font(.system(size: 12, weight: .regular))
+                                    .appFont(size: 12, weight: .regular)
                                     .foregroundColor(.gray)
                                     .padding(12)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .onTapGesture {
                                         showRecentSearches = true
@@ -318,11 +309,11 @@ struct HomeView: View {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("CERTIFIED GARAGE PROGRAM")
-                                        .font(.system(size: 12, weight: .bold))
+                                        .appFont(size: 12, weight: .bold)
                                         .foregroundColor(.white)
                                     
                                     Text("Verified Expert Mechanical Services for reliable and durable repairs!")
-                                        .font(.system(size: 12, weight: .regular))
+                                        .appFont(size: 12, weight: .regular)
                                         .foregroundColor(.white)
                                         .lineLimit(3)
                                 }
@@ -335,10 +326,10 @@ struct HomeView: View {
                             }) {
                                 HStack(spacing: 4) {
                                     Text("LEARN MORE")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.white)
                                     Image(systemName: "chevron.right")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .appFont(size: 10, weight: .semibold)
                                         .foregroundColor(.white)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -363,9 +354,9 @@ struct HomeView: View {
     private func getCategoryIcon(_ category: String) -> String {
         switch category {
         case "Engine":
-            return "engine"
+            return "car.fill"
         case "Brakes":
-            return "brake.radiator.fill"
+            return "stop.circle.fill"
         case "Transmission":
             return "gearshape"
         case "Electrical":
@@ -377,6 +368,33 @@ struct HomeView: View {
         }
     }
     
+    @ViewBuilder
+    private func recentSearchRow(title: String, details: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "clock")
+                .appFont(size: 14, weight: .semibold)
+                .foregroundColor(.gray)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .appFont(size: 14, weight: .semibold)
+                    .foregroundColor(.primary)
+                Text(details)
+                    .appFont(size: 11, weight: .regular)
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .appFont(size: 12, weight: .semibold)
+                .foregroundColor(.gray)
+        }
+        .padding(12)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .cornerRadius(10)
+    }
+
     private func relativeDateString(from date: Date?) -> String {
         guard let date else { return "Recently" }
         let formatter = RelativeDateTimeFormatter()
@@ -390,6 +408,8 @@ struct HomeView: View {
         await garageService.fetchAllGarages()
         if authService.isAuthenticated {
             await repairRequestService.fetchMyRepairRequests()
+            notificationService.loadCachedNotifications()
+            await notificationService.syncNotificationsFromServer()
         }
     }
 }
