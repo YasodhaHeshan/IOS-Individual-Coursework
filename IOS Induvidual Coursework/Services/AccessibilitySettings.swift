@@ -23,12 +23,16 @@ final class AccessibilitySettings: ObservableObject {
     @Published var hapticFeedbackEnabled: Bool {
         didSet { UserDefaults.standard.set(hapticFeedbackEnabled, forKey: "hapticFeedbackEnabled") }
     }
+    @Published var darkModeEnabled: Bool {
+        didSet { UserDefaults.standard.set(darkModeEnabled, forKey: "darkModeEnabled") }
+    }
 
     private init() {
         textSize = UserDefaults.standard.string(forKey: "textSize") ?? "Default"
         boldTextEnabled = UserDefaults.standard.bool(forKey: "boldTextEnabled")
         reduceMotionEnabled = UserDefaults.standard.bool(forKey: "reduceMotionEnabled")
         hapticFeedbackEnabled = UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true
+        darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
     }
 
     // MARK: - SwiftUI Environment Values

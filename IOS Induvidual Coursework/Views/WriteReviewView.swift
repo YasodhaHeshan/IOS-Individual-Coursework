@@ -39,7 +39,7 @@ struct WriteReviewView: View {
                                 Text("Write Review")
                                     .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         Spacer()
                     }
@@ -72,7 +72,7 @@ struct WriteReviewView: View {
                                 HStack {
                                     Text(selectedGarage)
                                         .appFont(size: 16, weight: .regular)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.primary)
                                     
                                     Spacer()
                                     
@@ -82,7 +82,7 @@ struct WriteReviewView: View {
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                             }
                             .padding(.horizontal, 20)
@@ -105,7 +105,7 @@ struct WriteReviewView: View {
                                 }
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 16)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 
                                 HStack(spacing: 8) {
@@ -131,7 +131,7 @@ struct WriteReviewView: View {
                                 TextField("E.g. Great service and fair pricing", text: $reviewTitle)
                                     .appFont(size: 14, weight: .regular)
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
@@ -150,7 +150,7 @@ struct WriteReviewView: View {
                                     .lineLimit(4...6)
                                     .appFont(size: 14, weight: .regular)
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)

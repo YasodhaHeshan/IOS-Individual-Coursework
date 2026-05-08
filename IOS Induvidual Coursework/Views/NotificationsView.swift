@@ -45,13 +45,13 @@ struct NotificationsView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "chevron.left")
                                 .appFont(size: 16, weight: .semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                         }
                     }
                     
                     Text("Notifications")
                         .appFont(size: 18, weight: .semibold)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -60,7 +60,7 @@ struct NotificationsView: View {
                     }) {
                         Image(systemName: "ellipsis")
                             .appFont(size: 16, weight: .semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -143,15 +143,15 @@ struct NotificationsView: View {
                                 HStack(spacing: 4) {
                                     Text("Explore Partners")
                                         .appFont(size: 13, weight: .semibold)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.primary)
                                     
                                     Image(systemName: "arrow.right")
                                         .appFont(size: 11, weight: .semibold)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.primary)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.vertical, 12)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(8)
                             }
                         }
@@ -266,7 +266,7 @@ struct NotificationItemView: View {
                 HStack {
                     Text(notification.title)
                         .appFont(size: 14, weight: .semibold)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -298,7 +298,7 @@ struct NotificationItemView: View {
             }
         }
         .padding(12)
-        .background(notification.isRead ? Color.white.opacity(0.5) : Color.white)
+        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(notification.isRead ? 0.5 : 1))
         .cornerRadius(10)
         .onTapGesture {
             onTap()

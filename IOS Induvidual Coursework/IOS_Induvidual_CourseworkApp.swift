@@ -17,11 +17,9 @@ struct IOS_Induvidual_CourseworkApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                // Text size — scales all Dynamic Type fonts across the entire app
                 .dynamicTypeSize(accessibilitySettings.dynamicTypeSize)
-                // Bold text — increases font weight for all text in the app
                 .environment(\.legibilityWeight, accessibilitySettings.legibilityWeight)
-                // Reduce motion — disables all SwiftUI animations app-wide when on
+                .preferredColorScheme(accessibilitySettings.darkModeEnabled ? .dark : .light)
                 .transaction { t in
                     if accessibilitySettings.reduceMotionEnabled {
                         t.disablesAnimations = true

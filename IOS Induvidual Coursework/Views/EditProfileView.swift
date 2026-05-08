@@ -30,7 +30,7 @@ struct EditProfileView: View {
                                 Text("Edit Profile")
                                     .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         Spacer()
                     }
@@ -79,7 +79,7 @@ struct EditProfileView: View {
                                     TextField("Enter your full name", text: $editedFullName)
                                         .appFont(size: 16, weight: .regular)
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(10)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 10)
@@ -112,7 +112,7 @@ struct EditProfileView: View {
                                         .appFont(size: 16, weight: .regular)
                                         .keyboardType(.phonePad)
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(10)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 10)
@@ -129,7 +129,7 @@ struct EditProfileView: View {
                                     TextField("e.g., Colombo, Western Province", text: $editedLocation)
                                         .appFont(size: 16, weight: .regular)
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(10)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 10)

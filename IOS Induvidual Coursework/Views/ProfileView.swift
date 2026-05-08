@@ -52,14 +52,14 @@ struct ProfileView: View {
                 HStack {
                     Text("Profile")
                         .appFont(size: 18, weight: .bold)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape.fill")
                             .appFont(size: 16, weight: .semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -82,7 +82,7 @@ struct ProfileView: View {
                             
                             Text(userName)
                                 .appFont(size: 20, weight: .bold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                             
                             Text(userSubtitle)
                                 .appFont(size: 12, weight: .regular)
@@ -93,7 +93,7 @@ struct ProfileView: View {
                                 VStack(spacing: 4) {
                                     Text("\(max(0, repairRequestService.repairRequests.count))")
                                         .appFont(size: 16, weight: .bold)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.primary)
                                     
                                     Text("REQUESTS")
                                         .appFont(size: 10, weight: .semibold)
@@ -143,7 +143,7 @@ struct ProfileView: View {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(vehicle.name)
                                                 .appFont(size: 14, weight: .semibold)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             
                                             Text(vehicle.services)
                                                 .appFont(size: 11, weight: .regular)
@@ -157,7 +157,7 @@ struct ProfileView: View {
                                             .foregroundColor(.gray)
                                     }
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                                 
@@ -213,7 +213,7 @@ struct ProfileView: View {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(estimate.name)
                                                 .appFont(size: 13, weight: .semibold)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             
                                             Text(estimate.status)
                                                 .appFont(size: 10, weight: .regular)
@@ -225,7 +225,7 @@ struct ProfileView: View {
                                         VStack(alignment: .trailing, spacing: 2) {
                                             Text(estimate.price)
                                                 .appFont(size: 13, weight: .bold)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             
                                             Text("Latest")
                                                 .appFont(size: 9, weight: .regular)
@@ -233,7 +233,7 @@ struct ProfileView: View {
                                         }
                                     }
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                             }

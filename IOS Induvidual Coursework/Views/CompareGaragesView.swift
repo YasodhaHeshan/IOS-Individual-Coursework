@@ -32,7 +32,7 @@ struct CompareGaragesView: View {
                                 Text("Compare Garages")
                                     .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         
                         Spacer()
@@ -44,13 +44,13 @@ struct CompareGaragesView: View {
                         }) {
                             Image(systemName: "magnifyingglass")
                                 .appFont(size: 16, weight: .semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                         }
                         
                         Button(action: {}) {
                             Image(systemName: "ellipsis")
                                 .appFont(size: 16, weight: .semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -65,7 +65,7 @@ struct CompareGaragesView: View {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(garage.name)
                                                 .appFont(size: 16, weight: .semibold)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                         }
                                         
                                         Spacer()
@@ -79,11 +79,11 @@ struct CompareGaragesView: View {
                                                 if let rating = garage.rating {
                                                     Text(String(format: "%.1f", rating))
                                                         .appFont(size: 12, weight: .semibold)
-                                                        .foregroundColor(.black)
+                                                        .foregroundColor(.primary)
                                                 } else {
                                                     Text("–")
                                                         .appFont(size: 12, weight: .semibold)
-                                                        .foregroundColor(.black)
+                                                        .foregroundColor(.primary)
                                                 }
                                             }
                                         }
@@ -103,7 +103,7 @@ struct CompareGaragesView: View {
                                     // Price
                                     Text(garage.priceRange)
                                         .appFont(size: 24, weight: .bold)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.primary)
                                     
                                     // Hours and Category
                                     HStack(spacing: 12) {
@@ -140,7 +140,7 @@ struct CompareGaragesView: View {
                                                 .foregroundColor(.orange)
                                                 .frame(maxWidth: .infinity)
                                                 .frame(height: 40)
-                                                .background(Color.white)
+                                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                                 .cornerRadius(8)
                                                 .overlay(
                                                     RoundedRectangle(cornerRadius: 8)
@@ -164,7 +164,7 @@ struct CompareGaragesView: View {
                                     }
                                 }
                                 .padding(16)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(12)
                             }
                             

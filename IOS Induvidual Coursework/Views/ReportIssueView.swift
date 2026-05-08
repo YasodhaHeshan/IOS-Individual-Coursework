@@ -74,7 +74,7 @@ struct ReportIssueView: View {
                                 Text("RepairCost LK")
                                     .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         Spacer()
                     }
@@ -108,7 +108,7 @@ struct ReportIssueView: View {
                                 }
                             }
                             .padding(16)
-                            .background(Color.white)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                             .cornerRadius(12)
                             .padding(.horizontal, 20)
                             
@@ -165,7 +165,7 @@ struct ReportIssueView: View {
                                 }
                                 .padding(16)
                             }
-                            .background(Color.white)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                             .cornerRadius(12)
                             .padding(.horizontal, 20)
                             
@@ -224,7 +224,7 @@ struct ReportIssueView: View {
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 100)
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(12)
                                     }
                                 }

@@ -62,7 +62,7 @@ struct SparePartsView: View {
                     Spacer()
                     Image(systemName: "line.3.horizontal.decrease.circle")
                         .appFont(size: 20)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
@@ -89,7 +89,7 @@ struct SparePartsView: View {
                             
                             Text("Spare Parts")
                                 .appFont(size: 28, weight: .bold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 20)
@@ -117,10 +117,10 @@ struct SparePartsView: View {
                                     Button(action: { selectedCategory = category }) {
                                         Text(category)
                                             .appFont(size: 12, weight: .semibold)
-                                            .foregroundColor(selectedCategory == category ? .white : .black)
+                                            .foregroundColor(selectedCategory == category ? .white : .primary)
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 8)
-                                            .background(selectedCategory == category ? Color.black : Color(UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)))
+                                            .background(selectedCategory == category ? Color.orange : Color(uiColor: .secondarySystemGroupedBackground))
                                             .cornerRadius(6)
                                     }
                                 }
@@ -135,7 +135,7 @@ struct SparePartsView: View {
                                     HStack {
                                         Text(category)
                                             .appFont(size: 16, weight: .semibold)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.primary)
                                         
                                         Spacer()
                                         
@@ -271,7 +271,7 @@ struct SparePartItemView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(part.name)
                     .appFont(size: 14, weight: .semibold)
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                     .lineLimit(2)
                 
                 Text(part.compatibility)
@@ -292,7 +292,7 @@ struct SparePartItemView: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text("Rs. \(Int(part.price)):00")
                     .appFont(size: 14, weight: .bold)
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
             }
             
             Image(systemName: "chevron.right")
@@ -300,7 +300,7 @@ struct SparePartItemView: View {
                 .foregroundColor(.gray)
         }
         .padding(12)
-        .background(Color.white)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(10)
     }
 }
@@ -326,7 +326,7 @@ struct TrendingComparisonItemView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(comparison.name)
                     .appFont(size: 14, weight: .semibold)
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 
                 Text(comparison.category)
                     .appFont(size: 11, weight: .regular)
@@ -338,7 +338,7 @@ struct TrendingComparisonItemView: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(comparison.range)
                     .appFont(size: 12, weight: .semibold)
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 
                 Button(action: {}) {
                     Text("VIEW")
@@ -348,7 +348,7 @@ struct TrendingComparisonItemView: View {
             }
         }
         .padding(12)
-        .background(Color.white)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(10)
     }
 }

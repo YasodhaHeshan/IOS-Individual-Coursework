@@ -48,7 +48,7 @@ struct DescribeProblemView: View {
                                 Text("Report Issue")
                                     .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         Spacer()
                     }
@@ -82,7 +82,7 @@ struct DescribeProblemView: View {
                                     .lineLimit(3...5)
                                     .appFont(size: 14, weight: .regular)
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
@@ -101,7 +101,7 @@ struct DescribeProblemView: View {
                                     .lineLimit(3...5)
                                     .appFont(size: 14, weight: .regular)
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
@@ -137,7 +137,7 @@ struct DescribeProblemView: View {
                                         }
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 90)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(12)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 12)
@@ -189,7 +189,7 @@ struct DescribeProblemView: View {
                                     }
                                     .frame(maxWidth: .infinity, minHeight: 90)
                                     .padding(.horizontal, 12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(12)
                                 }
 

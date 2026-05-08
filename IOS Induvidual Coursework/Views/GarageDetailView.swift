@@ -58,9 +58,9 @@ struct GarageDetailView: View {
                         Button(action: { dismiss() }) {
                             Image(systemName: "chevron.left")
                                 .appFont(size: 16, weight: .semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .padding(10)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .clipShape(Circle())
                         }
                         .padding(16)
@@ -72,7 +72,7 @@ struct GarageDetailView: View {
                             HStack(spacing: 8) {
                                 Text(garage.name)
                                     .appFont(size: 22, weight: .bold)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.primary)
                                 
                                 if garage.isVerified {
                                     HStack(spacing: 4) {
@@ -102,7 +102,7 @@ struct GarageDetailView: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(String(format: "%.1f", garage.rating ?? 0.0))
                                         .appFont(size: 14, weight: .semibold)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.primary)
                                     
                                     Text("(\(garage.reviewCount) Reviews)")
                                         .appFont(size: 12)
@@ -202,7 +202,7 @@ struct GarageDetailView: View {
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
-                                    .background(Color.black)
+                                    .background(Color.orange)
                                     .cornerRadius(8)
                                 }
                                 
@@ -292,7 +292,7 @@ struct SectionHeader: View {
     var body: some View {
         Text(title)
             .appFont(size: 14, weight: .semibold)
-            .foregroundColor(.black)
+            .foregroundColor(.primary)
     }
 }
 
@@ -317,7 +317,7 @@ struct ReviewItemView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(review.authorName)
                         .appFont(size: 13, weight: .semibold)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     Text(review.date)
                         .appFont(size: 11)
@@ -342,7 +342,7 @@ struct ReviewItemView: View {
                 .lineSpacing(1.2)
         }
         .padding(12)
-        .background(Color.white)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(8)
     }
 }

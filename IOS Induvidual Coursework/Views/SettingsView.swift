@@ -7,12 +7,8 @@ struct SettingsView: View {
 
     @State private var isLoggingOut = false
     @State private var showLogoutConfirmation = false
-    @State private var showLanguagePicker = false
-    @State private var showUnitPicker = false
     @State private var showTextSizePicker = false
 
-    let languages = ["English", "Sinhala", "Tamil"]
-    let units = ["Metric", "Imperial"]
     let textSizes = ["Small", "Default", "Large", "Extra Large"]
     
     var body: some View {
@@ -26,7 +22,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Settings")
                             .appFont(size: 18, weight: .bold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Spacer()
                     }
@@ -57,7 +53,7 @@ struct SettingsView: View {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(viewModel.fullName.isEmpty ? "User" : viewModel.fullName)
                                             .appFont(size: 16, weight: .bold)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.primary)
                                         
                                         Text(viewModel.email)
                                             .appFont(size: 12, weight: .regular)
@@ -75,7 +71,7 @@ struct SettingsView: View {
                                     }
                                 }
                                 .padding(12)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(12)
                                 .padding(.horizontal, 20)
                             }
@@ -94,18 +90,14 @@ struct SettingsView: View {
                                             RoundedRectangle(cornerRadius: 10)
                                                 .fill(Color.orange.opacity(0.2))
                                                 .frame(width: 44, height: 44)
-                                            
                                             Image(systemName: "bell.fill")
                                                 .appFont(size: 18, weight: .semibold)
                                                 .foregroundColor(.orange)
                                         }
-                                        
                                         Text("Notifications")
                                             .appFont(size: 16, weight: .regular)
-                                            .foregroundColor(.black)
-                                        
+                                            .foregroundColor(.primary)
                                         Spacer()
-                                        
                                         Toggle("", isOn: $viewModel.notificationsEnabled)
                                             .tint(.orange)
                                             .onChange(of: viewModel.notificationsEnabled) { _, newValue in
@@ -113,109 +105,55 @@ struct SettingsView: View {
                                             }
                                     }
                                     .padding(12)
-                                    .background(Color.white)
-                                    
-                                    Divider()
-                                        .padding(.horizontal, 56)
-                                    
-                                    // Privacy & Security
-                                    NavigationLink(destination: Text("Privacy & Security")) {
-                                        HStack(spacing: 12) {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color.orange.opacity(0.2))
-                                                    .frame(width: 44, height: 44)
-                                                
-                                                Image(systemName: "lock.fill")
-                                                    .appFont(size: 18, weight: .semibold)
-                                                    .foregroundColor(.orange)
-                                            }
-                                            
-                                            Text("Privacy & Security")
-                                                .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "chevron.right")
-                                                .appFont(size: 14, weight: .semibold)
-                                                .foregroundColor(.gray)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
+
+                                    Divider().padding(.horizontal, 56)
+
+                                    // Dark Mode Toggle
+                                    HStack(spacing: 12) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.orange.opacity(0.2))
+                                                .frame(width: 44, height: 44)
+                                            Image(systemName: "moon.fill")
+                                                .appFont(size: 18, weight: .semibold)
+                                                .foregroundColor(.orange)
                                         }
-                                        .padding(12)
-                                        .background(Color.white)
+                                        Text("Dark Mode")
+                                            .appFont(size: 16, weight: .regular)
+                                            .foregroundColor(.primary)
+                                        Spacer()
+                                        Toggle("", isOn: $viewModel.darkModeEnabled)
+                                            .tint(.orange)
+                                            .onChange(of: viewModel.darkModeEnabled) { _, newValue in
+                                                viewModel.saveDarkModePreference(newValue)
+                                            }
                                     }
-                                    
-                                    Divider()
-                                        .padding(.horizontal, 56)
-                                    
-                                    // Language
-                                    Button(action: { showLanguagePicker = true }) {
-                                        HStack(spacing: 12) {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color.orange.opacity(0.2))
-                                                    .frame(width: 44, height: 44)
-                                                
-                                                Image(systemName: "globe")
-                                                    .appFont(size: 18, weight: .semibold)
-                                                    .foregroundColor(.orange)
-                                            }
-                                            
-                                            Text("Language")
-                                                .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
-                                            
-                                            Spacer()
-                                            
-                                            HStack(spacing: 8) {
-                                                Text(viewModel.language)
-                                                    .appFont(size: 14, weight: .regular)
-                                                    .foregroundColor(.gray)
-                                                
-                                                Image(systemName: "chevron.right")
-                                                    .appFont(size: 14, weight: .semibold)
-                                                    .foregroundColor(.gray)
-                                            }
+                                    .padding(12)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
+
+                                    Divider().padding(.horizontal, 56)
+
+                                    // Language (English only)
+                                    HStack(spacing: 12) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.orange.opacity(0.2))
+                                                .frame(width: 44, height: 44)
+                                            Image(systemName: "globe")
+                                                .appFont(size: 18, weight: .semibold)
+                                                .foregroundColor(.orange)
                                         }
-                                        .padding(12)
-                                        .background(Color.white)
+                                        Text("Language")
+                                            .appFont(size: 16, weight: .regular)
+                                            .foregroundColor(.primary)
+                                        Spacer()
+                                        Text("English")
+                                            .appFont(size: 14, weight: .regular)
+                                            .foregroundColor(.secondary)
                                     }
-                                    
-                                    Divider()
-                                        .padding(.horizontal, 56)
-                                    
-                                    // Measurement Units
-                                    Button(action: { showUnitPicker = true }) {
-                                        HStack(spacing: 12) {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color.orange.opacity(0.2))
-                                                    .frame(width: 44, height: 44)
-                                                
-                                                Image(systemName: "ruler.fill")
-                                                    .appFont(size: 18, weight: .semibold)
-                                                    .foregroundColor(.orange)
-                                            }
-                                            
-                                            Text("Measurement Units")
-                                                .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
-                                            
-                                            Spacer()
-                                            
-                                            HStack(spacing: 8) {
-                                                Text(viewModel.measurementUnit)
-                                                    .appFont(size: 14, weight: .regular)
-                                                    .foregroundColor(.gray)
-                                                
-                                                Image(systemName: "chevron.right")
-                                                    .appFont(size: 14, weight: .semibold)
-                                                    .foregroundColor(.gray)
-                                            }
-                                        }
-                                        .padding(12)
-                                        .background(Color.white)
-                                    }
+                                    .padding(12)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 }
                                 .cornerRadius(12)
                                 .padding(.horizontal, 20)
@@ -242,7 +180,7 @@ struct SettingsView: View {
                                             }
                                             Text("Text Size")
                                                 .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             Spacer()
                                             HStack(spacing: 8) {
                                                 Text(viewModel.textSize)
@@ -254,7 +192,7 @@ struct SettingsView: View {
                                             }
                                         }
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     }
 
                                     Divider().padding(.horizontal, 56)
@@ -271,7 +209,7 @@ struct SettingsView: View {
                                         }
                                         Text("Bold Text")
                                             .appFont(size: 16, weight: .regular)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.primary)
                                         Spacer()
                                         Toggle("", isOn: $viewModel.boldTextEnabled)
                                             .tint(.blue)
@@ -280,7 +218,7 @@ struct SettingsView: View {
                                             }
                                     }
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
 
                                     Divider().padding(.horizontal, 56)
 
@@ -297,7 +235,7 @@ struct SettingsView: View {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text("Reduce Motion")
                                                 .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             Text("Limits animations throughout the app")
                                                 .appFont(size: 11)
                                                 .foregroundColor(.gray)
@@ -310,7 +248,7 @@ struct SettingsView: View {
                                             }
                                     }
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
 
                                     Divider().padding(.horizontal, 56)
 
@@ -326,7 +264,7 @@ struct SettingsView: View {
                                         }
                                         Text("Haptic Feedback")
                                             .appFont(size: 16, weight: .regular)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.primary)
                                         Spacer()
                                         Toggle("", isOn: $viewModel.hapticFeedbackEnabled)
                                             .tint(.blue)
@@ -335,7 +273,7 @@ struct SettingsView: View {
                                             }
                                     }
                                     .padding(12)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 }
                                 .cornerRadius(12)
                                 .padding(.horizontal, 20)
@@ -351,7 +289,7 @@ struct SettingsView: View {
                                 HStack(spacing: 12) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 10)
-                                            .fill(Color.white)
+                                            .fill(Color(uiColor: .secondarySystemGroupedBackground))
                                             .frame(width: 56, height: 56)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 10)
@@ -366,7 +304,7 @@ struct SettingsView: View {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Manage Saved Vehicles")
                                             .appFont(size: 16, weight: .bold)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.primary)
                                         
                                         Text("2 Vehicles Registered")
                                             .appFont(size: 12, weight: .regular)
@@ -382,7 +320,7 @@ struct SettingsView: View {
                                     }
                                 }
                                 .padding(12)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(12)
                                 .padding(.horizontal, 20)
                             }
@@ -410,7 +348,7 @@ struct SettingsView: View {
                                             
                                             Text("Help Center")
                                                 .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             
                                             Spacer()
                                             
@@ -419,7 +357,7 @@ struct SettingsView: View {
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     }
                                     
                                     Divider()
@@ -440,7 +378,7 @@ struct SettingsView: View {
                                             
                                             Text("Contact Us")
                                                 .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             
                                             Spacer()
                                             
@@ -449,7 +387,7 @@ struct SettingsView: View {
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     }
                                     
                                     Divider()
@@ -470,7 +408,7 @@ struct SettingsView: View {
                                             
                                             Text("About RepairCost LK")
                                                 .appFont(size: 16, weight: .regular)
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.primary)
                                             
                                             Spacer()
                                             
@@ -479,7 +417,7 @@ struct SettingsView: View {
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     }
                                 }
                                 .cornerRadius(12)
@@ -545,43 +483,8 @@ struct SettingsView: View {
         } message: {
             Text("Are you sure you want to log out?")
         }
-        .sheet(isPresented: $showLanguagePicker) {
-            languagePicker
-        }
-        .sheet(isPresented: $showUnitPicker) {
-            unitPicker
-        }
         .sheet(isPresented: $showTextSizePicker) {
             textSizePicker
-        }
-    }
-    
-    private var languagePicker: some View {
-        NavigationStack {
-            List(languages, id: \.self) { language in
-                HStack {
-                    Text(language)
-                    Spacer()
-                    if viewModel.language == language {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(.orange)
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.saveLanguagePreference(language)
-                    showLanguagePicker = false
-                }
-            }
-            .navigationTitle("Select Language")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
-                        showLanguagePicker = false
-                    }
-                }
-            }
         }
     }
     
@@ -627,35 +530,6 @@ struct SettingsView: View {
         default:            base = 15
         }
         return .system(size: base * scale)
-    }
-
-    private var unitPicker: some View {
-        NavigationStack {
-            List(units, id: \.self) { unit in
-                HStack {
-                    Text(unit)
-                    Spacer()
-                    if viewModel.measurementUnit == unit {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(.orange)
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.saveMeasurementUnitPreference(unit)
-                    showUnitPicker = false
-                }
-            }
-            .navigationTitle("Select Unit")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
-                        showUnitPicker = false
-                    }
-                }
-            }
-        }
     }
 
     private func handleLogout() async {

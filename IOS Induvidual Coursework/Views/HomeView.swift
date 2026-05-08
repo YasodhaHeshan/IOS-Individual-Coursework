@@ -56,7 +56,7 @@ struct HomeView: View {
                             ZStack(alignment: .topTrailing) {
                                 Image(systemName: "bell")
                                     .appFont(size: 16, weight: .semibold)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.primary)
 
                                 if notificationService.unreadCount > 0 {
                                     Text("\(min(notificationService.unreadCount, 9))")
@@ -79,7 +79,7 @@ struct HomeView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("FIX IT.")
                                     .appFont(size: 40, weight: .bold)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.primary)
                             
                             Text("ESTIMATE REPAIR COSTS IN SECONDS.")
                                 .appFont(size: 13, weight: .regular)
@@ -164,7 +164,7 @@ struct HomeView: View {
                                                 
                                                 Text(category)
                                                     .appFont(size: 14, weight: .semibold)
-                                                    .foregroundColor(.black)
+                                                    .foregroundColor(.primary)
                                                 
                                                 Spacer()
                                                 
@@ -175,7 +175,7 @@ struct HomeView: View {
                                                 }
                                             }
                                             .padding(12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .cornerRadius(10)
                                         }
                                     }
@@ -223,7 +223,7 @@ struct HomeView: View {
                                             .foregroundColor(.orange)
                                         Text("Find Garage")
                                             .appFont(size: 12, weight: .semibold)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.primary)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(16)
@@ -240,7 +240,7 @@ struct HomeView: View {
                                             .foregroundColor(.orange)
                                         Text("Spare Parts")
                                             .appFont(size: 12, weight: .semibold)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.primary)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(16)
@@ -280,7 +280,7 @@ struct HomeView: View {
                                             VStack(alignment: .leading, spacing: 2) {
                                                 Text(search)
                                                     .appFont(size: 14, weight: .semibold)
-                                                    .foregroundColor(.black)
+                                                    .foregroundColor(.primary)
                                                 Text(details)
                                                     .appFont(size: 11, weight: .regular)
                                                     .foregroundColor(.gray)
@@ -293,7 +293,7 @@ struct HomeView: View {
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
-                                        .background(Color.white)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(10)
                                     }
                                 }
@@ -303,7 +303,7 @@ struct HomeView: View {
                                     .foregroundColor(.gray)
                                     .padding(12)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                     .onTapGesture {
                                         showRecentSearches = true

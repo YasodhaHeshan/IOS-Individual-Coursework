@@ -14,6 +14,7 @@ final class SettingsViewModel: ObservableObject {
     @Published var boldTextEnabled = false
     @Published var reduceMotionEnabled = false
     @Published var hapticFeedbackEnabled = true
+    @Published var darkModeEnabled = false
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var successMessage: String?
@@ -41,6 +42,7 @@ final class SettingsViewModel: ObservableObject {
         self.boldTextEnabled = UserDefaults.standard.bool(forKey: "boldTextEnabled")
         self.reduceMotionEnabled = UserDefaults.standard.bool(forKey: "reduceMotionEnabled")
         self.hapticFeedbackEnabled = UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true
+        self.darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
     }
     
     func updateProfile(fullName: String, phone: String, location: String) async {
@@ -152,5 +154,10 @@ final class SettingsViewModel: ObservableObject {
     func saveHapticFeedbackPreference(_ enabled: Bool) {
         hapticFeedbackEnabled = enabled
         AccessibilitySettings.shared.hapticFeedbackEnabled = enabled
+    }
+
+    func saveDarkModePreference(_ enabled: Bool) {
+        darkModeEnabled = enabled
+        AccessibilitySettings.shared.darkModeEnabled = enabled
     }
 }

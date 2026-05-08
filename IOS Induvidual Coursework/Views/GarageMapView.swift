@@ -52,16 +52,16 @@ struct GarageMapView: View {
                     Button(action: { dismiss() }) {
                         Image(systemName: "chevron.left")
                             .appFont(size: 16, weight: .semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(10)
-                            .background(Color.white)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                             .clipShape(Circle())
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(garage.name)
                             .appFont(size: 14, weight: .semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         if let address = garage.address {
                             Text(address)
@@ -74,7 +74,7 @@ struct GarageMapView: View {
                     Spacer()
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(Color(uiColor: .secondarySystemGroupedBackground))
                 .cornerRadius(12)
                 .shadow(radius: 4)
                 .padding(16)
@@ -138,7 +138,7 @@ struct GarageMapView: View {
                     }
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(Color(uiColor: .secondarySystemGroupedBackground))
                 .cornerRadius(12)
                 .shadow(radius: 4)
                 .padding(16)

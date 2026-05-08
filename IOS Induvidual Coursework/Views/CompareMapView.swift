@@ -19,7 +19,7 @@ struct CompareMapView: View {
                                         .foregroundColor(.orange)
                                     Text(garage.name)
                                         .appFont(size: 10)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.primary)
                                 }
                             }
                         }
@@ -43,9 +43,9 @@ struct CompareMapView: View {
                     Button(action: { dismiss() }) {
                         Image(systemName: "chevron.left")
                             .appFont(size: 16, weight: .semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(10)
-                            .background(Color.white)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                             .clipShape(Circle())
                     }
                     Spacer()

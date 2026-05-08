@@ -39,12 +39,12 @@ struct GaragesView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Garages")
                                 .appFont(size: 18, weight: .semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                         }
                         Spacer()
                         Image(systemName: "line.3.horizontal.decrease.circle")
                             .appFont(size: 20)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
@@ -62,12 +62,12 @@ struct GaragesView: View {
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
-                        .background(Color.white)
+                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                         .cornerRadius(8)
                         
                         Image(systemName: "slider.horizontal.3")
                             .appFont(size: 16, weight: .semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
                     }
@@ -117,7 +117,7 @@ struct GaragesView: View {
                             
                             Text(selectedTab == "topRated" ? "Top Rated Experts" : "Nearby Experts")
                                 .appFont(size: 16, weight: .semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                             
                             Spacer()
                         }
@@ -250,7 +250,7 @@ struct GarageListItemView: View {
                 // Name
                 Text(garage.name)
                     .appFont(size: 16, weight: .semibold)
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 
                 // Location
                 HStack(spacing: 4) {
@@ -272,7 +272,7 @@ struct GarageListItemView: View {
                         
                         Text(String(format: "%.1f", garage.rating ?? 0.0))
                             .appFont(size: 12, weight: .semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Text("(\(garage.reviewCount ?? 0))")
                             .appFont(size: 11)
@@ -302,7 +302,7 @@ struct GarageListItemView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(Color.black)
+                            .background(Color.orange)
                             .cornerRadius(8)
                     }
                 }
@@ -310,7 +310,7 @@ struct GarageListItemView: View {
             .padding(.horizontal, 12)
         }
         .padding(12)
-        .background(Color.white)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(12)
     }
 }

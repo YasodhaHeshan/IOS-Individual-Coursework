@@ -36,7 +36,7 @@ struct SelectVehicleView: View {
                                 Text("RepairCost LK")
                                     .appFont(size: 14, weight: .semibold)
                             }
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         }
                         Spacer()
                     }
@@ -79,7 +79,7 @@ struct SelectVehicleView: View {
                                         }
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 80)
-                                        .background(selectedVehicleType == type ? Color.orange : Color.white)
+                                        .background(selectedVehicleType == type ? Color.orange : Color(uiColor: .secondarySystemGroupedBackground))
                                         .cornerRadius(12)
                                         .onTapGesture {
                                             selectedVehicleType = type
@@ -98,7 +98,7 @@ struct SelectVehicleView: View {
                                 HStack {
                                     Text(selectedBrand.isEmpty ? "Select Brand" : selectedBrand)
                                         .appFont(size: 16, weight: .regular)
-                                        .foregroundColor(selectedBrand.isEmpty ? .gray : .black)
+                                        .foregroundColor(selectedBrand.isEmpty ? .gray : .primary)
                                     
                                     Spacer()
                                     
@@ -108,7 +108,7 @@ struct SelectVehicleView: View {
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 .onTapGesture {
                                     showBrandPicker.toggle()
@@ -129,7 +129,7 @@ struct SelectVehicleView: View {
                                             }
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .onTapGesture {
                                                 selectedBrand = brand
                                                 showBrandPicker = false
@@ -141,7 +141,7 @@ struct SelectVehicleView: View {
                                             }
                                         }
                                     }
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                             }
@@ -156,7 +156,7 @@ struct SelectVehicleView: View {
                                 HStack {
                                     Text(selectedModel.isEmpty ? "Select Model" : selectedModel)
                                         .appFont(size: 16, weight: .regular)
-                                        .foregroundColor(selectedModel.isEmpty ? .gray : .black)
+                                        .foregroundColor(selectedModel.isEmpty ? .gray : .primary)
                                     
                                     Spacer()
                                     
@@ -166,7 +166,7 @@ struct SelectVehicleView: View {
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 .onTapGesture {
                                     showModelPicker.toggle()
@@ -187,7 +187,7 @@ struct SelectVehicleView: View {
                                             }
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .onTapGesture {
                                                 selectedModel = model
                                                 showModelPicker = false
@@ -199,7 +199,7 @@ struct SelectVehicleView: View {
                                             }
                                         }
                                     }
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                             }
@@ -214,7 +214,7 @@ struct SelectVehicleView: View {
                                 HStack {
                                     Text(selectedYear.isEmpty ? "E.g. 2022" : selectedYear)
                                         .appFont(size: 16, weight: .regular)
-                                        .foregroundColor(selectedYear.isEmpty ? .gray : .black)
+                                        .foregroundColor(selectedYear.isEmpty ? .gray : .primary)
                                     
                                     Spacer()
                                     
@@ -224,7 +224,7 @@ struct SelectVehicleView: View {
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .background(Color.white)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground))
                                 .cornerRadius(10)
                                 .onTapGesture {
                                     showYearPicker.toggle()
@@ -245,7 +245,7 @@ struct SelectVehicleView: View {
                                             }
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 12)
-                                            .background(Color.white)
+                                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .onTapGesture {
                                                 selectedYear = year
                                                 showYearPicker = false
@@ -257,7 +257,7 @@ struct SelectVehicleView: View {
                                             }
                                         }
                                     }
-                                    .background(Color.white)
+                                    .background(Color(uiColor: .secondarySystemGroupedBackground))
                                     .cornerRadius(10)
                                 }
                             }
