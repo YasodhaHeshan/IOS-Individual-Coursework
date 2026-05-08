@@ -354,6 +354,8 @@ struct DescribeProblemView: View {
 
             if let prediction = await damagePredictionService.predictDamageCategory(image: selectedImage) {
                 predicted = prediction.category
+                // CoreML model severity is accurate; override the rectangle-detector result
+                severity = prediction.severity
             }
 
             do {
