@@ -32,9 +32,9 @@ struct SelectVehicleView: View {
                         Button(action: { presentationMode.wrappedValue.dismiss() }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                 Text("RepairCost LK")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                             }
                             .foregroundColor(.black)
                         }
@@ -48,14 +48,14 @@ struct SelectVehicleView: View {
                             // Title
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("CONFIGURATION")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 Text("Select Vehicle")
-                                    .font(.system(size: 28, weight: .bold))
+                                    .appFont(size: 28, weight: .bold)
                                 
                                 Text("Select your vehicle type and provide details for a more accurate diagnostic and service quote.")
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .foregroundColor(.gray)
                             }
                             .padding(.horizontal, 20)
@@ -63,18 +63,18 @@ struct SelectVehicleView: View {
                             // Vehicle Type Selection
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("VEHICLE TYPE")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack(spacing: 12) {
                                     ForEach(vehicleTypes, id: \.self) { type in
                                         VStack(spacing: 8) {
                                             Image(systemName: getVehicleIcon(for: type))
-                                                .font(.system(size: 28))
+                                                .appFont(size: 28)
                                                 .foregroundColor(selectedVehicleType == type ? .white : .gray)
                                             
                                             Text(type)
-                                                .font(.system(size: 10, weight: .semibold))
+                                                .appFont(size: 10, weight: .semibold)
                                                 .foregroundColor(selectedVehicleType == type ? .white : .gray)
                                         }
                                         .frame(maxWidth: .infinity)
@@ -92,18 +92,18 @@ struct SelectVehicleView: View {
                             // Vehicle Brand
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("VEHICLE BRAND")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack {
                                     Text(selectedBrand.isEmpty ? "Select Brand" : selectedBrand)
-                                        .font(.system(size: 16, weight: .regular))
+                                        .appFont(size: 16, weight: .regular)
                                         .foregroundColor(selectedBrand.isEmpty ? .gray : .black)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.horizontal, 16)
@@ -119,11 +119,11 @@ struct SelectVehicleView: View {
                                         ForEach(brands, id: \.self) { brand in
                                             HStack {
                                                 Text(brand)
-                                                    .font(.system(size: 16, weight: .regular))
+                                                    .appFont(size: 16, weight: .regular)
                                                 Spacer()
                                                 if selectedBrand == brand {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
@@ -150,18 +150,18 @@ struct SelectVehicleView: View {
                             // Vehicle Model
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("VEHICLE MODEL")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack {
                                     Text(selectedModel.isEmpty ? "Select Model" : selectedModel)
-                                        .font(.system(size: 16, weight: .regular))
+                                        .appFont(size: 16, weight: .regular)
                                         .foregroundColor(selectedModel.isEmpty ? .gray : .black)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.horizontal, 16)
@@ -177,11 +177,11 @@ struct SelectVehicleView: View {
                                         ForEach(models, id: \.self) { model in
                                             HStack {
                                                 Text(model)
-                                                    .font(.system(size: 16, weight: .regular))
+                                                    .appFont(size: 16, weight: .regular)
                                                 Spacer()
                                                 if selectedModel == model {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
@@ -208,18 +208,18 @@ struct SelectVehicleView: View {
                             // Manufacturing Year
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("MANUFACTURING YEAR")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack {
                                     Text(selectedYear.isEmpty ? "E.g. 2022" : selectedYear)
-                                        .font(.system(size: 16, weight: .regular))
+                                        .appFont(size: 16, weight: .regular)
                                         .foregroundColor(selectedYear.isEmpty ? .gray : .black)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.horizontal, 16)
@@ -235,11 +235,11 @@ struct SelectVehicleView: View {
                                         ForEach(years, id: \.self) { year in
                                             HStack {
                                                 Text(year)
-                                                    .font(.system(size: 16, weight: .regular))
+                                                    .appFont(size: 16, weight: .regular)
                                                 Spacer()
                                                 if selectedYear == year {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
@@ -266,15 +266,15 @@ struct SelectVehicleView: View {
                             // Info Card
                             HStack(spacing: 12) {
                                 Image(systemName: "info.circle.fill")
-                                    .font(.system(size: 20))
+                                    .appFont(size: 20)
                                     .foregroundColor(.orange)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("By selecting your vehicle")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                     
                                     Text("You have a more compatible parts and specialist connected to any garage.")
-                                        .font(.system(size: 12, weight: .regular))
+                                        .appFont(size: 12, weight: .regular)
                                         .foregroundColor(.gray)
                                 }
                                 
@@ -304,7 +304,7 @@ struct SelectVehicleView: View {
                                 Text("Continue")
                                 Image(systemName: "arrow.right")
                             }
-                            .font(.system(size: 16, weight: .semibold))
+                            .appFont(size: 16, weight: .semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
@@ -314,7 +314,7 @@ struct SelectVehicleView: View {
                         .disabled(!isFormValid)
                         
                         Text("By continuing, you agree to our terms of service")
-                            .font(.system(size: 11, weight: .regular))
+                            .appFont(size: 11, weight: .regular)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }

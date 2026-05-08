@@ -9,9 +9,11 @@ struct SettingsView: View {
     @State private var showLogoutConfirmation = false
     @State private var showLanguagePicker = false
     @State private var showUnitPicker = false
-    
+    @State private var showTextSizePicker = false
+
     let languages = ["English", "Sinhala", "Tamil"]
     let units = ["Metric", "Imperial"]
+    let textSizes = ["Small", "Default", "Large", "Extra Large"]
     
     var body: some View {
         NavigationStack {
@@ -23,7 +25,7 @@ struct SettingsView: View {
                     // MARK: - Header
                     HStack {
                         Text("Settings")
-                            .font(.system(size: 18, weight: .bold))
+                            .appFont(size: 18, weight: .bold)
                             .foregroundColor(.black)
                         
                         Spacer()
@@ -36,7 +38,7 @@ struct SettingsView: View {
                             // MARK: - Account Section
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("ACCOUNT")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                     .padding(.horizontal, 20)
                                 
@@ -48,17 +50,17 @@ struct SettingsView: View {
                                             .frame(width: 56, height: 56)
                                         
                                         Text(getInitials(viewModel.fullName))
-                                            .font(.system(size: 16, weight: .bold))
+                                            .appFont(size: 16, weight: .bold)
                                             .foregroundColor(.white)
                                     }
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(viewModel.fullName.isEmpty ? "User" : viewModel.fullName)
-                                            .font(.system(size: 16, weight: .bold))
+                                            .appFont(size: 16, weight: .bold)
                                             .foregroundColor(.black)
                                         
                                         Text(viewModel.email)
-                                            .font(.system(size: 12, weight: .regular))
+                                            .appFont(size: 12, weight: .regular)
                                             .foregroundColor(.gray)
                                     }
                                     
@@ -66,7 +68,7 @@ struct SettingsView: View {
                                     
                                     NavigationLink(destination: EditProfileView()) {
                                         Text("Edit\nProfile")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                             .foregroundColor(.orange)
                                             .multilineTextAlignment(.trailing)
                                             .lineLimit(2)
@@ -81,7 +83,7 @@ struct SettingsView: View {
                             // MARK: - App Settings Section
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("APP SETTINGS")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                     .padding(.horizontal, 20)
                                 
@@ -94,12 +96,12 @@ struct SettingsView: View {
                                                 .frame(width: 44, height: 44)
                                             
                                             Image(systemName: "bell.fill")
-                                                .font(.system(size: 18, weight: .semibold))
+                                                .appFont(size: 18, weight: .semibold)
                                                 .foregroundColor(.orange)
                                         }
                                         
                                         Text("Notifications")
-                                            .font(.system(size: 16, weight: .regular))
+                                            .appFont(size: 16, weight: .regular)
                                             .foregroundColor(.black)
                                         
                                         Spacer()
@@ -125,18 +127,18 @@ struct SettingsView: View {
                                                     .frame(width: 44, height: 44)
                                                 
                                                 Image(systemName: "lock.fill")
-                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .appFont(size: 18, weight: .semibold)
                                                     .foregroundColor(.orange)
                                             }
                                             
                                             Text("Privacy & Security")
-                                                .font(.system(size: 16, weight: .regular))
+                                                .appFont(size: 16, weight: .regular)
                                                 .foregroundColor(.black)
                                             
                                             Spacer()
                                             
                                             Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
+                                                .appFont(size: 14, weight: .semibold)
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
@@ -155,23 +157,23 @@ struct SettingsView: View {
                                                     .frame(width: 44, height: 44)
                                                 
                                                 Image(systemName: "globe")
-                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .appFont(size: 18, weight: .semibold)
                                                     .foregroundColor(.orange)
                                             }
                                             
                                             Text("Language")
-                                                .font(.system(size: 16, weight: .regular))
+                                                .appFont(size: 16, weight: .regular)
                                                 .foregroundColor(.black)
                                             
                                             Spacer()
                                             
                                             HStack(spacing: 8) {
                                                 Text(viewModel.language)
-                                                    .font(.system(size: 14, weight: .regular))
+                                                    .appFont(size: 14, weight: .regular)
                                                     .foregroundColor(.gray)
                                                 
                                                 Image(systemName: "chevron.right")
-                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .appFont(size: 14, weight: .semibold)
                                                     .foregroundColor(.gray)
                                             }
                                         }
@@ -191,23 +193,23 @@ struct SettingsView: View {
                                                     .frame(width: 44, height: 44)
                                                 
                                                 Image(systemName: "ruler.fill")
-                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .appFont(size: 18, weight: .semibold)
                                                     .foregroundColor(.orange)
                                             }
                                             
                                             Text("Measurement Units")
-                                                .font(.system(size: 16, weight: .regular))
+                                                .appFont(size: 16, weight: .regular)
                                                 .foregroundColor(.black)
                                             
                                             Spacer()
                                             
                                             HStack(spacing: 8) {
                                                 Text(viewModel.measurementUnit)
-                                                    .font(.system(size: 14, weight: .regular))
+                                                    .appFont(size: 14, weight: .regular)
                                                     .foregroundColor(.gray)
                                                 
                                                 Image(systemName: "chevron.right")
-                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .appFont(size: 14, weight: .semibold)
                                                     .foregroundColor(.gray)
                                             }
                                         }
@@ -219,10 +221,130 @@ struct SettingsView: View {
                                 .padding(.horizontal, 20)
                             }
                             
+                            // MARK: - Accessibility Section
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("ACCESSIBILITY")
+                                    .appFont(size: 12, weight: .bold)
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal, 20)
+
+                                VStack(spacing: 0) {
+                                    // Text Size
+                                    Button(action: { showTextSizePicker = true }) {
+                                        HStack(spacing: 12) {
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color.blue.opacity(0.15))
+                                                    .frame(width: 44, height: 44)
+                                                Image(systemName: "textformat.size")
+                                                    .appFont(size: 18, weight: .semibold)
+                                                    .foregroundColor(.blue)
+                                            }
+                                            Text("Text Size")
+                                                .appFont(size: 16, weight: .regular)
+                                                .foregroundColor(.black)
+                                            Spacer()
+                                            HStack(spacing: 8) {
+                                                Text(viewModel.textSize)
+                                                    .appFont(size: 14)
+                                                    .foregroundColor(.gray)
+                                                Image(systemName: "chevron.right")
+                                                    .appFont(size: 14, weight: .semibold)
+                                                    .foregroundColor(.gray)
+                                            }
+                                        }
+                                        .padding(12)
+                                        .background(Color.white)
+                                    }
+
+                                    Divider().padding(.horizontal, 56)
+
+                                    // Bold Text
+                                    HStack(spacing: 12) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.blue.opacity(0.15))
+                                                .frame(width: 44, height: 44)
+                                            Image(systemName: "bold")
+                                                .appFont(size: 18, weight: .semibold)
+                                                .foregroundColor(.blue)
+                                        }
+                                        Text("Bold Text")
+                                            .appFont(size: 16, weight: .regular)
+                                            .foregroundColor(.black)
+                                        Spacer()
+                                        Toggle("", isOn: $viewModel.boldTextEnabled)
+                                            .tint(.blue)
+                                            .onChange(of: viewModel.boldTextEnabled) { _, newValue in
+                                                viewModel.saveBoldTextPreference(newValue)
+                                            }
+                                    }
+                                    .padding(12)
+                                    .background(Color.white)
+
+                                    Divider().padding(.horizontal, 56)
+
+                                    // Reduce Motion
+                                    HStack(spacing: 12) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.blue.opacity(0.15))
+                                                .frame(width: 44, height: 44)
+                                            Image(systemName: "waveform.path.ecg")
+                                                .appFont(size: 18, weight: .semibold)
+                                                .foregroundColor(.blue)
+                                        }
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Reduce Motion")
+                                                .appFont(size: 16, weight: .regular)
+                                                .foregroundColor(.black)
+                                            Text("Limits animations throughout the app")
+                                                .appFont(size: 11)
+                                                .foregroundColor(.gray)
+                                        }
+                                        Spacer()
+                                        Toggle("", isOn: $viewModel.reduceMotionEnabled)
+                                            .tint(.blue)
+                                            .onChange(of: viewModel.reduceMotionEnabled) { _, newValue in
+                                                viewModel.saveReduceMotionPreference(newValue)
+                                            }
+                                    }
+                                    .padding(12)
+                                    .background(Color.white)
+
+                                    Divider().padding(.horizontal, 56)
+
+                                    // Haptic Feedback
+                                    HStack(spacing: 12) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.blue.opacity(0.15))
+                                                .frame(width: 44, height: 44)
+                                            Image(systemName: "hand.tap.fill")
+                                                .appFont(size: 18, weight: .semibold)
+                                                .foregroundColor(.blue)
+                                        }
+                                        Text("Haptic Feedback")
+                                            .appFont(size: 16, weight: .regular)
+                                            .foregroundColor(.black)
+                                        Spacer()
+                                        Toggle("", isOn: $viewModel.hapticFeedbackEnabled)
+                                            .tint(.blue)
+                                            .onChange(of: viewModel.hapticFeedbackEnabled) { _, newValue in
+                                                viewModel.saveHapticFeedbackPreference(newValue)
+                                            }
+                                    }
+                                    .padding(12)
+                                    .background(Color.white)
+                                }
+                                .cornerRadius(12)
+                                .padding(.horizontal, 20)
+                            }
+
                             // MARK: - Garage Management Section
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("GARAGE MANAGEMENT")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                     .padding(.horizontal, 20)
                                 
@@ -237,17 +359,17 @@ struct SettingsView: View {
                                             )
                                         
                                         Image(systemName: "car.fill")
-                                            .font(.system(size: 20, weight: .semibold))
+                                            .appFont(size: 20, weight: .semibold)
                                             .foregroundColor(.orange)
                                     }
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Manage Saved Vehicles")
-                                            .font(.system(size: 16, weight: .bold))
+                                            .appFont(size: 16, weight: .bold)
                                             .foregroundColor(.black)
                                         
                                         Text("2 Vehicles Registered")
-                                            .font(.system(size: 12, weight: .regular))
+                                            .appFont(size: 12, weight: .regular)
                                             .foregroundColor(.gray)
                                     }
                                     
@@ -255,7 +377,7 @@ struct SettingsView: View {
                                     
                                     Button(action: {}) {
                                         Image(systemName: "square.and.pencil")
-                                            .font(.system(size: 16, weight: .semibold))
+                                            .appFont(size: 16, weight: .semibold)
                                             .foregroundColor(.orange)
                                     }
                                 }
@@ -268,7 +390,7 @@ struct SettingsView: View {
                             // MARK: - Support & Legal Section
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("SUPPORT & LEGAL")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                     .padding(.horizontal, 20)
                                 
@@ -282,18 +404,18 @@ struct SettingsView: View {
                                                     .frame(width: 44, height: 44)
                                                 
                                                 Image(systemName: "questionmark.circle.fill")
-                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .appFont(size: 18, weight: .semibold)
                                                     .foregroundColor(.gray)
                                             }
                                             
                                             Text("Help Center")
-                                                .font(.system(size: 16, weight: .regular))
+                                                .appFont(size: 16, weight: .regular)
                                                 .foregroundColor(.black)
                                             
                                             Spacer()
                                             
                                             Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
+                                                .appFont(size: 14, weight: .semibold)
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
@@ -312,18 +434,18 @@ struct SettingsView: View {
                                                     .frame(width: 44, height: 44)
                                                 
                                                 Image(systemName: "envelope.fill")
-                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .appFont(size: 18, weight: .semibold)
                                                     .foregroundColor(.gray)
                                             }
                                             
                                             Text("Contact Us")
-                                                .font(.system(size: 16, weight: .regular))
+                                                .appFont(size: 16, weight: .regular)
                                                 .foregroundColor(.black)
                                             
                                             Spacer()
                                             
                                             Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
+                                                .appFont(size: 14, weight: .semibold)
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
@@ -342,18 +464,18 @@ struct SettingsView: View {
                                                     .frame(width: 44, height: 44)
                                                 
                                                 Image(systemName: "info.circle.fill")
-                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .appFont(size: 18, weight: .semibold)
                                                     .foregroundColor(.gray)
                                             }
                                             
                                             Text("About RepairCost LK")
-                                                .font(.system(size: 16, weight: .regular))
+                                                .appFont(size: 16, weight: .regular)
                                                 .foregroundColor(.black)
                                             
                                             Spacer()
                                             
                                             Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
+                                                .appFont(size: 14, weight: .semibold)
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
@@ -369,7 +491,7 @@ struct SettingsView: View {
                                 showLogoutConfirmation = true
                             }) {
                                 Text(isLoggingOut ? "Logging Out..." : "Log Out")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                     .foregroundColor(.red)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
@@ -380,7 +502,7 @@ struct SettingsView: View {
                             // MARK: - Version Info
                             VStack(spacing: 4) {
                                 Text("Version 2.4.12 (Build 2024.102)")
-                                    .font(.system(size: 12, weight: .regular))
+                                    .appFont(size: 12, weight: .regular)
                                     .foregroundColor(.gray)
 
                                 Button(action: {
@@ -389,13 +511,13 @@ struct SettingsView: View {
                                     }
                                 }) {
                                     Text(syncService.isSyncing ? "Syncing data..." : "Sync data now")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.orange)
                                 }
 
                                 if let lastSyncDate = syncService.lastSyncDate {
                                     Text("Last sync: \(lastSyncDate.formatted(date: .abbreviated, time: .shortened))")
-                                        .font(.system(size: 11, weight: .regular))
+                                        .appFont(size: 11, weight: .regular)
                                         .foregroundColor(.gray)
                                 }
                             }
@@ -429,6 +551,9 @@ struct SettingsView: View {
         .sheet(isPresented: $showUnitPicker) {
             unitPicker
         }
+        .sheet(isPresented: $showTextSizePicker) {
+            textSizePicker
+        }
     }
     
     private var languagePicker: some View {
@@ -460,6 +585,50 @@ struct SettingsView: View {
         }
     }
     
+    private var textSizePicker: some View {
+        NavigationStack {
+            List(textSizes, id: \.self) { size in
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(size)
+                            .font(textSizeFont(for: size))
+                        Text("The quick brown fox")
+                            .font(textSizeFont(for: size, scale: 0.75))
+                            .foregroundColor(.gray)
+                    }
+                    Spacer()
+                    if viewModel.textSize == size {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.blue)
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.saveTextSizePreference(size)
+                    showTextSizePicker = false
+                }
+            }
+            .navigationTitle("Text Size")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Done") { showTextSizePicker = false }
+                }
+            }
+        }
+    }
+
+    private func textSizeFont(for size: String, scale: CGFloat = 1.0) -> Font {
+        let base: CGFloat
+        switch size {
+        case "Small":       base = 13
+        case "Large":       base = 17
+        case "Extra Large": base = 20
+        default:            base = 15
+        }
+        return .system(size: base * scale)
+    }
+
     private var unitPicker: some View {
         NavigationStack {
             List(units, id: \.self) { unit in

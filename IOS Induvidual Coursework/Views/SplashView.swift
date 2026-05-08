@@ -14,7 +14,7 @@ struct SplashView: View {
 
                     VStack(spacing: 4) {
                         Text("RepairCost LK")
-                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .appFont(size: 32, weight: .bold, design: .rounded)
                             .foregroundStyle(.primary)
 
                         Text("AUTOMOTIVE PRECISION")

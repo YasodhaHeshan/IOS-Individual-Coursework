@@ -51,14 +51,14 @@ struct ProfileView: View {
                 // MARK: - Header
                 HStack {
                     Text("Profile")
-                        .font(.system(size: 18, weight: .bold))
+                        .appFont(size: 18, weight: .bold)
                         .foregroundColor(.black)
                     
                     Spacer()
                     
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape.fill")
-                            .font(.system(size: 16, weight: .semibold))
+                            .appFont(size: 16, weight: .semibold)
                             .foregroundColor(.black)
                     }
                 }
@@ -76,27 +76,27 @@ struct ProfileView: View {
                                     .frame(width: 80, height: 80)
                                 
                                 Text("KP")
-                                    .font(.system(size: 28, weight: .bold))
+                                    .appFont(size: 28, weight: .bold)
                                     .foregroundColor(.orange)
                             }
                             
                             Text(userName)
-                                .font(.system(size: 20, weight: .bold))
+                                .appFont(size: 20, weight: .bold)
                                 .foregroundColor(.black)
                             
                             Text(userSubtitle)
-                                .font(.system(size: 12, weight: .regular))
+                                .appFont(size: 12, weight: .regular)
                                 .foregroundColor(.gray)
                             
                             // Stats
                             HStack(spacing: 24) {
                                 VStack(spacing: 4) {
                                     Text("\(max(0, repairRequestService.repairRequests.count))")
-                                        .font(.system(size: 16, weight: .bold))
+                                        .appFont(size: 16, weight: .bold)
                                         .foregroundColor(.black)
                                     
                                     Text("REQUESTS")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .appFont(size: 10, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 
@@ -105,11 +105,11 @@ struct ProfileView: View {
                                 
                                 VStack(spacing: 4) {
                                     Text(syncService.lastSyncDate == nil ? "-" : "OK")
-                                        .font(.system(size: 16, weight: .bold))
+                                        .appFont(size: 16, weight: .bold)
                                         .foregroundColor(.orange)
                                     
                                     Text("SYNC")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .appFont(size: 10, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                             }
@@ -121,14 +121,14 @@ struct ProfileView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 Text("SAVED VEHICLES")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                 
                                 Spacer()
                                 
                                 NavigationLink(destination: SelectVehicleView()) {
                                     Text("VIEW ALL")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.orange)
                                 }
                             }
@@ -137,23 +137,23 @@ struct ProfileView: View {
                                 ForEach(savedVehicles, id: \.name) { vehicle in
                                     HStack(spacing: 12) {
                                         Image(systemName: "car.fill")
-                                            .font(.system(size: 20, weight: .semibold))
+                                            .appFont(size: 20, weight: .semibold)
                                             .foregroundColor(.orange)
                                         
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(vehicle.name)
-                                                .font(.system(size: 14, weight: .semibold))
+                                                .appFont(size: 14, weight: .semibold)
                                                 .foregroundColor(.black)
                                             
                                             Text(vehicle.services)
-                                                .font(.system(size: 11, weight: .regular))
+                                                .appFont(size: 11, weight: .regular)
                                                 .foregroundColor(.gray)
                                         }
                                         
                                         Spacer()
                                         
                                         Image(systemName: "chevron.right")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                             .foregroundColor(.gray)
                                     }
                                     .padding(12)
@@ -167,7 +167,7 @@ struct ProfileView: View {
                                         Spacer()
                                         
                                         Image(systemName: "plus.circle.fill")
-                                            .font(.system(size: 32, weight: .semibold))
+                                            .appFont(size: 32, weight: .semibold)
                                             .foregroundColor(.orange)
                                         
                                         Spacer()
@@ -184,14 +184,14 @@ struct ProfileView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 Text("ESTIMATE HISTORY")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                 
                                 Spacer()
                                 
                                 NavigationLink(destination: NotificationsView()) {
                                     Text(syncService.isSyncing ? "SYNCING..." : "VIEW ALERTS")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.orange)
                                 }
                             }
@@ -206,17 +206,17 @@ struct ProfileView: View {
                                                 .frame(width: 40, height: 40)
                                             
                                             Text(estimate.number)
-                                                .font(.system(size: 14, weight: .bold))
+                                                .appFont(size: 14, weight: .bold)
                                                 .foregroundColor(.orange)
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(estimate.name)
-                                                .font(.system(size: 13, weight: .semibold))
+                                                .appFont(size: 13, weight: .semibold)
                                                 .foregroundColor(.black)
                                             
                                             Text(estimate.status)
-                                                .font(.system(size: 10, weight: .regular))
+                                                .appFont(size: 10, weight: .regular)
                                                 .foregroundColor(.gray)
                                         }
                                         
@@ -224,11 +224,11 @@ struct ProfileView: View {
                                         
                                         VStack(alignment: .trailing, spacing: 2) {
                                             Text(estimate.price)
-                                                .font(.system(size: 13, weight: .bold))
+                                                .appFont(size: 13, weight: .bold)
                                                 .foregroundColor(.black)
                                             
                                             Text("Latest")
-                                                .font(.system(size: 9, weight: .regular))
+                                                .appFont(size: 9, weight: .regular)
                                                 .foregroundColor(.orange)
                                         }
                                     }
@@ -242,10 +242,10 @@ struct ProfileView: View {
                             NavigationLink(destination: NotificationsView()) {
                                 HStack {
                                     Image(systemName: "calendar")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                     
                                     Text("VIEW FULL HISTORY")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                     
                                     Spacer()
                                 }

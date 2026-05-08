@@ -35,7 +35,7 @@ struct GarageDetailView: View {
                                     ZStack {
                                         Color.gray.opacity(0.2)
                                         Image(systemName: "photo.fill")
-                                            .font(.system(size: 80))
+                                            .appFont(size: 80)
                                             .foregroundColor(.gray.opacity(0.5))
                                     }
                                 @unknown default:
@@ -49,7 +49,7 @@ struct GarageDetailView: View {
                             ZStack {
                                 Color.gray.opacity(0.2)
                                 Image(systemName: "building.2.fill")
-                                    .font(.system(size: 80))
+                                    .appFont(size: 80)
                                     .foregroundColor(.gray.opacity(0.5))
                             }
                             .frame(height: 240)
@@ -57,7 +57,7 @@ struct GarageDetailView: View {
                         
                         Button(action: { dismiss() }) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
+                                .appFont(size: 16, weight: .semibold)
                                 .foregroundColor(.black)
                                 .padding(10)
                                 .background(Color.white)
@@ -71,15 +71,15 @@ struct GarageDetailView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack(spacing: 8) {
                                 Text(garage.name)
-                                    .font(.system(size: 22, weight: .bold))
+                                    .appFont(size: 22, weight: .bold)
                                     .foregroundColor(.black)
                                 
                                 if garage.isVerified {
                                     HStack(spacing: 4) {
                                         Image(systemName: "checkmark.circle.fill")
-                                            .font(.system(size: 14))
+                                            .appFont(size: 14)
                                         Text("VERIFIED")
-                                            .font(.system(size: 11, weight: .semibold))
+                                            .appFont(size: 11, weight: .semibold)
                                     }
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 10)
@@ -94,18 +94,18 @@ struct GarageDetailView: View {
                                 HStack(spacing: 4) {
                                     ForEach(0..<5, id: \.self) { index in
                                         Image(systemName: index < Int(garage.rating ?? 0.0) ? "star.fill" : "star")
-                                            .font(.system(size: 14))
+                                            .appFont(size: 14)
                                             .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                                     }
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(String(format: "%.1f", garage.rating ?? 0.0))
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.black)
                                     
                                     Text("(\(garage.reviewCount) Reviews)")
-                                        .font(.system(size: 12))
+                                        .appFont(size: 12)
                                         .foregroundColor(.gray)
                                 }
                             }
@@ -113,7 +113,7 @@ struct GarageDetailView: View {
                             // Description
                             if let description = garage.description {
                                 Text(description)
-                                    .font(.system(size: 13, weight: .regular))
+                                    .appFont(size: 13, weight: .regular)
                                     .foregroundColor(.gray)
                                     .lineSpacing(1.5)
                             }
@@ -129,36 +129,36 @@ struct GarageDetailView: View {
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "mappin.circle.fill")
-                                        .font(.system(size: 18))
+                                        .appFont(size: 18)
                                         .foregroundColor(.gray)
                                     
                                     if let address = garage.address {
                                         Text(address)
-                                            .font(.system(size: 13))
+                                            .appFont(size: 13)
                                             .foregroundColor(.gray)
                                     }
                                 }
                                 
                                 HStack(spacing: 12) {
                                     Image(systemName: "clock.circle.fill")
-                                        .font(.system(size: 18))
+                                        .appFont(size: 18)
                                         .foregroundColor(.gray)
                                     
                                     if let hours = garage.openHours {
                                         Text(hours)
-                                            .font(.system(size: 13))
+                                            .appFont(size: 13)
                                             .foregroundColor(.gray)
                                     }
                                 }
                                 
                                 HStack(spacing: 12) {
                                     Image(systemName: "phone.circle.fill")
-                                        .font(.system(size: 18))
+                                        .appFont(size: 18)
                                         .foregroundColor(.gray)
                                     
                                     if let phone = garage.phone {
                                         Text(phone)
-                                            .font(.system(size: 13))
+                                            .appFont(size: 13)
                                             .foregroundColor(.gray)
                                     }
                                 }
@@ -174,10 +174,10 @@ struct GarageDetailView: View {
                             }) {
                                 HStack(spacing: 8) {
                                     Image(systemName: "location.fill")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
 
                                     Text("GET DIRECTIONS")
-                                        .font(.system(size: 13, weight: .semibold))
+                                        .appFont(size: 13, weight: .semibold)
                                 }
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -194,10 +194,10 @@ struct GarageDetailView: View {
                                 }) {
                                     HStack(spacing: 8) {
                                         Image(systemName: "phone.fill")
-                                            .font(.system(size: 14, weight: .semibold))
+                                            .appFont(size: 14, weight: .semibold)
                                         
                                         Text("CONTACT")
-                                            .font(.system(size: 13, weight: .semibold))
+                                            .appFont(size: 13, weight: .semibold)
                                     }
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
@@ -209,10 +209,10 @@ struct GarageDetailView: View {
                                 NavigationLink(destination: WriteReviewView(selectedGarage: garage.name)) {
                                     HStack(spacing: 8) {
                                         Image(systemName: "pencil")
-                                            .font(.system(size: 14, weight: .semibold))
+                                            .appFont(size: 14, weight: .semibold)
                                         
                                         Text("REVIEW")
-                                            .font(.system(size: 13, weight: .semibold))
+                                            .appFont(size: 13, weight: .semibold)
                                     }
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
@@ -237,11 +237,11 @@ struct GarageDetailView: View {
                                     ForEach(specializations, id: \.self) { spec in
                                         HStack(spacing: 8) {
                                             Image(systemName: "checkmark.circle.fill")
-                                                .font(.system(size: 14))
+                                                .appFont(size: 14)
                                                 .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                                             
                                             Text(spec)
-                                                .font(.system(size: 13))
+                                                .appFont(size: 13)
                                                 .foregroundColor(.gray)
                                         }
                                     }
@@ -260,7 +260,7 @@ struct GarageDetailView: View {
                                 
                                 Button(action: {}) {
                                     Text("SEE ALL")
-                                        .font(.system(size: 11, weight: .semibold))
+                                        .appFont(size: 11, weight: .semibold)
                                         .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                                 }
                             }
@@ -291,7 +291,7 @@ struct SectionHeader: View {
     
     var body: some View {
         Text(title)
-            .font(.system(size: 14, weight: .semibold))
+            .appFont(size: 14, weight: .semibold)
             .foregroundColor(.black)
     }
 }
@@ -310,17 +310,17 @@ struct ReviewItemView: View {
                         .frame(width: 40, height: 40)
                     
                     Text(review.avatarInitials)
-                        .font(.system(size: 12, weight: .semibold))
+                        .appFont(size: 12, weight: .semibold)
                         .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(review.authorName)
-                        .font(.system(size: 13, weight: .semibold))
+                        .appFont(size: 13, weight: .semibold)
                         .foregroundColor(.black)
                     
                     Text(review.date)
-                        .font(.system(size: 11))
+                        .appFont(size: 11)
                         .foregroundColor(.gray)
                 }
                 
@@ -330,14 +330,14 @@ struct ReviewItemView: View {
                 HStack(spacing: 2) {
                     ForEach(0..<5, id: \.self) { index in
                         Image(systemName: index < Int(review.rating) ? "star.fill" : "star")
-                            .font(.system(size: 10))
+                            .appFont(size: 10)
                             .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                     }
                 }
             }
             
             Text(review.reviewText)
-                .font(.system(size: 12, weight: .regular))
+                .appFont(size: 12, weight: .regular)
                 .foregroundColor(.gray)
                 .lineSpacing(1.2)
         }

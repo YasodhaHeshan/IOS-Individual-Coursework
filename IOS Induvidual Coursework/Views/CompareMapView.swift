@@ -15,10 +15,10 @@ struct CompareMapView: View {
                             Annotation(garage.name, coordinate: loc.coordinate) {
                                 VStack(spacing: 4) {
                                     Image(systemName: "mappin.circle.fill")
-                                        .font(.system(size: 24))
+                                        .appFont(size: 24)
                                         .foregroundColor(.orange)
                                     Text(garage.name)
-                                        .font(.system(size: 10))
+                                        .appFont(size: 10)
                                         .foregroundColor(.black)
                                 }
                             }
@@ -42,7 +42,7 @@ struct CompareMapView: View {
                 HStack {
                     Button(action: { dismiss() }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
+                            .appFont(size: 16, weight: .semibold)
                             .foregroundColor(.black)
                             .padding(10)
                             .background(Color.white)

@@ -28,9 +28,9 @@ struct CompareGaragesView: View {
                         Button(action: { presentationMode.wrappedValue.dismiss() }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                 Text("Compare Garages")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                             }
                             .foregroundColor(.black)
                         }
@@ -43,13 +43,13 @@ struct CompareGaragesView: View {
                             }
                         }) {
                             Image(systemName: "magnifyingglass")
-                                .font(.system(size: 16, weight: .semibold))
+                                .appFont(size: 16, weight: .semibold)
                                 .foregroundColor(.black)
                         }
                         
                         Button(action: {}) {
                             Image(systemName: "ellipsis")
-                                .font(.system(size: 16, weight: .semibold))
+                                .appFont(size: 16, weight: .semibold)
                                 .foregroundColor(.black)
                         }
                     }
@@ -64,7 +64,7 @@ struct CompareGaragesView: View {
                                     HStack(alignment: .top, spacing: 12) {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(garage.name)
-                                                .font(.system(size: 16, weight: .semibold))
+                                                .appFont(size: 16, weight: .semibold)
                                                 .foregroundColor(.black)
                                         }
                                         
@@ -73,16 +73,16 @@ struct CompareGaragesView: View {
                                         VStack(alignment: .trailing, spacing: 2) {
                                             HStack(spacing: 2) {
                                                 Image(systemName: "star.fill")
-                                                    .font(.system(size: 12))
+                                                    .appFont(size: 12)
                                                     .foregroundColor(.orange)
 
                                                 if let rating = garage.rating {
                                                     Text(String(format: "%.1f", rating))
-                                                        .font(.system(size: 12, weight: .semibold))
+                                                        .appFont(size: 12, weight: .semibold)
                                                         .foregroundColor(.black)
                                                 } else {
                                                     Text("–")
-                                                        .font(.system(size: 12, weight: .semibold))
+                                                        .appFont(size: 12, weight: .semibold)
                                                         .foregroundColor(.black)
                                                 }
                                             }
@@ -92,38 +92,38 @@ struct CompareGaragesView: View {
                                     // Distance
                                     HStack(spacing: 6) {
                                         Image(systemName: "location.fill")
-                                            .font(.system(size: 11))
+                                            .appFont(size: 11)
                                             .foregroundColor(.gray)
                                         
                                         Text(distanceText(for: garage))
-                                            .font(.system(size: 11, weight: .regular))
+                                            .appFont(size: 11, weight: .regular)
                                             .foregroundColor(.gray)
                                     }
                                     
                                     // Price
                                     Text(garage.priceRange)
-                                        .font(.system(size: 24, weight: .bold))
+                                        .appFont(size: 24, weight: .bold)
                                         .foregroundColor(.black)
                                     
                                     // Hours and Category
                                     HStack(spacing: 12) {
                                         HStack(spacing: 4) {
                                             Image(systemName: "clock")
-                                                .font(.system(size: 10))
+                                                .appFont(size: 10)
                                                 .foregroundColor(.orange)
 
                                             Text(garage.openHours ?? "Hours unavailable")
-                                                .font(.system(size: 11, weight: .regular))
+                                                .appFont(size: 11, weight: .regular)
                                                 .foregroundColor(.gray)
                                         }
 
                                         HStack(spacing: 4) {
                                             Image(systemName: "wrench.and.screwdriver")
-                                                .font(.system(size: 10))
+                                                .appFont(size: 10)
                                                 .foregroundColor(.gray)
 
                                             Text(garage.category)
-                                                .font(.system(size: 11, weight: .regular))
+                                                .appFont(size: 11, weight: .regular)
                                                 .foregroundColor(.gray)
                                         }
 
@@ -136,7 +136,7 @@ struct CompareGaragesView: View {
                                             selectedGarageForMap = garage
                                         }) {
                                             Text("VIEW MAP")
-                                                .font(.system(size: 12, weight: .semibold))
+                                                .appFont(size: 12, weight: .semibold)
                                                 .foregroundColor(.orange)
                                                 .frame(maxWidth: .infinity)
                                                 .frame(height: 40)
@@ -154,7 +154,7 @@ struct CompareGaragesView: View {
                                             }
                                         }) {
                                             Text("CONTACT")
-                                                .font(.system(size: 12, weight: .semibold))
+                                                .appFont(size: 12, weight: .semibold)
                                                 .foregroundColor(.white)
                                                 .frame(maxWidth: .infinity)
                                                 .frame(height: 40)
@@ -180,10 +180,10 @@ struct CompareGaragesView: View {
                         Button(action: { showMapView.toggle() }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "map.fill")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                                 
                                 Text("SHOW MAP VIEW")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)

@@ -114,7 +114,7 @@ struct SignUpView: View {
     private var header: some View {
         VStack(spacing: 8) {
             Text("Create Account")
-                .font(.system(size: 36, weight: .heavy, design: .rounded))
+                .appFont(size: 36, weight: .heavy, design: .rounded)
                 .multilineTextAlignment(.center)
 
             Text("Join the network of transparency in vehicle repairs across Sri Lanka.")

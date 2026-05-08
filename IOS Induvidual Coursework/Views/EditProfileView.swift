@@ -26,9 +26,9 @@ struct EditProfileView: View {
                         Button(action: { presentationMode.wrappedValue.dismiss() }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                 Text("Edit Profile")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                             }
                             .foregroundColor(.black)
                         }
@@ -54,14 +54,14 @@ struct EditProfileView: View {
                                             .frame(width: 100, height: 100)
 
                                         Text(getInitials(editedFullName))
-                                            .font(.system(size: 32, weight: .bold))
+                                            .appFont(size: 32, weight: .bold)
                                             .foregroundColor(.white)
                                     }
                                 }
 
                                 PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                                     Text("Change Photo")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.orange)
                                 }
                             }
@@ -73,11 +73,11 @@ struct EditProfileView: View {
                                 // Full Name
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Full Name")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.gray)
                                     
                                     TextField("Enter your full name", text: $editedFullName)
-                                        .font(.system(size: 16, weight: .regular))
+                                        .appFont(size: 16, weight: .regular)
                                         .padding(12)
                                         .background(Color.white)
                                         .cornerRadius(10)
@@ -90,11 +90,11 @@ struct EditProfileView: View {
                                 // Email (Read-only)
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Email")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.gray)
                                     
                                     Text(viewModel.email)
-                                        .font(.system(size: 16, weight: .regular))
+                                        .appFont(size: 16, weight: .regular)
                                         .foregroundColor(.gray)
                                         .padding(12)
                                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -105,11 +105,11 @@ struct EditProfileView: View {
                                 // Phone
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Phone Number")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.gray)
                                     
                                     TextField("Enter your phone number", text: $editedPhone)
-                                        .font(.system(size: 16, weight: .regular))
+                                        .appFont(size: 16, weight: .regular)
                                         .keyboardType(.phonePad)
                                         .padding(12)
                                         .background(Color.white)
@@ -123,11 +123,11 @@ struct EditProfileView: View {
                                 // Preferred Location
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Preferred Location")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.gray)
                                     
                                     TextField("e.g., Colombo, Western Province", text: $editedLocation)
-                                        .font(.system(size: 16, weight: .regular))
+                                        .appFont(size: 16, weight: .regular)
                                         .padding(12)
                                         .background(Color.white)
                                         .cornerRadius(10)
@@ -142,7 +142,7 @@ struct EditProfileView: View {
                             // Error/Success Messages
                             if let errorMessage = viewModel.errorMessage {
                                 Text(errorMessage)
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .foregroundColor(.red)
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 12)
@@ -152,7 +152,7 @@ struct EditProfileView: View {
                             }
                             if let formError {
                                 Text(formError)
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .foregroundColor(.red)
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 12)
@@ -163,7 +163,7 @@ struct EditProfileView: View {
                             
                             if let successMessage = viewModel.successMessage {
                                 Text(successMessage)
-                                    .font(.system(size: 14, weight: .regular))
+                                    .appFont(size: 14, weight: .regular)
                                     .foregroundColor(.green)
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 12)
@@ -201,7 +201,7 @@ struct EditProfileView: View {
                                     .padding(.vertical, 14)
                             } else {
                                 Text("Save Changes")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 14)
                                     .foregroundColor(.white)

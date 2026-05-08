@@ -38,12 +38,12 @@ struct GaragesView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Garages")
-                                .font(.system(size: 18, weight: .semibold))
+                                .appFont(size: 18, weight: .semibold)
                                 .foregroundColor(.black)
                         }
                         Spacer()
                         Image(systemName: "line.3.horizontal.decrease.circle")
-                            .font(.system(size: 20))
+                            .appFont(size: 20)
                             .foregroundColor(.black)
                     }
                     .padding(.horizontal, 20)
@@ -53,11 +53,11 @@ struct GaragesView: View {
                     HStack(spacing: 8) {
                         HStack(spacing: 8) {
                             Image(systemName: "magnifyingglass")
-                                .font(.system(size: 14, weight: .semibold))
+                                .appFont(size: 14, weight: .semibold)
                                 .foregroundColor(.gray)
                             
                             TextField("Search", text: $searchText)
-                                .font(.system(size: 14))
+                                .appFont(size: 14)
                                 .tint(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                         }
                         .padding(.horizontal, 12)
@@ -66,7 +66,7 @@ struct GaragesView: View {
                         .cornerRadius(8)
                         
                         Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 16, weight: .semibold))
+                            .appFont(size: 16, weight: .semibold)
                             .foregroundColor(.black)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
@@ -91,10 +91,10 @@ struct GaragesView: View {
                         Button(action: {}) {
                             HStack(spacing: 4) {
                                 Text("FILTER")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.white)
                                 Image(systemName: "line.3.horizontal.decrease")
-                                    .font(.system(size: 10, weight: .semibold))
+                                    .appFont(size: 10, weight: .semibold)
                                     .foregroundColor(.white)
                             }
                             .padding(.horizontal, 12)
@@ -112,11 +112,11 @@ struct GaragesView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Text("RESULTS")
-                                .font(.system(size: 11, weight: .semibold))
+                                .appFont(size: 11, weight: .semibold)
                                 .foregroundColor(.gray)
                             
                             Text(selectedTab == "topRated" ? "Top Rated Experts" : "Nearby Experts")
-                                .font(.system(size: 16, weight: .semibold))
+                                .appFont(size: 16, weight: .semibold)
                                 .foregroundColor(.black)
                             
                             Spacer()
@@ -129,17 +129,17 @@ struct GaragesView: View {
                         } else if let errorMessage = garageService.errorMessage {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Failed to load garages")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                                     .foregroundColor(.red)
                                 Text(errorMessage)
-                                    .font(.system(size: 12, weight: .regular))
+                                    .appFont(size: 12, weight: .regular)
                                     .foregroundColor(.gray)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 8)
                         } else if displayedGarages.isEmpty {
                             Text("No garages found")
-                                .font(.system(size: 13, weight: .regular))
+                                .appFont(size: 13, weight: .regular)
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.top, 8)
@@ -184,7 +184,7 @@ struct TabButton: View {
         Button(action: action) {
             VStack(spacing: 0) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .appFont(size: 14, weight: .semibold)
                     .foregroundColor(isSelected ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
                 
                 if isSelected {
@@ -223,7 +223,7 @@ struct GarageListItemView: View {
                         ZStack {
                             Color.gray.opacity(0.2)
                             Image(systemName: "photo.fill")
-                                .font(.system(size: 40))
+                                .appFont(size: 40)
                                 .foregroundColor(.gray.opacity(0.5))
                         }
                     @unknown default:
@@ -239,7 +239,7 @@ struct GarageListItemView: View {
                 ZStack {
                     Color.gray.opacity(0.2)
                     Image(systemName: "building.2.fill")
-                        .font(.system(size: 40))
+                        .appFont(size: 40)
                         .foregroundColor(.gray.opacity(0.5))
                 }
                 .frame(height: 180)
@@ -249,17 +249,17 @@ struct GarageListItemView: View {
             VStack(alignment: .leading, spacing: 8) {
                 // Name
                 Text(garage.name)
-                    .font(.system(size: 16, weight: .semibold))
+                    .appFont(size: 16, weight: .semibold)
                     .foregroundColor(.black)
                 
                 // Location
                 HStack(spacing: 4) {
                     Image(systemName: "mappin.circle.fill")
-                        .font(.system(size: 12))
+                        .appFont(size: 12)
                         .foregroundColor(.gray)
                     
                     Text(garage.location)
-                        .font(.system(size: 12, weight: .regular))
+                        .appFont(size: 12, weight: .regular)
                         .foregroundColor(.gray)
                 }
                 
@@ -267,20 +267,20 @@ struct GarageListItemView: View {
                 HStack(spacing: 16) {
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill")
-                            .font(.system(size: 12))
+                            .appFont(size: 12)
                             .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                         
                         Text(String(format: "%.1f", garage.rating ?? 0.0))
-                            .font(.system(size: 12, weight: .semibold))
+                            .appFont(size: 12, weight: .semibold)
                             .foregroundColor(.black)
                         
                         Text("(\(garage.reviewCount ?? 0))")
-                            .font(.system(size: 11))
+                            .appFont(size: 11)
                             .foregroundColor(.gray)
                     }
                     
                     Text(garage.priceRange)
-                        .font(.system(size: 12, weight: .semibold))
+                        .appFont(size: 12, weight: .semibold)
                         .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                 }
                 
@@ -288,7 +288,7 @@ struct GarageListItemView: View {
                 HStack(spacing: 8) {
                     NavigationLink(destination: GarageDetailView(garage: garage)) {
                         Text("View Details")
-                            .font(.system(size: 13, weight: .semibold))
+                            .appFont(size: 13, weight: .semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
@@ -298,7 +298,7 @@ struct GarageListItemView: View {
                     
                     Button(action: {}) {
                         Text("Contact")
-                            .font(.system(size: 13, weight: .semibold))
+                            .appFont(size: 13, weight: .semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)

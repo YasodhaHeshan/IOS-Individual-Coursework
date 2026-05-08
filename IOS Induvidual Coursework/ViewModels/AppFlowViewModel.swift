@@ -14,8 +14,9 @@ final class AppFlowViewModel: ObservableObject {
             .sink { [weak self] isAuthenticated in
                 guard let self = self else { return }
                 if isAuthenticated {
-                    // If authenticated, go to home unless onboarding is explicitly required
-                    if self.currentScreen == .splash || self.currentScreen == .login || self.currentScreen == .signUp {
+                    // Only auto-navigate to home when restoring a session from splash.
+                    // Login/SignUp screens use their own callbacks so the user sees onboarding.
+                    if self.currentScreen == .splash {
                         self.currentScreen = .home
                     }
                 } else {

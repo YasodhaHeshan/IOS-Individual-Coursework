@@ -48,19 +48,19 @@ struct HomeView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("RepairCost LK")
-                                .font(.system(size: 14, weight: .semibold))
+                                .appFont(size: 14, weight: .semibold)
                                 .foregroundColor(.gray)
                         }
                         Spacer()
                         NavigationLink(destination: NotificationsView()) {
                             ZStack(alignment: .topTrailing) {
                                 Image(systemName: "bell")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                     .foregroundColor(.black)
 
                                 if notificationService.unreadCount > 0 {
                                     Text("\(min(notificationService.unreadCount, 9))")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .appFont(size: 10, weight: .bold)
                                         .foregroundColor(.white)
                                         .padding(4)
                                         .background(Color.orange)
@@ -78,11 +78,11 @@ struct HomeView: View {
                             // MARK: - Hero Section
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("FIX IT.")
-                                    .font(.system(size: 40, weight: .bold))
+                                    .appFont(size: 40, weight: .bold)
                                     .foregroundColor(.black)
                             
                             Text("ESTIMATE REPAIR COSTS IN SECONDS.")
-                                .font(.system(size: 13, weight: .regular))
+                                .appFont(size: 13, weight: .regular)
                                 .foregroundColor(.gray)
                                 .lineLimit(3)
                         }
@@ -98,7 +98,7 @@ struct HomeView: View {
                                     selectedIssue = ""
                                 }) {
                                     Text("Type issue")
-                                        .font(.system(size: 15, weight: .semibold))
+                                        .appFont(size: 15, weight: .semibold)
                                         .foregroundColor(searchTab == .typeIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
@@ -118,7 +118,7 @@ struct HomeView: View {
                                     issueInput = ""
                                 }) {
                                     Text("Select issue")
-                                        .font(.system(size: 15, weight: .semibold))
+                                        .appFont(size: 15, weight: .semibold)
                                         .foregroundColor(searchTab == .selectIssue ? .init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)) : .gray)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
@@ -141,10 +141,10 @@ struct HomeView: View {
                                 HStack(spacing: 12) {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Type Issue")
-                                            .font(.system(size: 11, weight: .semibold))
+                                            .appFont(size: 11, weight: .semibold)
                                             .foregroundColor(.gray)
                                         TextField("Enter issue", text: $issueInput)
-                                            .font(.system(size: 14, weight: .regular))
+                                            .appFont(size: 14, weight: .regular)
                                     }
                                     Spacer()
                                 }
@@ -159,18 +159,18 @@ struct HomeView: View {
                                         }) {
                                             HStack {
                                                 Image(systemName: getCategoryIcon(category))
-                                                    .font(.system(size: 16, weight: .semibold))
+                                                    .appFont(size: 16, weight: .semibold)
                                                     .foregroundColor(.orange)
                                                 
                                                 Text(category)
-                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .appFont(size: 14, weight: .semibold)
                                                     .foregroundColor(.black)
                                                 
                                                 Spacer()
                                                 
                                                 if selectedIssue == category {
                                                     Image(systemName: "checkmark")
-                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .appFont(size: 14, weight: .semibold)
                                                         .foregroundColor(.orange)
                                                 }
                                             }
@@ -193,17 +193,17 @@ struct HomeView: View {
                             NavigationLink(destination: SelectVehicleView()) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "doc.richtext")
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .appFont(size: 18, weight: .semibold)
                                         .foregroundColor(.white)
                                     
                                     Text("Estimate Cost")
-                                        .font(.system(size: 16, weight: .semibold))
+                                        .appFont(size: 16, weight: .semibold)
                                         .foregroundColor(.white)
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.right")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .appFont(size: 14, weight: .semibold)
                                         .foregroundColor(.white)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -219,10 +219,10 @@ struct HomeView: View {
                                 }) {
                                     VStack(spacing: 8) {
                                         Image(systemName: "building.2")
-                                            .font(.system(size: 20, weight: .semibold))
+                                            .appFont(size: 20, weight: .semibold)
                                             .foregroundColor(.orange)
                                         Text("Find Garage")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                             .foregroundColor(.black)
                                     }
                                     .frame(maxWidth: .infinity)
@@ -236,10 +236,10 @@ struct HomeView: View {
                                 }) {
                                     VStack(spacing: 8) {
                                         Image(systemName: "gearshape")
-                                            .font(.system(size: 20, weight: .semibold))
+                                            .appFont(size: 20, weight: .semibold)
                                             .foregroundColor(.orange)
                                         Text("Spare Parts")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                             .foregroundColor(.black)
                                     }
                                     .frame(maxWidth: .infinity)
@@ -255,7 +255,7 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 Text("RECENT SEARCHES")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                 
                                 Spacer()
@@ -264,7 +264,7 @@ struct HomeView: View {
                                     showRecentSearches = false
                                 }) {
                                     Text("CLEAR ALL")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.orange)
                                 }
                             }
@@ -274,22 +274,22 @@ struct HomeView: View {
                                     ForEach(recentSearches, id: \.0) { search, details in
                                         HStack(spacing: 12) {
                                             Image(systemName: "clock")
-                                                .font(.system(size: 14, weight: .semibold))
+                                                .appFont(size: 14, weight: .semibold)
                                                 .foregroundColor(.gray)
                                             
                                             VStack(alignment: .leading, spacing: 2) {
                                                 Text(search)
-                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .appFont(size: 14, weight: .semibold)
                                                     .foregroundColor(.black)
                                                 Text(details)
-                                                    .font(.system(size: 11, weight: .regular))
+                                                    .appFont(size: 11, weight: .regular)
                                                     .foregroundColor(.gray)
                                             }
                                             
                                             Spacer()
                                             
                                             Image(systemName: "chevron.right")
-                                                .font(.system(size: 12, weight: .semibold))
+                                                .appFont(size: 12, weight: .semibold)
                                                 .foregroundColor(.gray)
                                         }
                                         .padding(12)
@@ -299,7 +299,7 @@ struct HomeView: View {
                                 }
                             } else {
                                 Text("Recent searches cleared")
-                                    .font(.system(size: 12, weight: .regular))
+                                    .appFont(size: 12, weight: .regular)
                                     .foregroundColor(.gray)
                                     .padding(12)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -318,11 +318,11 @@ struct HomeView: View {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("CERTIFIED GARAGE PROGRAM")
-                                        .font(.system(size: 12, weight: .bold))
+                                        .appFont(size: 12, weight: .bold)
                                         .foregroundColor(.white)
                                     
                                     Text("Verified Expert Mechanical Services for reliable and durable repairs!")
-                                        .font(.system(size: 12, weight: .regular))
+                                        .appFont(size: 12, weight: .regular)
                                         .foregroundColor(.white)
                                         .lineLimit(3)
                                 }
@@ -335,10 +335,10 @@ struct HomeView: View {
                             }) {
                                 HStack(spacing: 4) {
                                     Text("LEARN MORE")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.white)
                                     Image(systemName: "chevron.right")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .appFont(size: 10, weight: .semibold)
                                         .foregroundColor(.white)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)

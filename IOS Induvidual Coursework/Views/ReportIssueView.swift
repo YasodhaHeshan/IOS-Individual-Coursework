@@ -70,9 +70,9 @@ struct ReportIssueView: View {
                         Button(action: { presentationMode.wrappedValue.dismiss() }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .appFont(size: 16, weight: .semibold)
                                 Text("RepairCost LK")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .appFont(size: 14, weight: .semibold)
                             }
                             .foregroundColor(.black)
                         }
@@ -87,21 +87,21 @@ struct ReportIssueView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 8) {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .font(.system(size: 16))
+                                        .appFont(size: 16)
                                         .foregroundColor(.orange)
                                     
                                     Text("Report Issue")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .appFont(size: 12, weight: .semibold)
                                         .foregroundColor(.gray)
                                 }
                                 
                                 HStack(alignment: .bottom, spacing: 8) {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("LKR \(estimate.totalCost)")
-                                            .font(.system(size: 36, weight: .bold))
+                                            .appFont(size: 36, weight: .bold)
                                         
                                         Text(estimate.priceLabel)
-                                            .font(.system(size: 12, weight: .regular))
+                                            .appFont(size: 12, weight: .regular)
                                             .foregroundColor(.gray)
                                     }
                                     Spacer()
@@ -118,21 +118,21 @@ struct ReportIssueView: View {
                                 HStack(spacing: 12) {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Parts")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                             .foregroundColor(.gray)
                                         
                                         Text(estimate.partsName)
-                                            .font(.system(size: 14, weight: .regular))
+                                            .appFont(size: 14, weight: .regular)
                                     }
                                     
                                     Spacer()
                                     
                                     VStack(alignment: .trailing, spacing: 2) {
                                         Text(estimate.partsCost)
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                         
                                         Text("Per Unit")
-                                            .font(.system(size: 11, weight: .regular))
+                                            .appFont(size: 11, weight: .regular)
                                             .foregroundColor(.gray)
                                     }
                                 }
@@ -145,21 +145,21 @@ struct ReportIssueView: View {
                                 HStack(spacing: 12) {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(estimate.laborName)
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                             .foregroundColor(.gray)
                                         
                                         Text(estimate.laborHours)
-                                            .font(.system(size: 14, weight: .regular))
+                                            .appFont(size: 14, weight: .regular)
                                     }
                                     
                                     Spacer()
                                     
                                     VStack(alignment: .trailing, spacing: 2) {
                                         Text(estimate.laborCost)
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                         
                                         Text("Hourly")
-                                            .font(.system(size: 11, weight: .regular))
+                                            .appFont(size: 11, weight: .regular)
                                             .foregroundColor(.gray)
                                     }
                                 }
@@ -172,23 +172,23 @@ struct ReportIssueView: View {
                             // Analysis Summary
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("ANALYSIS SUMMARY")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 VStack(spacing: 12) {
                                     ForEach(estimate.analysisSummary, id: \.title) { point in
                                         HStack(alignment: .top, spacing: 12) {
                                             Image(systemName: "info.circle.fill")
-                                                .font(.system(size: 16))
+                                                .appFont(size: 16)
                                                 .foregroundColor(.orange)
                                                 .padding(.top, 2)
                                             
                                             VStack(alignment: .leading, spacing: 4) {
                                                 Text(point.title)
-                                                    .font(.system(size: 13, weight: .semibold))
+                                                    .appFont(size: 13, weight: .semibold)
                                                 
                                                 Text(point.description)
-                                                    .font(.system(size: 12, weight: .regular))
+                                                    .appFont(size: 12, weight: .regular)
                                                     .foregroundColor(.gray)
                                                     .lineLimit(3)
                                             }
@@ -206,18 +206,18 @@ struct ReportIssueView: View {
                             // Garage Comparison
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("FOR NEAREST WORK AREA SHOP LOCATION")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .appFont(size: 12, weight: .semibold)
                                     .foregroundColor(.gray)
                                 
                                 HStack(spacing: 10) {
                                     ForEach(estimate.garageComparison, id: \.name) { garage in
                                         VStack(spacing: 8) {
                                             Image(systemName: garage.icon)
-                                                .font(.system(size: 24))
+                                                .appFont(size: 24)
                                                 .foregroundColor(.orange)
                                             
                                             Text(garage.name)
-                                                .font(.system(size: 10, weight: .semibold))
+                                                .appFont(size: 10, weight: .semibold)
                                                 .lineLimit(2)
                                                 .multilineTextAlignment(.center)
                                         }
@@ -252,7 +252,7 @@ struct ReportIssueView: View {
                                 Text("Compare Garages")
                                 Image(systemName: "arrow.right")
                             }
-                            .font(.system(size: 16, weight: .semibold))
+                            .appFont(size: 16, weight: .semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
@@ -263,12 +263,12 @@ struct ReportIssueView: View {
 
                         if let requestError {
                             Text(requestError)
-                                .font(.system(size: 12, weight: .regular))
+                                .appFont(size: 12, weight: .regular)
                                 .foregroundColor(.red)
                         }
                         
                         Text("By continuing, you agree to our terms of service")
-                            .font(.system(size: 11, weight: .regular))
+                            .appFont(size: 11, weight: .regular)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }

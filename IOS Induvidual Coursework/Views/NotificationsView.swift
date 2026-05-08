@@ -44,13 +44,13 @@ struct NotificationsView: View {
                     Button(action: { dismiss() }) {
                         HStack(spacing: 8) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
+                                .appFont(size: 16, weight: .semibold)
                                 .foregroundColor(.black)
                         }
                     }
                     
                     Text("Notifications")
-                        .font(.system(size: 18, weight: .semibold))
+                        .appFont(size: 18, weight: .semibold)
                         .foregroundColor(.black)
                     
                     Spacer()
@@ -59,7 +59,7 @@ struct NotificationsView: View {
                         notificationService.clearAll()
                     }) {
                         Image(systemName: "ellipsis")
-                            .font(.system(size: 16, weight: .semibold))
+                            .appFont(size: 16, weight: .semibold)
                             .foregroundColor(.black)
                     }
                 }
@@ -72,7 +72,7 @@ struct NotificationsView: View {
                         if !todayNotifications.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("TODAY")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                     .padding(.horizontal, 20)
                                 
@@ -91,7 +91,7 @@ struct NotificationsView: View {
                         if !earlierNotifications.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("EARLIER")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .appFont(size: 12, weight: .bold)
                                     .foregroundColor(.gray)
                                     .padding(.horizontal, 20)
                                 
@@ -112,20 +112,20 @@ struct NotificationsView: View {
                                 VStack(alignment: .leading, spacing: 8) {
                                     HStack(spacing: 4) {
                                         Image(systemName: "wrench.and.screwdriver.fill")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .appFont(size: 12, weight: .semibold)
                                             .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                                         
                                         Text("PARTNER SPOTLIGHT")
-                                            .font(.system(size: 10, weight: .bold))
+                                            .appFont(size: 10, weight: .bold)
                                             .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
                                     }
                                     
                                     Text("Upgrade Your Engine Care")
-                                        .font(.system(size: 18, weight: .bold))
+                                        .appFont(size: 18, weight: .bold)
                                         .foregroundColor(.white)
                                     
                                     Text("Get premium synthetic oil upgrades and ceramic coating protection from our elite partners.")
-                                        .font(.system(size: 12, weight: .regular))
+                                        .appFont(size: 12, weight: .regular)
                                         .foregroundColor(.white.opacity(0.8))
                                         .lineSpacing(1.2)
                                 }
@@ -133,7 +133,7 @@ struct NotificationsView: View {
                                 Spacer()
                                 
                                 Image(systemName: "sparkles")
-                                    .font(.system(size: 40))
+                                    .appFont(size: 40)
                                     .foregroundColor(.white.opacity(0.3))
                             }
                             
@@ -142,11 +142,11 @@ struct NotificationsView: View {
                             }) {
                                 HStack(spacing: 4) {
                                     Text("Explore Partners")
-                                        .font(.system(size: 13, weight: .semibold))
+                                        .appFont(size: 13, weight: .semibold)
                                         .foregroundColor(.black)
                                     
                                     Image(systemName: "arrow.right")
-                                        .font(.system(size: 11, weight: .semibold))
+                                        .appFont(size: 11, weight: .semibold)
                                         .foregroundColor(.black)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -257,7 +257,7 @@ struct NotificationItemView: View {
                     .frame(width: 44, height: 44)
                 
                 Image(systemName: getIconName())
-                    .font(.system(size: 18, weight: .semibold))
+                    .appFont(size: 18, weight: .semibold)
                     .foregroundColor(getBackgroundColor())
             }
             
@@ -265,18 +265,18 @@ struct NotificationItemView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(notification.title)
-                        .font(.system(size: 14, weight: .semibold))
+                        .appFont(size: 14, weight: .semibold)
                         .foregroundColor(.black)
                     
                     Spacer()
                     
                     Text(notification.timestamp)
-                        .font(.system(size: 12, weight: .regular))
+                        .appFont(size: 12, weight: .regular)
                         .foregroundColor(.gray)
                 }
                 
                 Text(notification.description)
-                    .font(.system(size: 12, weight: .regular))
+                    .appFont(size: 12, weight: .regular)
                     .foregroundColor(.gray)
                     .lineSpacing(1.2)
                 
@@ -286,7 +286,7 @@ struct NotificationItemView: View {
                         onTap()
                     }) {
                         Text(actionButtonTitle)
-                            .font(.system(size: 12, weight: .semibold))
+                            .appFont(size: 12, weight: .semibold)
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)

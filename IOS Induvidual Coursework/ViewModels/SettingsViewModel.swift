@@ -10,6 +10,10 @@ final class SettingsViewModel: ObservableObject {
     @Published var notificationsEnabled = false
     @Published var language = "English"
     @Published var measurementUnit = "Metric"
+    @Published var textSize = "Default"
+    @Published var boldTextEnabled = false
+    @Published var reduceMotionEnabled = false
+    @Published var hapticFeedbackEnabled = true
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var successMessage: String?
@@ -33,6 +37,10 @@ final class SettingsViewModel: ObservableObject {
         self.notificationsEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
         self.language = UserDefaults.standard.string(forKey: "language") ?? "English"
         self.measurementUnit = UserDefaults.standard.string(forKey: "measurementUnit") ?? "Metric"
+        self.textSize = UserDefaults.standard.string(forKey: "textSize") ?? "Default"
+        self.boldTextEnabled = UserDefaults.standard.bool(forKey: "boldTextEnabled")
+        self.reduceMotionEnabled = UserDefaults.standard.bool(forKey: "reduceMotionEnabled")
+        self.hapticFeedbackEnabled = UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true
     }
     
     func updateProfile(fullName: String, phone: String, location: String) async {
@@ -112,7 +120,7 @@ final class SettingsViewModel: ObservableObject {
     func saveMeasurementUnitPreference(_ unit: String) {
         measurementUnit = unit
         UserDefaults.standard.set(unit, forKey: "measurementUnit")
-        
+
         Task {
             guard let userId = authService.currentUser?.id else { return }
             try? await supabaseService.updateUserPreferences(
@@ -122,5 +130,27 @@ final class SettingsViewModel: ObservableObject {
                 measurementUnit: unit
             )
         }
+    }
+
+    // MARK: - Accessibility Preferences
+
+    func saveTextSizePreference(_ size: String) {
+        textSize = size
+        AccessibilitySettings.shared.textSize = size
+    }
+
+    func saveBoldTextPreference(_ enabled: Bool) {
+        boldTextEnabled = enabled
+        AccessibilitySettings.shared.boldTextEnabled = enabled
+    }
+
+    func saveReduceMotionPreference(_ enabled: Bool) {
+        reduceMotionEnabled = enabled
+        AccessibilitySettings.shared.reduceMotionEnabled = enabled
+    }
+
+    func saveHapticFeedbackPreference(_ enabled: Bool) {
+        hapticFeedbackEnabled = enabled
+        AccessibilitySettings.shared.hapticFeedbackEnabled = enabled
     }
 }

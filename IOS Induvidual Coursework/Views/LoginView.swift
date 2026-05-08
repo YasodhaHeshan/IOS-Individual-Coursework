@@ -23,7 +23,7 @@ struct LoginView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("RepairCost LK")
-                            .font(.system(size: 36, weight: .heavy, design: .rounded))
+                            .appFont(size: 36, weight: .heavy, design: .rounded)
 
                         Text("Precision estimates for Sri Lankan motorists.")
                             .font(.subheadline)
