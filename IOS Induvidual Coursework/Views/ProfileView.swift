@@ -7,11 +7,24 @@ struct ProfileView: View {
     @StateObject private var syncService = SyncService.shared
     
     private var userName: String {
-        authService.currentUser?.email.components(separatedBy: "@").first?.capitalized ?? "Guest User"
+        authService.currentUser?.fullName
+            ?? authService.currentUser?.email.components(separatedBy: "@").first?.capitalized
+            ?? "Guest User"
     }
 
     private var userSubtitle: String {
         authService.currentUser?.email ?? "Sign in to sync your history"
+    }
+
+    private var userInitials: String {
+        let name = authService.currentUser?.fullName
+            ?? authService.currentUser?.email.components(separatedBy: "@").first
+            ?? "U"
+        let parts = name.split(separator: " ")
+        if parts.count >= 2 {
+            return (String(parts[0].prefix(1)) + String(parts[1].prefix(1))).uppercased()
+        }
+        return String(name.prefix(2)).uppercased()
     }
 
     private var estimateHistory: [(number: String, name: String, price: String, status: String)] {
@@ -36,6 +49,17 @@ struct ProfileView: View {
         ]
     }
     
+    private var profileInitialsView: some View {
+        ZStack {
+            Circle()
+                .fill(Color(UIColor(red: 0.95, green: 0.85, blue: 0.75, alpha: 1)))
+                .frame(width: 80, height: 80)
+            Text(userInitials)
+                .appFont(size: 28, weight: .bold)
+                .foregroundColor(.orange)
+        }
+    }
+
     let savedVehicles = [
         (name: "Toyota Prius", services: "3 car services"),
         (name: "Honda Hornet", services: "2 car services")
@@ -71,13 +95,23 @@ struct ProfileView: View {
                         VStack(spacing: 12) {
                             // Avatar
                             ZStack {
-                                Circle()
-                                    .fill(Color(UIColor(red: 0.95, green: 0.85, blue: 0.75, alpha: 1)))
-                                    .frame(width: 80, height: 80)
-                                
-                                Text("KP")
-                                    .appFont(size: 28, weight: .bold)
-                                    .foregroundColor(.orange)
+                                if let urlString = authService.currentUser?.profileImageURL,
+                                   let url = URL(string: urlString) {
+                                    AsyncImage(url: url) { phase in
+                                        switch phase {
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 80, height: 80)
+                                                .clipShape(Circle())
+                                        default:
+                                            profileInitialsView
+                                        }
+                                    }
+                                } else {
+                                    profileInitialsView
+                                }
                             }
                             
                             Text(userName)

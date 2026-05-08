@@ -48,14 +48,22 @@ struct EditProfileView: View {
                                             .scaledToFill()
                                             .frame(width: 100, height: 100)
                                             .clipShape(Circle())
+                                    } else if let urlString = viewModel.profileImageURL,
+                                              let url = URL(string: urlString) {
+                                        AsyncImage(url: url) { phase in
+                                            switch phase {
+                                            case .success(let image):
+                                                image
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 100, height: 100)
+                                                    .clipShape(Circle())
+                                            default:
+                                                initialsAvatar
+                                            }
+                                        }
                                     } else {
-                                        Circle()
-                                            .fill(Color(red: 0.2, green: 0.2, blue: 0.3))
-                                            .frame(width: 100, height: 100)
-
-                                        Text(getInitials(editedFullName))
-                                            .appFont(size: 32, weight: .bold)
-                                            .foregroundColor(.white)
+                                        initialsAvatar
                                     }
                                 }
 
@@ -189,7 +197,8 @@ struct EditProfileView: View {
                                 await viewModel.updateProfile(
                                     fullName: editedFullName,
                                     phone: editedPhone,
-                                    location: editedLocation
+                                    location: editedLocation,
+                                    profileImage: selectedImage
                                 )
                                 isSaving = false
                             }
@@ -226,12 +235,33 @@ struct EditProfileView: View {
                     .navigationBarBackButtonHidden(true)
         .safeAreaPadding(.bottom, TabBarLayout.bottomClearance)
         .onAppear {
-            editedFullName = viewModel.fullName
-            editedPhone = viewModel.phone
-            editedLocation = viewModel.preferredLocation
+            // Populate fields immediately from cached data
+            syncFieldsFromViewModel()
+        }
+        .task {
+            // Then refresh from the server in the background
+            await viewModel.fetchProfileFromServer()
+            syncFieldsFromViewModel()
         }
     }
+
+    private func syncFieldsFromViewModel() {
+        editedFullName = viewModel.fullName
+        editedPhone = viewModel.phone
+        editedLocation = viewModel.preferredLocation
+    }
     
+
+    private var initialsAvatar: some View {
+        ZStack {
+            Circle()
+                .fill(Color(red: 0.2, green: 0.2, blue: 0.3))
+                .frame(width: 100, height: 100)
+            Text(getInitials(editedFullName))
+                .appFont(size: 32, weight: .bold)
+                .foregroundColor(.white)
+        }
+    }
 
     private var isFormValid: Bool {
         !editedFullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&

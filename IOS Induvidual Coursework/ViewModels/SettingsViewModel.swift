@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
@@ -7,6 +8,7 @@ final class SettingsViewModel: ObservableObject {
     @Published var email = ""
     @Published var phone = ""
     @Published var preferredLocation = ""
+    @Published var profileImageURL: String?
     @Published var notificationsEnabled = false
     @Published var language = "English"
     @Published var measurementUnit = "Metric"
@@ -32,6 +34,7 @@ final class SettingsViewModel: ObservableObject {
             self.email = user.email
             self.phone = user.phone ?? ""
             self.preferredLocation = user.preferredLocation ?? ""
+            self.profileImageURL = user.profileImageURL
         }
         
         // Load saved preferences from UserDefaults
@@ -45,42 +48,73 @@ final class SettingsViewModel: ObservableObject {
         self.darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
     }
     
-    func updateProfile(fullName: String, phone: String, location: String) async {
+    func fetchProfileFromServer() async {
+        guard let userId = authService.currentUser?.id else { return }
+        do {
+            let user = try await supabaseService.getUserProfile(userId: userId)
+            authService.currentUser = user
+            self.fullName = user.fullName ?? ""
+            self.email = user.email
+            self.phone = user.phone ?? ""
+            self.preferredLocation = user.preferredLocation ?? ""
+            self.profileImageURL = user.profileImageURL
+        } catch {
+            // Silently fall back to cached data on network failure
+        }
+    }
+
+    func updateProfile(fullName: String, phone: String, location: String, profileImage: UIImage? = nil) async {
         guard let userId = authService.currentUser?.id else {
             errorMessage = "User not authenticated"
             return
         }
-        
+
         isLoading = true
         errorMessage = nil
         successMessage = nil
-        
+
+        // Upload image separately so a failure doesn't block saving text fields
+        var uploadedImageURL: String? = nil
+        var imageUploadError: String? = nil
+        if let image = profileImage {
+            do {
+                uploadedImageURL = try await supabaseService.uploadProfileImage(image, userId: userId)
+            } catch {
+                imageUploadError = "Photo could not be saved. Please check your Supabase storage bucket settings."
+            }
+        }
+
         do {
             try await supabaseService.updateUserProfile(
                 userId: userId,
                 fullName: fullName,
                 phone: phone,
-                preferredLocation: location
+                preferredLocation: location,
+                profileImageURL: uploadedImageURL
             )
-            
-            // Update local state - create a new User with updated values
+
             if var user = authService.currentUser {
                 user.fullName = fullName
                 user.phone = phone
                 user.preferredLocation = location
+                if let url = uploadedImageURL { user.profileImageURL = url }
                 authService.currentUser = user
+                authService.saveSession(user: user)
             }
-            
+
             self.fullName = fullName
             self.phone = phone
             self.preferredLocation = location
-            
+            if let url = uploadedImageURL { self.profileImageURL = url }
+
             isLoading = false
-            successMessage = "Profile updated successfully"
-            
-            // Clear success message after 2 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.successMessage = nil
+            if let imgErr = imageUploadError {
+                errorMessage = imgErr
+            } else {
+                successMessage = "Profile updated successfully"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.successMessage = nil
+                }
             }
         } catch {
             isLoading = false

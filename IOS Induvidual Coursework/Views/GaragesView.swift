@@ -201,7 +201,8 @@ struct TabButton: View {
 struct GarageListItemView: View {
     let garage: Garage
     @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.openURL) private var openURL
+
     var body: some View {
         VStack(spacing: 12) {
             // Image
@@ -296,7 +297,12 @@ struct GarageListItemView: View {
                             .cornerRadius(8)
                     }
                     
-                    Button(action: {}) {
+                    Button(action: {
+                        if let phone = garage.phone,
+                           let url = URL(string: "tel://\(phone.filter { $0.isNumber })") {
+                            openURL(url)
+                        }
+                    }) {
                         Text("Contact")
                             .appFont(size: 13, weight: .semibold)
                             .foregroundColor(.white)

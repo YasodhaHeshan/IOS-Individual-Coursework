@@ -7,6 +7,9 @@ struct GarageDetailView: View {
     @StateObject private var garageService = GarageService.shared
     let garage: Garage
     @State private var showMapView = false
+    @State private var reviews: [GarageReview] = []
+    @State private var isLoadingReviews = false
+    @State private var hasFetchedReviews = false
     
     var body: some View {
         ZStack {
@@ -255,19 +258,32 @@ struct GarageDetailView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 SectionHeader(title: "Community Reviews")
-                                
                                 Spacer()
-                                
-                                Button(action: {}) {
-                                    Text("SEE ALL")
-                                        .appFont(size: 11, weight: .semibold)
-                                        .foregroundColor(.init(UIColor(red: 0.8, green: 0.4, blue: 0, alpha: 1)))
+                                if isLoadingReviews {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
                                 }
                             }
-                            
-                            VStack(spacing: 16) {
-                                ForEach(sampleReviews) { review in
-                                    ReviewItemView(review: review)
+
+                            if hasFetchedReviews && reviews.isEmpty {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "bubble.left.and.bubble.right")
+                                        .appFont(size: 32)
+                                        .foregroundColor(.gray.opacity(0.4))
+                                    Text("No reviews yet")
+                                        .appFont(size: 14, weight: .semibold)
+                                        .foregroundColor(.gray)
+                                    Text("Be the first to share your experience.")
+                                        .appFont(size: 12)
+                                        .foregroundColor(.gray.opacity(0.7))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 24)
+                            } else {
+                                VStack(spacing: 16) {
+                                    ForEach(hasFetchedReviews ? reviews : sampleReviews) { review in
+                                        ReviewItemView(review: review)
+                                    }
                                 }
                             }
                         }
@@ -282,6 +298,16 @@ struct GarageDetailView: View {
         .sheet(isPresented: $showMapView) {
             GarageMapView(garage: garage)
         }
+        .task {
+            await loadReviews()
+        }
+    }
+
+    private func loadReviews() async {
+        isLoadingReviews = true
+        reviews = (try? await SupabaseService.shared.fetchGarageReviews(garageName: garage.name)) ?? []
+        isLoadingReviews = false
+        hasFetchedReviews = true
     }
 }
 

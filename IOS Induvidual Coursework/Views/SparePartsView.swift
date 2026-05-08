@@ -290,7 +290,7 @@ struct SparePartItemView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text("Rs. \(Int(part.price)):00")
+                Text("Rs. \(Int(part.price)).00")
                     .appFont(size: 14, weight: .bold)
                     .foregroundColor(.primary)
             }

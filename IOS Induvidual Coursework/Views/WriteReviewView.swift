@@ -256,8 +256,10 @@ struct WriteReviewView: View {
         }
 
         do {
+            let reviewerName = AuthService.shared.currentUser?.fullName ?? "Anonymous"
             try await SupabaseService.shared.createGarageReview(
                 userId: userId,
+                reviewerName: reviewerName,
                 garageName: selectedGarage,
                 rating: selectedRating,
                 reviewTitle: trimmedTitle,
