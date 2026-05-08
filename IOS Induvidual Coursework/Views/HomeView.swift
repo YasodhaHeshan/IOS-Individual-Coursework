@@ -17,23 +17,15 @@ struct HomeView: View {
         case selectIssue
     }
     
-    private var recentSearches: [(String, String)] {
-        let mappedRequests = repairRequestService.repairRequests.prefix(3).map { request in
-            let title = request.damageCategory.isEmpty ? request.description : request.damageCategory
-            let details = "\(request.vehicleMake) \(request.vehicleModel) • \(relativeDateString(from: request.createdAt))"
-            return (title, details)
-        }
-        
-        if !mappedRequests.isEmpty {
-            return Array(mappedRequests)
-        }
-        
-        return [
-            ("Brake Pad Replacement", "Honda Civic • 5 days ago"),
-            ("Engine Oil Leak", "Honda Civic • 5 days ago"),
-            ("Alternator Repair", "BMW 320i • 3 days ago")
-        ]
+    private var recentRequests: [RepairRequest] {
+        Array(repairRequestService.repairRequests.prefix(3))
     }
+
+    private let placeholderSearches: [(String, String)] = [
+        ("Brake Pad Replacement", "Honda Civic • 5 days ago"),
+        ("Engine Oil Leak", "Honda Civic • 5 days ago"),
+        ("Alternator Repair", "BMW 320i • 3 days ago")
+    ]
     
     let categories = ["Engine", "Brakes", "Transmission", "Electrical", "Suspension"]
     
@@ -271,30 +263,29 @@ struct HomeView: View {
                             
                             if showRecentSearches {
                                 VStack(spacing: 10) {
-                                    ForEach(recentSearches, id: \.0) { search, details in
-                                        HStack(spacing: 12) {
-                                            Image(systemName: "clock")
-                                                .appFont(size: 14, weight: .semibold)
-                                                .foregroundColor(.gray)
-                                            
-                                            VStack(alignment: .leading, spacing: 2) {
-                                                Text(search)
-                                                    .appFont(size: 14, weight: .semibold)
-                                                    .foregroundColor(.primary)
-                                                Text(details)
-                                                    .appFont(size: 11, weight: .regular)
-                                                    .foregroundColor(.gray)
+                                    if !recentRequests.isEmpty {
+                                        ForEach(recentRequests) { request in
+                                            NavigationLink(destination: ReportIssueView(
+                                                estimate: RepairCostEstimate(from: request),
+                                                vehicleMake: request.vehicleMake,
+                                                vehicleModel: request.vehicleModel,
+                                                vehicleYear: request.vehicleYear,
+                                                issueDescription: request.description,
+                                                damageCategory: request.damageCategory,
+                                                imageURLs: request.imageURLs,
+                                                existingRequest: request
+                                            )) {
+                                                recentSearchRow(
+                                                    title: request.damageCategory.isEmpty ? request.description : request.damageCategory,
+                                                    details: "\(request.vehicleMake) \(request.vehicleModel) • \(relativeDateString(from: request.createdAt))"
+                                                )
                                             }
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "chevron.right")
-                                                .appFont(size: 12, weight: .semibold)
-                                                .foregroundColor(.gray)
+                                            .buttonStyle(.plain)
                                         }
-                                        .padding(12)
-                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
-                                        .cornerRadius(10)
+                                    } else {
+                                        ForEach(placeholderSearches, id: \.0) { search, details in
+                                            recentSearchRow(title: search, details: details)
+                                        }
                                     }
                                 }
                             } else {
@@ -377,6 +368,33 @@ struct HomeView: View {
         }
     }
     
+    @ViewBuilder
+    private func recentSearchRow(title: String, details: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "clock")
+                .appFont(size: 14, weight: .semibold)
+                .foregroundColor(.gray)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .appFont(size: 14, weight: .semibold)
+                    .foregroundColor(.primary)
+                Text(details)
+                    .appFont(size: 11, weight: .regular)
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .appFont(size: 12, weight: .semibold)
+                .foregroundColor(.gray)
+        }
+        .padding(12)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .cornerRadius(10)
+    }
+
     private func relativeDateString(from date: Date?) -> String {
         guard let date else { return "Recently" }
         let formatter = RelativeDateTimeFormatter()

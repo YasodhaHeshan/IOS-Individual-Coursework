@@ -12,6 +12,7 @@ struct ReportIssueView: View {
     let issueDescription: String
     let damageCategory: String
     let imageURLs: [String]
+    let existingRequest: RepairRequest?
 
     @State private var isSubmittingRequest = false
     @State private var requestError: String?
@@ -19,35 +20,36 @@ struct ReportIssueView: View {
 
     init(
         estimate: RepairCostEstimate = RepairCostEstimate(
-        totalCost: "42.5K",
-        currency: "LKR",
-        priceLabel: "Repair • LKR • Tata",
-        partsName: "Brake Pads & Rotor",
-        partsCost: "LKR 28,000",
-        laborName: "Labor",
-        laborCost: "LKR 14,500",
-        laborHours: "Estimated 2-3 hours",
-        analysisSummary: [
-            RepairCostEstimate.AnalysisPoint(
-                title: "Data-Driven Analysis",
-                description: "Based on 2022 Toyota Camry regional data in Colombo. Actual prices may vary based on specific garage overhead."
-            ),
-            RepairCostEstimate.AnalysisPoint(
-                title: "Warranty Coverage",
-                description: "Includes standard 6-month warranty on parts and manufacturer warranty on parts."
-            )
-        ],
-        garageComparison: [
-            RepairCostEstimate.GarageInfo(name: "Pujith VR's Ideal Parts Outlet", icon: "building.2.fill"),
-            RepairCostEstimate.GarageInfo(name: "Specialized Autoworks Colombo", icon: "wrench.and.screwdriver.fill")
-        ]
+            totalCost: "42.5K",
+            currency: "LKR",
+            priceLabel: "Repair • LKR • Tata",
+            partsName: "Brake Pads & Rotor",
+            partsCost: "LKR 28,000",
+            laborName: "Labor",
+            laborCost: "LKR 14,500",
+            laborHours: "Estimated 2-3 hours",
+            analysisSummary: [
+                RepairCostEstimate.AnalysisPoint(
+                    title: "Data-Driven Analysis",
+                    description: "Based on 2022 Toyota Camry regional data in Colombo. Actual prices may vary based on specific garage overhead."
+                ),
+                RepairCostEstimate.AnalysisPoint(
+                    title: "Warranty Coverage",
+                    description: "Includes standard 6-month warranty on parts and manufacturer warranty on parts."
+                )
+            ],
+            garageComparison: [
+                RepairCostEstimate.GarageInfo(name: "Pujith VR's Ideal Parts Outlet", icon: "building.2.fill"),
+                RepairCostEstimate.GarageInfo(name: "Specialized Autoworks Colombo", icon: "wrench.and.screwdriver.fill")
+            ]
         ),
         vehicleMake: String = "Toyota",
         vehicleModel: String = "Prius",
         vehicleYear: Int = 2022,
         issueDescription: String = "General issue reported",
         damageCategory: String = "General Damage",
-        imageURLs: [String] = []
+        imageURLs: [String] = [],
+        existingRequest: RepairRequest? = nil
     ) {
         self.estimate = estimate
         self.vehicleMake = vehicleMake
@@ -56,6 +58,7 @@ struct ReportIssueView: View {
         self.issueDescription = issueDescription
         self.damageCategory = damageCategory
         self.imageURLs = imageURLs
+        self.existingRequest = existingRequest
     }
     
     var body: some View {
@@ -285,6 +288,13 @@ struct ReportIssueView: View {
     }
 
     private func submitRepairRequestAndContinue() async {
+        // Opened from history — just restore current request and navigate
+        if let existingRequest {
+            repairRequestService.currentRequest = existingRequest
+            navigateToComparison = true
+            return
+        }
+
         isSubmittingRequest = true
         requestError = nil
 

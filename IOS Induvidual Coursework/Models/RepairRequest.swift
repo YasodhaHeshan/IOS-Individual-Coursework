@@ -55,6 +55,42 @@ extension RepairRequest {
     }
 }
 
+extension RepairCostEstimate {
+    init(from request: RepairRequest) {
+        let midCost = request.predictedCost ?? 22_000
+        let confidence = request.predictedConfidence ?? 0.75
+        let partsCostVal = Int(midCost * 0.6)
+        let laborCostVal = Int(midCost * 0.4)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+
+        totalCost = String(format: "%.1fK", midCost / 1000)
+        currency = "LKR"
+        priceLabel = "Repair • LKR • \(request.vehicleMake)"
+        partsName = request.damageCategory.isEmpty ? "General Parts" : "\(request.damageCategory) Parts"
+        partsCost = "LKR \(formatter.string(from: NSNumber(value: partsCostVal)) ?? "\(partsCostVal)")"
+        laborName = "Labor"
+        laborCost = "LKR \(formatter.string(from: NSNumber(value: laborCostVal)) ?? "\(laborCostVal)")"
+        laborHours = "Estimated 2-4 hours"
+        analysisSummary = [
+            AnalysisPoint(
+                title: "Saved Estimate",
+                description: "Category: \(request.damageCategory), confidence: \(Int(confidence * 100))%."
+            ),
+            AnalysisPoint(
+                title: "Vehicle Context",
+                description: "Estimate for \(request.vehicleYear) \(request.vehicleMake) \(request.vehicleModel) based on service patterns."
+            )
+        ]
+        garageComparison = [
+            GarageInfo(name: "Nearby Verified Garages", icon: "building.2.fill"),
+            GarageInfo(name: "Top Rated Specialists", icon: "wrench.and.screwdriver.fill")
+        ]
+        rawCost = midCost
+        rawConfidence = confidence
+    }
+}
+
 struct RepairCostEstimate {
     let totalCost: String
     let currency: String
