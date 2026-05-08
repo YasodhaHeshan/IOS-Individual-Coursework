@@ -294,7 +294,9 @@ struct ReportIssueView: View {
             vehicleYear: vehicleYear,
             description: issueDescription,
             damageCategory: damageCategory,
-            imageURLs: imageURLs
+            imageURLs: imageURLs,
+            predictedCost: estimate.rawCost > 0 ? estimate.rawCost : nil,
+            predictedConfidence: estimate.rawConfidence > 0 ? estimate.rawConfidence : nil
         )
 
         if let serviceError = repairRequestService.errorMessage {

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SelectVehicleView: View {
+    let initialIssue: String
+
     @State private var selectedVehicleType: String = ""
     @State private var selectedBrand: String = ""
     @State private var selectedModel: String = ""
@@ -9,11 +11,29 @@ struct SelectVehicleView: View {
     @State private var showModelPicker = false
     @State private var showYearPicker = false
     @Environment(\.presentationMode) var presentationMode
-    
+
+    init(initialIssue: String = "") {
+        self.initialIssue = initialIssue
+    }
+
     let vehicleTypes = ["Car", "Motorcycle", "Truck", "Van"]
     let brands = ["Honda", "Toyota", "BMW", "Mercedes", "Ford", "Hyundai", "Nissan", "Suzuki"]
-    let models = ["Civic", "Accord", "CR-V", "Pilot", "City", "Odyssey"]
     let years = Array(2000...2026).map { String($0) }.reversed()
+
+    private let brandModels: [String: [String]] = [
+        "Honda":    ["Civic", "Accord", "CR-V", "Pilot", "City", "HR-V", "Jazz", "Odyssey"],
+        "Toyota":   ["Corolla", "Camry", "Prius", "Hilux", "Land Cruiser", "RAV4", "Yaris", "Fortuner"],
+        "BMW":      ["3 Series", "5 Series", "X3", "X5", "7 Series", "1 Series", "X1", "M3"],
+        "Mercedes": ["C-Class", "E-Class", "GLE", "S-Class", "A-Class", "GLC", "CLA", "GLA"],
+        "Ford":     ["Ranger", "EcoSport", "Everest", "Fiesta", "Focus", "Explorer", "Mustang", "F-150"],
+        "Hyundai":  ["i10", "i20", "Tucson", "Santa Fe", "Elantra", "Creta", "Ioniq", "Kona"],
+        "Nissan":   ["Sunny", "X-Trail", "Navara", "Leaf", "Qashqai", "Note", "Pathfinder", "Micra"],
+        "Suzuki":   ["Alto", "Swift", "Vitara", "Jimny", "Baleno", "Celerio", "Dzire", "S-Cross"]
+    ]
+
+    private var models: [String] {
+        brandModels[selectedBrand] ?? []
+    }
     
     var isFormValid: Bool {
         !selectedVehicleType.isEmpty && !selectedBrand.isEmpty && 
@@ -132,6 +152,7 @@ struct SelectVehicleView: View {
                                             .background(Color(uiColor: .secondarySystemGroupedBackground))
                                             .onTapGesture {
                                                 selectedBrand = brand
+                                                selectedModel = ""
                                                 showBrandPicker = false
                                             }
                                             
@@ -297,7 +318,8 @@ struct SelectVehicleView: View {
                                 vehicleType: selectedVehicleType,
                                 vehicleMake: selectedBrand,
                                 vehicleModel: selectedModel,
-                                vehicleYear: Int(selectedYear) ?? Calendar.current.component(.year, from: Date())
+                                vehicleYear: Int(selectedYear) ?? Calendar.current.component(.year, from: Date()),
+                                initialIssue: initialIssue
                             )
                         ) {
                             HStack(spacing: 8) {

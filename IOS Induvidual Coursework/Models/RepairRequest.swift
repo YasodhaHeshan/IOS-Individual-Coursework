@@ -32,6 +32,27 @@ struct RepairRequest: Identifiable, Codable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
+
+}
+
+extension RepairRequest {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        userId = try c.decode(String.self, forKey: .userId)
+        vehicleMake = try c.decode(String.self, forKey: .vehicleMake)
+        vehicleModel = try c.decode(String.self, forKey: .vehicleModel)
+        vehicleYear = try c.decode(Int.self, forKey: .vehicleYear)
+        damageCategory = (try? c.decodeIfPresent(String.self, forKey: .damageCategory)) ?? ""
+        description = (try? c.decodeIfPresent(String.self, forKey: .description)) ?? ""
+        imageURLs = (try? c.decodeIfPresent([String].self, forKey: .imageURLs)) ?? []
+        predictedCost = try? c.decodeIfPresent(Double.self, forKey: .predictedCost)
+        predictedConfidence = try? c.decodeIfPresent(Double.self, forKey: .predictedConfidence)
+        selectedGarageId = try? c.decodeIfPresent(String.self, forKey: .selectedGarageId)
+        status = (try? c.decodeIfPresent(String.self, forKey: .status)) ?? "pending"
+        createdAt = try? c.decodeIfPresent(Date.self, forKey: .createdAt)
+        updatedAt = try? c.decodeIfPresent(Date.self, forKey: .updatedAt)
+    }
 }
 
 struct RepairCostEstimate {
@@ -45,6 +66,8 @@ struct RepairCostEstimate {
     let laborHours: String
     let analysisSummary: [AnalysisPoint]
     let garageComparison: [GarageInfo]
+    var rawCost: Double = 0
+    var rawConfidence: Double = 0.75
     
     struct AnalysisPoint {
         let title: String

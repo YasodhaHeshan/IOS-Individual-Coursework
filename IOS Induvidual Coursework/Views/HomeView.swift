@@ -190,7 +190,7 @@ struct HomeView: View {
                         // MARK: - Quick Actions
                         VStack(alignment: .leading, spacing: 12) {
                             // Estimate Cost Button
-                            NavigationLink(destination: SelectVehicleView()) {
+                            NavigationLink(destination: SelectVehicleView(initialIssue: searchTab == .typeIssue ? issueInput : selectedIssue)) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "doc.richtext")
                                         .appFont(size: 18, weight: .semibold)
@@ -390,6 +390,8 @@ struct HomeView: View {
         await garageService.fetchAllGarages()
         if authService.isAuthenticated {
             await repairRequestService.fetchMyRepairRequests()
+            notificationService.loadCachedNotifications()
+            await notificationService.syncNotificationsFromServer()
         }
     }
 }

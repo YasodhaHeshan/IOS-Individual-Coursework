@@ -8,7 +8,7 @@ struct DescribeProblemView: View {
     let vehicleModel: String
     let vehicleYear: Int
 
-    @State private var issueSummary: String = ""
+    @State private var issueSummary: String
     @State private var detailedDescription: String = ""
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var selectedImage: UIImage?
@@ -26,6 +26,14 @@ struct DescribeProblemView: View {
     @StateObject private var textRecognitionService = TextRecognitionService.shared
 
     @Environment(\.presentationMode) var presentationMode
+
+    init(vehicleType: String, vehicleMake: String, vehicleModel: String, vehicleYear: Int, initialIssue: String = "") {
+        self.vehicleType = vehicleType
+        self.vehicleMake = vehicleMake
+        self.vehicleModel = vehicleModel
+        self.vehicleYear = vehicleYear
+        self._issueSummary = State(initialValue: initialIssue)
+    }
     
     var isFormValid: Bool {
         !issueSummary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -277,6 +285,30 @@ struct DescribeProblemView: View {
         }
     }
 
+    private func categorizeFromDescription(_ text: String) -> String {
+        let lower = text.lowercased()
+        if lower.contains("glass") || lower.contains("windshield") || lower.contains("window") {
+            return "Broken Glass"
+        } else if lower.contains("engine") || lower.contains("oil leak") || lower.contains("coolant") || lower.contains("overheating") {
+            return "Engine"
+        } else if lower.contains("brake") || lower.contains("pad") || lower.contains("rotor") || lower.contains("disc") {
+            return "Mechanical"
+        } else if lower.contains("scratch") || lower.contains("paint") || lower.contains("scuff") {
+            return "Scratch"
+        } else if lower.contains("dent") || lower.contains("bumper") || lower.contains("panel") || lower.contains("body") {
+            return "Dent"
+        } else if lower.contains("electrical") || lower.contains("battery") || lower.contains("starter") || lower.contains("alternator") {
+            return "Mechanical"
+        } else if lower.contains("transmission") || lower.contains("gear") || lower.contains("clutch") {
+            return "Mechanical"
+        } else if lower.contains("suspension") || lower.contains("steering") || lower.contains("tyre") || lower.contains("tire") || lower.contains("wheel") {
+            return "Mechanical"
+        } else if lower.contains("ac") || lower.contains("air condition") || lower.contains("aircon") {
+            return "Mechanical"
+        }
+        return "General Damage"
+    }
+
     private func loadSelectedImage(from item: PhotosPickerItem) async {
         do {
             guard let data = try await item.loadTransferable(type: Data.self),
@@ -336,6 +368,10 @@ struct DescribeProblemView: View {
             }
         }
 
+        if selectedImage == nil {
+            predicted = categorizeFromDescription("\(issueSummary) \(detailedDescription)")
+        }
+
         predictedCategory = predicted
         let costEstimate = damagePredictionService.estimateRepairCost(
             damageCategory: predicted,
@@ -349,14 +385,19 @@ struct DescribeProblemView: View {
             vehicleModel: vehicleModel
         )
 
+        let partsCostValue = Int(costEstimate.lowEstimate * 0.6)
+        let laborCostValue = Int(costEstimate.lowEstimate * 0.4)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+
         generatedEstimate = RepairCostEstimate(
             totalCost: String(format: "%.1fK", costEstimate.midEstimate / 1000),
             currency: "LKR",
             priceLabel: "Repair • LKR • \(vehicleMake)",
-            partsName: suggestedParts.first?.name ?? "General Parts",
-            partsCost: "LKR \(Int(costEstimate.lowEstimate))",
+            partsName: suggestedParts.first?.name ?? "\(predicted) Parts",
+            partsCost: "LKR \(formatter.string(from: NSNumber(value: partsCostValue)) ?? "\(partsCostValue)")",
             laborName: "Labor",
-            laborCost: "LKR \(Int(max(1000, costEstimate.midEstimate - costEstimate.lowEstimate)))",
+            laborCost: "LKR \(formatter.string(from: NSNumber(value: laborCostValue)) ?? "\(laborCostValue)")",
             laborHours: "Estimated 2-4 hours",
             analysisSummary: [
                 RepairCostEstimate.AnalysisPoint(
@@ -371,7 +412,9 @@ struct DescribeProblemView: View {
             garageComparison: [
                 RepairCostEstimate.GarageInfo(name: "Nearby Verified Garages", icon: "building.2.fill"),
                 RepairCostEstimate.GarageInfo(name: "Top Rated Specialists", icon: "wrench.and.screwdriver.fill")
-            ]
+            ],
+            rawCost: costEstimate.midEstimate,
+            rawConfidence: costEstimate.confidence
         )
 
         isSubmitting = false
